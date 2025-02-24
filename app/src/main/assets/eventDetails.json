@@ -1,0 +1,152 @@
+{
+  "success": true,
+  "reason": "Данные успешно получены",
+  "concert": [
+    {
+      "id": "1",
+      "name": "Ночь Рока",
+      "description": "Погрузитесь в атмосферу захватывающей ночи рок-музыки...",
+      "date": "2025-02-15",
+      "time": "20:00",
+      "artists": [
+        {
+          "id": "1",
+          "professions": "GUITARIST",
+          "fullName": "Иван Иванов"
+        },
+        {
+          "id": "2",
+          "professions": "DRUMMER",
+          "fullName": "Анна Смирнова"
+        },
+        {
+          "id": "3",
+          "professions": "VOCALIST",
+          "fullName": "Михаил Браун"
+        }
+      ],
+      "venue": {
+        "name": "Главный Зал",
+        "capacity": 2000
+      },
+      "duration": 180,
+      "ageRating": "18+",
+      "genres": [
+        "Рок",
+        "Поп"
+      ],
+      "img": "https://example.com/rocknight.jpg",
+      "minPrice": 1500
+    },
+    {
+      "id": "2",
+      "name": "Фолк Фестиваль",
+      "description": "Откройте для себя богатство народной музыки...",
+      "date": "2025-06-15",
+      "time": "17:00",
+      "artists": [
+        {
+          "id": "1",
+          "professions": "GUITARIST",
+          "fullName": "Виктор Кузнецов"
+        },
+        {
+          "id": "2",
+          "professions": "DRUMMER",
+          "fullName": "Елена Морозова"
+        },
+        {
+          "id": "3",
+          "professions": "VOCALIST",
+          "fullName": "Николай Романов"
+        }
+      ],
+      "venue": {
+        "name": "Малый Зал",
+        "capacity": 1000
+      },
+      "duration": 300,
+      "ageRating": "Для всех возрастов",
+      "genres": [
+        "Фолк"
+      ],
+      "img": "https://example.com/folkfestival.jpg",
+      "minPrice": 1000
+    },
+    {
+      "id": "3",
+      "name": "Вечер Джаза",
+      "description": "Приглашаем вас на спокойный вечер джазовой музыки...",
+      "date": "2025-03-10",
+      "time": "19:00",
+      "artists": [
+        {
+          "id": "1",
+          "professions": "GUITARIST",
+          "fullName": "Сара Ли"
+        }
+      ],
+      "venue": {
+        "name": "Главный Зал",
+        "capacity": 2000
+      },
+      "duration": 120,
+      "ageRating": "12+",
+      "genres": [
+        "Джаз"
+      ],
+      "img": "https://example.com/jazzevening.jpg",
+      "minPrice": 1200
+    },
+    {
+      "id": "4",
+      "name": "Электро Ночь",
+      "description": "Погрузитесь в мир электронной музыки...",
+      "date": "2025-05-20",
+      "time": "22:00",
+      "artists": [
+        {
+          "id": "1",
+          "professions": "DJ",
+          "fullName": "DJ Макс"
+        }
+      ],
+      "venue": {
+        "name": "Главный Зал",
+        "capacity": 2000
+      },
+      "duration": 240,
+      "ageRating": "18+",
+      "genres": [
+        "Электронная"
+      ],
+      "img": "https://example.com/electronight.jpg",
+      "minPrice": 1300
+    },
+    {
+      "id": "5",
+      "name": "Классический Гала",
+      "description": "Приготовьтесь к очаровательной ночи классической музыки...",
+      "date": "2025-04-05",
+      "time": "18:00",
+      "artists": [
+        {
+          "id": "1",
+          "professions": "VOCALIST",
+          "fullName": "Анна Иванова"
+        }
+      ],
+      "venue": {
+        "name": "Главный Зал",
+        "capacity": 2000
+      },
+      "duration": 150,
+      "ageRating": "Для всех возрастов",
+      "genres": [
+        "Классическая"
+      ],
+      "img": "https://example.com/classicalgala.jpg",
+      "minPrice": 1400
+    }
+  ]
+}

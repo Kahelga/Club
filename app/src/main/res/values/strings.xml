@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Club</string>
+    <string name="poster_title"> Афиша событий</string>
+    <string name="error_title">Произошла ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="min_price_event"> от %1$d₽</string>
+    <string name="button_details">Подробнее</string>
+
+    <string name="details_title">О событии</string>
+    <string name="details_description">Описание:</string>
+    <string name="details_artists">Исполнитель(и):</string>
+    <string name="details_description_more">Показать больше</string>
+    <string name="details_description_less">Скрыть</string>
+    <string name="duration_event"> %1$d мин</string>
+    <string name="venue_event"> Место проведения: %s </string>
+    <string name="dataTime_event"> %s %s </string>
+
+    <string name="auth_title">Авторизация </string>
+    <string name="auth_login">Логин </string>
+    <string name="auth_pass">Пароль </string>
+    <string name="button_auth">Войти </string>
+    <string name="button_registration">Зарегистрироваться</string>
+</resources>

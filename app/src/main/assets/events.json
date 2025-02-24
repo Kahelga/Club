@@ -1,0 +1,62 @@
+{
+  "success": true,
+  "reason": "Данные успешно получены",
+  "events": [
+    {
+      "id": "1",
+      "name": "Ночь Рока",
+      "date": "2025-03-02",
+      "genres": [
+        "Рок",
+        "Поп"
+      ],
+      "ageRating": "18+",
+      "minPrice": 1500,
+      "img": "http://localhost:8090/img/poster1"
+    },
+    {
+      "id": "2",
+      "name": "Фолк Фестиваль",
+      "date": "2025-03-02",
+      "genres": [
+        "Фолк"
+      ],
+      "ageRating": "Для всех возрастов",
+      "minPrice": 1000,
+      "img": "http://localhost:8090/img/poster2"
+    },
+    {
+      "id": "3",
+      "name": "Вечер Джаза",
+      "date": "2025-03-03",
+      "genres": [
+        "Джаз"
+      ],
+      "ageRating": "12+",
+      "minPrice": 1200,
+      "img": "http://localhost:8090/img/poster3"
+    },
+    {
+      "id": "4",
+      "name": "Электро Ночь",
+      "date": "2025-03-04",
+      "genres": [
+        "Электронная"
+      ],
+      "ageRating": "18+",
+      "minPrice": 1300,
+      "img": "http://localhost:8090/img/poster4"
+    },
+    {
+      "id": "5",
+      "name": "Классический Гала",
+      "date": "2025-03-01",
+      "genres": [
+        "Классическая"
+      ],
+      "ageRating": "Для всех возрастов",
+      "minPrice": 1400,
+      "img": "https://example.com/classicalgala.jpg"
+    }
+  ]
+}

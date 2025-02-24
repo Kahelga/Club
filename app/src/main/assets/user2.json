@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "reason": "string",
+  "user": {
+    "phone": "89990008888",
+    "firstname": "firstname",
+    "middlename": "middlename",
+    "lastname": "lastname",
+    "email": "email1@gmail.com",
+    "city": "city1"
+  },
+  "token": "eyJpc3MiOiJBdXRoIFKvvdte"
+}

@@ -1,17 +1,19 @@
 package com.example.club.eventDetails.domain.entity
 
+import com.example.club.poster.domain.entity.AgeRatings
+import com.example.club.poster.domain.entity.EventStatus
+
 data class EventDetails(
     val id:String,
-    val name:String,
-    val description:String,
+    val title:String,
     val date:String,
-    val time:String,
+    val genre:List<String>,
+    val ageRating: AgeRatings,
+    val description:String,
     val artists:List<EventArtists>,
-    val venue:EventVenue,
     val duration:Int,
-    val ageRating:String,
-    val genres:List<String>,
-    val img:String,
-    val minPrice:Int
+    val imgPreview:String,
+    val minPrice:Int,
+    val status:EventStatus
 
 )

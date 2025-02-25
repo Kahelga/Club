@@ -17,8 +17,16 @@
     <string name="dataTime_event"> %s %s </string>
 
     <string name="auth_title">Авторизация </string>
-    <string name="auth_login">Логин </string>
+    <string name="auth_login">Email </string>
     <string name="auth_pass">Пароль </string>
     <string name="button_auth">Войти </string>
     <string name="button_registration">Зарегистрироваться</string>
+    <string name="validation_error">Некорректный формат</string>
+    <string name="button_update">Обновить данные</string>
+    <string name="user_name">Имя*</string>
+    <string name="user_lastname">Отчество</string>
+    <string name="user_middlename">Фамилия*</string>
+    <string name="user_email">Почта*</string>
+    <string name="user_phone">Телефон</string>
+    <string name="user_city">Город</string>
 </resources>

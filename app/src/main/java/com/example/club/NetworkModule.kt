@@ -42,42 +42,22 @@ class NetworkModule(context: Context) {
                 repeat(10) {
                     mockWebServerManager.mockResponses(
                         "/events/preview" to Response("events.json", HttpURLConnection.HTTP_OK),
-                        "/event/1" to Response("eventDetails1.json", HttpURLConnection.HTTP_OK),
-                        "/event/2" to Response("eventDetails2.json", HttpURLConnection.HTTP_OK),
-                        "/event/3" to Response("eventDetails3.json", HttpURLConnection.HTTP_OK),
-                        "/event/4" to Response("eventDetails4.json", HttpURLConnection.HTTP_OK),
-                        "/event/5" to Response("eventDetails5.json", HttpURLConnection.HTTP_OK),
-                      //  "/users/signin" to Response("user1.json", HttpURLConnection.HTTP_OK),
-                       // "/users/signin" to Response("user2.json", HttpURLConnection.HTTP_OK),
-                       // "/users/signin" to Response("error.json", HttpURLConnection.HTTP_UNAUTHORIZED),
-                        "/img/poster1" to Response(
-                            "poster1.jpg",
-                            HttpURLConnection.HTTP_OK,
-                            "image/jpg"
-                        ),
-                        "/img/poster2" to Response(
-                            "poster2.jpeg",
-                            HttpURLConnection.HTTP_OK,
-                            "image/jpeg"
-                        ),
-                        "/img/poster3" to Response(
-                            "poster3.png",
-                            HttpURLConnection.HTTP_OK,
-                            "image/png"
-                        ),
-                        "/img/poster4" to Response(
-                            "poster4.png",
-                            HttpURLConnection.HTTP_OK,
-                            "image/png"
-                        )
-
+                        "/events/1" to Response("eventDetails1.json", HttpURLConnection.HTTP_OK),
+                        "/events/2" to Response("eventDetails2.json", HttpURLConnection.HTTP_OK),
+                        "/events/3" to Response("eventDetails3.json", HttpURLConnection.HTTP_OK),
+                        "/events/4" to Response("eventDetails4.json", HttpURLConnection.HTTP_OK),
+                        "/events/5" to Response("eventDetails5.json", HttpURLConnection.HTTP_OK),
+                        "/img/poster1" to Response("poster1.jpg", HttpURLConnection.HTTP_OK, "image/jpg"),
+                        "/img/poster2" to Response("poster2.jpeg", HttpURLConnection.HTTP_OK, "image/jpeg"),
+                        "/img/poster3" to Response("poster3.png", HttpURLConnection.HTTP_OK, "image/png"),
+                        "/img/poster4" to Response("poster4.png", HttpURLConnection.HTTP_OK, "image/png"),
+                        "/users/user1@gmail.com/profile" to Response("user1.json", HttpURLConnection.HTTP_OK),
+                        "/users/user2@gmail.com/profile" to Response("user2.json", HttpURLConnection.HTTP_OK),
                     )
                 }
-                retrofit = Retrofit.Builder()
-                    .client(provideOkHttpClientWithProgress())
+                retrofit = Retrofit.Builder().client(provideOkHttpClientWithProgress())
                     .baseUrl(mockWebServerManager.getUrl())
-                    .addConverterFactory(provideKotlinXSerializationFactory())
-                    .build()
+                    .addConverterFactory(provideKotlinXSerializationFactory()).build()
 
                 // Успешная инициализация
                 initializationDeferred.complete(Unit)
@@ -104,20 +84,17 @@ class NetworkModule(context: Context) {
         .build()*/
 
     private fun provideOkHttpClientWithProgress(): OkHttpClient =
-        OkHttpClient().newBuilder()
-            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+        OkHttpClient().newBuilder().connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-            .addInterceptor(provideLoggingInterceptor())
+            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS).addInterceptor(provideLoggingInterceptor())
             .build()
 
     private fun provideKotlinXSerializationFactory(): Converter.Factory =
         Json.asConverterFactory("application/json; charset=UTF8".toMediaType())
 
-    private fun provideLoggingInterceptor(): Interceptor =
-        HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
+    private fun provideLoggingInterceptor(): Interceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
 
     fun shutdownMockServer() {
         mockWebServerManager.shutdown()

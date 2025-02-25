@@ -5,7 +5,7 @@ data class Event (
     val title:String,
     val date:String,
     val genre:List<String>,
-    val ageRating:String,
+    val ageRating:AgeRatings,
     val minPrice:Int, //double
     val imgPreview:String,
     val status:EventStatus

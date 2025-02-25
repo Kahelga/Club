@@ -1,9 +1,9 @@
 package com.example.club.profile.data.converter
 
 
-import com.example.club.authorization.data.model.UserModel
+
 import com.example.club.profile.domain.entity.User
-import com.example.club.profile.data.ProfileResponseData
+import com.example.club.profile.data.model.UserModel
 
 
 class UserConverter {
@@ -17,15 +17,15 @@ class UserConverter {
             city = userModel.city
         )
     }*/
-    fun convert(model: ProfileResponseData): User {
+    fun convert(model: UserModel): User {
         return User(
-            id=model.user.id,
-            phone = model.user.phone,
-            firstname = model.user.firstname,
-            middlename = model.user.middlename,
-            lastname = model.user.lastname,
-            email = model.user.email,
-            city = model.user.city
+            id=model.id,
+            phone = model.phone,
+            firstname = model.firstname,
+            middlename = model.middlename,
+            lastname = model.lastname,
+            email = model.email,
+            city = model.city
 
 
         )

@@ -9,8 +9,8 @@ class ProfileRepositoryImpl(
     private val profileApi: ProfileApi,
     private val userConverter: UserConverter
 ):ProfileRepository {
-    override suspend fun get(userId: String): User {
-        val model=profileApi.get(userId)
+    override suspend fun get(login: String): User {
+        val model=profileApi.get(login)
         return userConverter.convert(model)
     }
 }

@@ -51,12 +51,13 @@ import com.example.club.authorization.presentation.AuthViewModel
 @Composable
 fun AuthScreen(
     authViewModel: AuthViewModel,
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (login:String) -> Unit,
     onBackPressed: () -> Unit,
 ) {
     val authState by authViewModel.state.collectAsState()
+    val userLogin by authViewModel.login.collectAsState()
 
-    var login by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
 
@@ -77,7 +78,7 @@ fun AuthScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        LoginField(value = login, onValueChange = { login = it})
+        LoginField(value = email, onValueChange = { email = it})
         Spacer(modifier = Modifier.height(8.dp))
 
         PasswordField(
@@ -94,8 +95,8 @@ fun AuthScreen(
 
         AuthButton(onClick = {
             isError = false
-            if (login.isNotEmpty() && password.isNotEmpty()) {
-                authViewModel.authorize(login, password)
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                authViewModel.authorize(email, password)
             } else {
                 isError = true
             }
@@ -116,7 +117,7 @@ fun AuthScreen(
 
             is AuthState.Success -> {
                 LaunchedEffect(Unit) {
-                    onLoginSuccess()
+                    onLoginSuccess(userLogin)
                 }
             }
         }
@@ -170,6 +171,7 @@ fun TopBar(onBackPressed: () -> Unit) {
     }
 }
 
+/*
 @Composable
 fun LoginField(value: String, onValueChange: (String) -> Unit) {
     TextField(
@@ -187,6 +189,45 @@ fun LoginField(value: String, onValueChange: (String) -> Unit) {
             .clip(RoundedCornerShape(8.dp))
             .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
     )
+}
+*/
+@Composable
+fun LoginField(value: String, onValueChange: (String) -> Unit) {
+    var errorMessage by remember { mutableStateOf("") }
+
+    LaunchedEffect(value) {
+        errorMessage = validateEmail(value)
+    }
+
+    Column {
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        TextField(
+            value = value,
+            onValueChange = { newValue ->
+                onValueChange(newValue)
+                errorMessage = validateEmail(newValue)
+            },
+            label = { Text(stringResource(id = R.string.auth_login)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+        )
+
+    }
 }
 
 
@@ -207,5 +248,19 @@ fun RegisterButton(onClick: () -> Unit) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(stringResource(id = R.string.button_registration))
+    }
+}
+fun validateEmail(email: String): String {
+    if (email.isBlank()) {
+        return ""
+    }
+    val emailRegex = Regex(
+        "^(?!\\.)([a-zA-Z0-9!#$%&'*+/=?^_`{|}~.-]+)@[a-zA-Z0-9.-]+\\.[a-zA-Z]{1,}$"
+    )
+
+    return if (emailRegex.matches(email)) {
+        ""
+    } else {
+        "Некорректный формат"
     }
 }

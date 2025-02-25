@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "reason": "string",
+  "user": {
+    "phone": "89990008888",
+    "firstname": "firstname",
+    "middlename": "middlename",
+    "lastname": "lastname",
+    "email": "email1@gmail.com",
+    "city": "city1"
+  },
+  "access_token": "eyJpc3MiOiJBdXRoIFKvvdte",
+  "refresh_token": "eyJpc3MiOiJBdXRoIFNlcnZlciIs"
+}

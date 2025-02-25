@@ -1,67 +1,64 @@
-{
-  "success": true,
-  "reason": "Данные успешно получены",
-  "events": [
-    {
-      "id": "1",
-      "title": "Ночь Рока",
-      "date": "2025-03-02T20:00:00Z",
-      "genre": [
-        "Рок",
-        "Поп"
-      ],
-      "ageRating": "18+",
-      "minPrice": 1500,
-      "imgPreview": "http://localhost:8090/img/poster1",
-      "status": "ACTIVE"
-    },
-    {
-      "id": "2",
-      "title": "Фолк Фестиваль",
-      "date": "2025-03-02T17:00:00Z",
-      "genre": [
-        "Фолк"
-      ],
-      "ageRating": "Для всех возрастов",
-      "minPrice": 1000,
-      "imgPreview": "http://localhost:8090/img/poster2",
-      "status": "ACTIVE"
-    },
-    {
-      "id": "3",
-      "title": "Вечер Джаза",
-      "date": "2025-03-03T19:00:00Z",
-      "genre": [
-        "Джаз"
-      ],
-      "ageRating": "12+",
-      "minPrice": 1200,
-      "imgPreview": "http://localhost:8090/img/poster3",
-      "status": "ACTIVE"
-    },
-    {
-      "id": "4",
-      "title": "Электро Ночь",
-      "date": "2025-03-04T22:00:00Z",
-      "genre": [
-        "Электронная"
-      ],
-      "ageRating": "18+",
-      "minPrice": 1300,
-      "imgPreview": "http://localhost:8090/img/poster4",
-      "status": "ACTIVE"
-    },
-    {
-      "id": "5",
-      "title": "Классический Гала",
-      "date": "2025-03-01T18:00:00Z",
-      "genre": [
-        "Классическая"
-      ],
-      "ageRating": "Для всех возрастов",
-      "minPrice": 1400,
-      "imgPreview": "https://example.com/classicalgala.jpg",
-      "status": "ACTIVE"
-    }
-  ]
-}
+[
+  {
+    "id": "1",
+    "title": "Ночь Рока",
+    "date": "2025-03-02T20:00:00Z",
+    "genre": [
+      "Рок",
+      "Поп"
+    ],
+    "ageRating": "NC17",
+    "minPrice": 1500,
+    "imgPreview": "http://localhost:8090/img/poster1",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "2",
+    "title": "Фолк Фестиваль",
+    "date": "2025-03-02T17:00:00Z",
+    "genre": [
+      "Фолк"
+    ],
+    "ageRating": "G",
+    "minPrice": 1000,
+    "imgPreview": "http://localhost:8090/img/poster2",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "3",
+    "title": "Вечер Джаза",
+    "date": "2025-03-03T19:00:00Z",
+    "genre": [
+      "Джаз"
+    ],
+    "ageRating": "PG13",
+    "minPrice": 1200,
+    "imgPreview": "http://localhost:8090/img/poster3",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "4",
+    "title": "Электро Ночь",
+    "date": "2025-03-04T22:00:00Z",
+    "genre": [
+      "Электронная"
+    ],
+    "ageRating": "NC17",
+    "minPrice": 1300,
+    "imgPreview": "http://localhost:8090/img/poster4",
+    "status": "ACTIVE"
+  },
+  {
+    "id": "5",
+    "title": "Классический Гала",
+    "date": "2025-03-01T18:00:00Z",
+    "genre": [
+      "Классическая"
+    ],
+    "ageRating": "G",
+    "minPrice": 1400,
+    "imgPreview": "https://example.com/classicalgala.jpg",
+    "status": "ACTIVE"
+  }
+]
+

@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
 class ProfileViewModel(
-    private val userId:String,
+    private val login:String,
     private val getProfileUseCase: GetProfileUseCase
 ):ViewModel() {
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)
@@ -20,7 +20,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             _state.value = ProfileState.Loading
             try {
-                val user = getProfileUseCase(userId)
+                val user = getProfileUseCase(login)
                 _state.value = ProfileState.Content(user)
             } catch (ce: CancellationException) {
                 throw ce

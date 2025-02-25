@@ -72,7 +72,7 @@ import java.util.TimeZone
 
 @Composable
 fun Content(
-    events: EventResponse,
+    events: /*EventResponse*/List<Event>,
     onItemClicked: (eventId: String) -> Unit,
 ) {
     CalendarWithEvents(events, onItemClicked)
@@ -80,7 +80,7 @@ fun Content(
 }
 
 @Composable
-fun CalendarWithEvents(events: EventResponse, onItemClicked: (eventId: String) -> Unit) {
+fun CalendarWithEvents(events: List<Event>/*EventResponse*/, onItemClicked: (eventId: String) -> Unit) {
     val calendar = Calendar.getInstance()
     var currentDate by remember { mutableStateOf(calendar.time) }
     var selectedDate by remember { mutableStateOf(formatDateString(Date())) }
@@ -148,7 +148,7 @@ fun CalendarWithEvents(events: EventResponse, onItemClicked: (eventId: String) -
         }
 
         EventList(
-            events.events.filter { formatDateSelected(it.date) == selectedDate },
+            events.filter { formatDateSelected(it.date) == selectedDate },
             onItemClicked
         )
     }

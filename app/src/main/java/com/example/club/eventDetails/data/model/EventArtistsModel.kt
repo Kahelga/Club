@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EventArtistsModel(
-    val id: String,
-    val professions: Professions,
-    val fullName: String
+    val id:String,
+    val name:String,
+    val profession:Professions,
 )

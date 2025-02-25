@@ -63,6 +63,10 @@ import coil.request.ImageRequest
 import com.example.club.R
 import com.example.club.eventDetails.domain.entity.EventDetails
 import com.example.club.poster.ui.formatDate
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 
 @Composable
@@ -99,7 +103,7 @@ private fun DetailItem(
 @Composable
 fun EventImage(event: EventDetails) {
     //val baseUrl = "http://localhost:8090/"
-    val imagePath = event.img
+    val imagePath = event.imgPreview
     //val fullUrl = "$baseUrl$imagePath"
 
     Box(
@@ -126,7 +130,7 @@ fun EventImage(event: EventDetails) {
         )
 
         // отображение жанров, мин цены
-        val genres = event.genres.joinToString(", ")
+        val genres = event.genre.joinToString(", ")
         val price = stringResource(R.string.min_price_event, event.minPrice)
 
         Box(
@@ -154,7 +158,7 @@ fun EventImage(event: EventDetails) {
 fun EventTitle(event: EventDetails) {
     Text(
         text = buildAnnotatedString {
-            append(event.name)
+            append(event.title)
             append(" (${event.ageRating})")
         },
         style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
@@ -172,7 +176,7 @@ fun EventInfoCard(event: EventDetails) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             EventTitle(event)
-            EventVenue(event)
+            //EventVenue(event)
             EventDateTime(event)
             EventDuration(event)
             EventArtists(event)
@@ -193,15 +197,10 @@ fun EventDateTime(event: EventDetails) {
             modifier = Modifier.size(30.dp)
         )
         Text(
-            text = stringResource(R.string.dataTime_event, formatDate(event.date), event.time),
+            text = stringResource(R.string.dataTime_event, formatDate(event.date), formatTimeSelected(event.date)),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 4.dp)
         )
-        /*Text(
-            text = event.time,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(end = 8.dp)
-        )*/
     }
 }
 
@@ -220,7 +219,7 @@ private fun EventArtists(event: EventDetails) {
         verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
         event.artists.forEachIndexed { index, artist ->
-            Text(text = artist.fullName)
+            Text(text = artist.name)
             if (index < event.artists.size - 1) {
                 Text(text = ", ")
             }
@@ -288,7 +287,7 @@ private fun EventDuration(event: EventDetails) {
     }
 }
 
-@Composable
+/*@Composable
 fun EventVenue(event: EventDetails) {
     Column(modifier = Modifier.padding(8.dp)) {
         Text(
@@ -298,7 +297,7 @@ fun EventVenue(event: EventDetails) {
         )
         //может что-то еще
     }
-}
+}*/
 
 @Composable
 private fun BuyTicketButton(/*onItemClicked: () -> Unit*/) {
@@ -314,5 +313,21 @@ private fun BuyTicketButton(/*onItemClicked: () -> Unit*/) {
             text = "Купить билет",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         )
+    }
+}
+
+fun formatTimeSelected(date: String): String {
+    // Указываем формат входящей даты
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC") // Устанавливаем временную зону UTC
+    }
+    // Указываем формат выходной времени
+    val outputFormat = SimpleDateFormat("HH:mm", Locale("ru"))
+
+    return try {
+        val parsedDate = inputFormat.parse(date)
+        outputFormat.format(parsedDate ?: Date())
+    } catch (e: Exception) {
+        date
     }
 }

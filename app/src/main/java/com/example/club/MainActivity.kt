@@ -4,14 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.club.authorization.data.converter.UserConverter
+import com.example.club.authorization.data.converter.UserConvert
 import com.example.club.authorization.data.network.UserAuthApi
 import com.example.club.authorization.data.repository.UserAuthRepositoryImpl
 import com.example.club.authorization.domain.repository.UserAuthRepository
@@ -26,6 +19,11 @@ import com.example.club.poster.data.network.EventPosterApi
 import com.example.club.poster.data.repository.EventPosterRepositoryImpl
 import com.example.club.poster.domain.repository.EventPosterRepository
 import com.example.club.poster.domain.usecase.GetEventPosterUseCase
+import com.example.club.profile.data.converter.UserConverter
+import com.example.club.profile.data.network.ProfileApi
+import com.example.club.profile.data.repository.ProfileRepositoryImpl
+import com.example.club.profile.domain.repository.ProfileRepository
+import com.example.club.profile.domain.usecase.GetProfileUseCase
 import com.example.club.ui.theme.ClubTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,9 +54,15 @@ class MainActivity : ComponentActivity() {
             val getEventUseCase = GetEventUseCase(eventRepository)
 
             val userAuthApi=retrofit.create(UserAuthApi::class.java)
-            val userConverter=UserConverter()
-            val userAuthRepository:UserAuthRepository=UserAuthRepositoryImpl(userAuthApi,userConverter)
+            val userConvert=UserConvert()
+            val userAuthRepository:UserAuthRepository=UserAuthRepositoryImpl(userAuthApi,userConvert)
             val authUseCase=AuthUseCase(userAuthRepository)
+
+            val profileApi=retrofit.create(ProfileApi::class.java)
+            val userConverter= UserConverter()
+            val profileRepository: ProfileRepository = ProfileRepositoryImpl(profileApi,userConverter)
+            val getProfileUseCase= GetProfileUseCase(profileRepository)
+
 
             // Переключаемся на главный поток для обновления UI
             withContext(Dispatchers.Main) {
@@ -67,7 +71,8 @@ class MainActivity : ComponentActivity() {
                         MainScreen(
                             getEventPosterUseCase = getEventPosterUseCase,
                             getEventUseCase = getEventUseCase,
-                            authUseCase=authUseCase
+                            authUseCase=authUseCase,
+                            getProfileUseCase=getProfileUseCase
                         )
                     }
                 }

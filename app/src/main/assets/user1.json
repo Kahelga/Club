@@ -1,13 +1,9 @@
 {
-  "success": true,
-  "reason": "string",
-  "user": {
-    "phone": "89990009999",
-    "firstname": "firstname",
-    "middlename": "middlename",
-    "lastname": "lastname",
-    "email": "email@gmail.com",
-    "city": "city"
-  },
-  "token": "eyJpc3MiOiJBdXRoIFNlcnZlciIs"
+  "id": "us1",
+  "phone": "89990009999",
+  "firstname": "firstname",
+  "middlename": "middlename",
+  "lastname": "lastname",
+  "email": "user1@gmail.com",
+  "city": "city"
 }

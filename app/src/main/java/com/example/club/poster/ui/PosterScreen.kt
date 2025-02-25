@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.club.R
+import com.example.club.authorization.presentation.AuthViewModel
 import com.example.club.poster.presentation.PosterState
 import com.example.club.poster.presentation.PosterViewModel
 
@@ -41,10 +42,12 @@ import com.example.club.poster.presentation.PosterViewModel
 @Composable
 fun PosterScreen(
     posterViewModel: PosterViewModel,
-    onItemSelected: (filmId: String) -> Unit,
-    onProfileSelected: () -> Unit
+    authViewModel: AuthViewModel,
+    onItemSelected: (eventId: String) -> Unit,
+    onProfileSelected: (login:String) -> Unit
 ) {
     val posterState by posterViewModel.state.collectAsState()
+    val loginUser by authViewModel.login.collectAsState()
 
     LaunchedEffect(Unit) {
         posterViewModel.loadEvents()
@@ -52,7 +55,7 @@ fun PosterScreen(
 
     Scaffold(
         bottomBar = {
-            BottomBar(onProfileSelected)
+            BottomBar { onProfileSelected(loginUser) }
         }
     ) { paddingValues ->
         Column(

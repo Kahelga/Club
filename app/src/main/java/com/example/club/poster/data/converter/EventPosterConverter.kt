@@ -7,7 +7,7 @@ import com.example.club.poster.domain.entity.Event
 
 
 class EventPosterConverter {
-    private fun convertEvent(eventModel: EventModel): Event {
+    /*private*/ fun convert(eventModel: EventModel): Event {
         return Event(
             id = eventModel.id,
             title = eventModel.title,
@@ -21,10 +21,10 @@ class EventPosterConverter {
         )
     }
 
-    fun convert(model: EventResponseData): EventResponse =
+    /*fun convert(model: EventResponseData): EventResponse =
         EventResponse(
             success = model.success,
             reason = model.reason,
             events = model.events.map { convertEvent(it) }
-        )
+        )*/
 }

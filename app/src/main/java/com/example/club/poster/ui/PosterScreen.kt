@@ -47,7 +47,7 @@ fun PosterScreen(
     val posterState by posterViewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        posterViewModel.loadFilms()
+        posterViewModel.loadEvents()
     }
 
     Scaffold(
@@ -67,7 +67,7 @@ fun PosterScreen(
                 is PosterState.Loading -> Loading()
                 is PosterState.Failure -> Error(
                     message = state.message ?: stringResource(id = R.string.error_unknown_error),
-                    onRetry = { posterViewModel.loadFilms() },
+                    onRetry = { posterViewModel.loadEvents() },
                 )
                 is PosterState.Content -> Content(
                     events = state.events,

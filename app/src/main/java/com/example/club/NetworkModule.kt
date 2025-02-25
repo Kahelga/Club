@@ -41,7 +41,7 @@ class NetworkModule(context: Context) {
                 Log.d("NetworkModule", "MockWebServer запущен на: ${mockWebServerManager.getUrl()}")
                 repeat(10) {
                     mockWebServerManager.mockResponses(
-                        "/events" to Response("events.json", HttpURLConnection.HTTP_OK),
+                        "/events/preview" to Response("events.json", HttpURLConnection.HTTP_OK),
                         "/event/1" to Response("eventDetails1.json", HttpURLConnection.HTTP_OK),
                         "/event/2" to Response("eventDetails2.json", HttpURLConnection.HTTP_OK),
                         "/event/3" to Response("eventDetails3.json", HttpURLConnection.HTTP_OK),

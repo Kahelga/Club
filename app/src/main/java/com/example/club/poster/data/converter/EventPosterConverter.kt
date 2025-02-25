@@ -10,12 +10,13 @@ class EventPosterConverter {
     private fun convertEvent(eventModel: EventModel): Event {
         return Event(
             id = eventModel.id,
-            name = eventModel.name,
+            title = eventModel.title,
             date = eventModel.date,
-            genres = eventModel.genres,
+            genre = eventModel.genre,
             ageRating = eventModel.ageRating,
             minPrice = eventModel.minPrice,
-            img = eventModel.img
+            imgPreview = eventModel.imgPreview,
+            status = eventModel.status
 
         )
     }

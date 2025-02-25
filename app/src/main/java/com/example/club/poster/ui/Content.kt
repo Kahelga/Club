@@ -68,6 +68,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun Content(
@@ -82,7 +83,7 @@ fun Content(
 fun CalendarWithEvents(events: EventResponse, onItemClicked: (eventId: String) -> Unit) {
     val calendar = Calendar.getInstance()
     var currentDate by remember { mutableStateOf(calendar.time) }
-    var selectedDate by remember { mutableStateOf(formatDateString(Date())) } // Устанавливаем сегодняшнюю дату
+    var selectedDate by remember { mutableStateOf(formatDateString(Date())) }
 
     val availableDates = remember(currentDate) { generateFutureDates(currentDate) }
 
@@ -226,7 +227,7 @@ private fun EventItem(
 @Composable
 fun EventImage(item: Event) {
     //val baseUrl = "http://localhost:8090/"
-    val imagePath = item.img
+    val imagePath = item.imgPreview
     println(imagePath)
     //val fullUrl = "$baseUrl$imagePath"
 
@@ -254,7 +255,7 @@ fun EventImage(item: Event) {
         )
 
         // отображение жанров, мин цены
-        val genres = item.genres.joinToString(", ")
+        val genres = item.genre.joinToString(", ")
         val price = stringResource(R.string.min_price_event, item.minPrice)
 
         Box(
@@ -282,7 +283,7 @@ fun EventImage(item: Event) {
 fun EventTitle(item: Event) {
     Text(
         text = buildAnnotatedString {
-            append(item.name)
+            append(item.title)
             append(" (${item.ageRating})")
         },
         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
@@ -341,7 +342,9 @@ fun formatDate(date: String): String {
 }
 
 fun formatDateSelected(date: String): String {
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
     val outputFormat = SimpleDateFormat("EEE, d MMM", Locale("ru"))
 
     return try {

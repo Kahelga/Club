@@ -1,14 +1,16 @@
 package com.example.club.poster.data.model
 
+import com.example.club.poster.domain.entity.EventStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class EventModel(
     val id:String,
-    val name:String,
+    val title:String,
     val date:String,
-    val genres:List<String>,
+    val genre:List<String>,
     val ageRating:String,
-    val minPrice:Int,
-    val img:String
+    val minPrice:Int, //double
+    val imgPreview:String,
+    val status: EventStatus
 )

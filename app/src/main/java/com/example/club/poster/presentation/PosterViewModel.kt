@@ -12,12 +12,12 @@ class PosterViewModel(private val getEventPosterUseCase: GetEventPosterUseCase) 
     private val _state = MutableStateFlow<PosterState>(PosterState.Initial)
     val state: StateFlow<PosterState> = _state
 
-    fun loadFilms() {
+    fun loadEvents() {
         viewModelScope.launch {
             _state.value = PosterState.Loading
             try {
-                val films = getEventPosterUseCase()
-                _state.value = PosterState.Content(films)
+                val events = getEventPosterUseCase()
+                _state.value = PosterState.Content(events)
 
             } catch (ce: CancellationException) {
                 throw ce

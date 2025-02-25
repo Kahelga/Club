@@ -4,59 +4,64 @@
   "events": [
     {
       "id": "1",
-      "name": "Ночь Рока",
-      "date": "2025-03-02",
-      "genres": [
+      "title": "Ночь Рока",
+      "date": "2025-03-02T20:00:00Z",
+      "genre": [
         "Рок",
         "Поп"
       ],
       "ageRating": "18+",
       "minPrice": 1500,
-      "img": "http://localhost:8090/img/poster1"
+      "imgPreview": "http://localhost:8090/img/poster1",
+      "status": "ACTIVE"
     },
     {
       "id": "2",
-      "name": "Фолк Фестиваль",
-      "date": "2025-03-02",
-      "genres": [
+      "title": "Фолк Фестиваль",
+      "date": "2025-03-02T17:00:00Z",
+      "genre": [
         "Фолк"
       ],
       "ageRating": "Для всех возрастов",
       "minPrice": 1000,
-      "img": "http://localhost:8090/img/poster2"
+      "imgPreview": "http://localhost:8090/img/poster2",
+      "status": "ACTIVE"
     },
     {
       "id": "3",
-      "name": "Вечер Джаза",
-      "date": "2025-03-03",
-      "genres": [
+      "title": "Вечер Джаза",
+      "date": "2025-03-03T19:00:00Z",
+      "genre": [
         "Джаз"
       ],
       "ageRating": "12+",
       "minPrice": 1200,
-      "img": "http://localhost:8090/img/poster3"
+      "imgPreview": "http://localhost:8090/img/poster3",
+      "status": "ACTIVE"
     },
     {
       "id": "4",
-      "name": "Электро Ночь",
-      "date": "2025-03-04",
-      "genres": [
+      "title": "Электро Ночь",
+      "date": "2025-03-04T22:00:00Z",
+      "genre": [
         "Электронная"
       ],
       "ageRating": "18+",
       "minPrice": 1300,
-      "img": "http://localhost:8090/img/poster4"
+      "imgPreview": "http://localhost:8090/img/poster4",
+      "status": "ACTIVE"
     },
     {
       "id": "5",
-      "name": "Классический Гала",
-      "date": "2025-03-01",
-      "genres": [
+      "title": "Классический Гала",
+      "date": "2025-03-01T18:00:00Z",
+      "genre": [
         "Классическая"
       ],
       "ageRating": "Для всех возрастов",
       "minPrice": 1400,
-      "img": "https://example.com/classicalgala.jpg"
+      "imgPreview": "https://example.com/classicalgala.jpg",
+      "status": "ACTIVE"
     }
   ]
 }

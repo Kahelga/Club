@@ -16,10 +16,10 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+ /*       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
-        }
+        }*/
     }
 
     buildTypes {
@@ -75,6 +75,7 @@ dependencies {
     //MockWebServer
     implementation (libs.okhttp)
     implementation(libs.mockwebserver.v4110)
+    implementation(libs.androidx.monitor)
     testImplementation(libs.mockwebserver)
 
     // Сериализация JSON

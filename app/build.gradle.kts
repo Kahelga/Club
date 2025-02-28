@@ -83,6 +83,8 @@ dependencies {
 
     // Асинхронное программирование
     implementation(libs.kotlinx.coroutines.android)
+    //безопасность
+    implementation(libs.androidx.security.crypto)
 
     testImplementation(libs.junit)
     implementation(libs.kotlinx.coroutines.test)

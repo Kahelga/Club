@@ -5,11 +5,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
@@ -27,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -40,9 +44,9 @@ import com.example.club.profile.ui.Error
 
 @Composable
 fun ProfileScreen(
-    profileViewModel:ProfileViewModel,
+    profileViewModel: ProfileViewModel,
     onPosterSelected: () -> Unit,
-    // onLogout: () -> Unit
+     onLogout: () -> Unit
     // onUpdateData: () -> Unit
 ) {
     val profileState by profileViewModel.state.collectAsState()
@@ -68,25 +72,31 @@ fun ProfileScreen(
             ) {
                 Text(
                     text = "Профиль",
-                    style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(bottom = 28.dp)
+                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+                   // modifier = Modifier.padding(bottom = 28.dp)
                 )
-                IconButton(onClick = { /* выход из профиля */ }) {
+                IconButton(
+                    onClick = onLogout,
+                    modifier = Modifier.size(35.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Filled.ExitToApp,
                         contentDescription = null,
+                        Modifier.size(35.dp)
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(25.dp))
             when (val state = profileState) {
                 is ProfileState.Initial,
-                is ProfileState.Loading ->{ } /*-> Loading()*/
+                is ProfileState.Loading -> {
+                } /*-> Loading()*/
                 is ProfileState.Failure -> Error(
                     message = state.message ?: stringResource(id = R.string.error_unknown_error),
-                    onRetry ={profileViewModel.loadUser()}
+                    onRetry = { profileViewModel.loadUser() }
                 )
 
-                    is ProfileState.Content -> Content(
+                is ProfileState.Content -> Content(
                     user = state.user
                 )
             }
@@ -101,13 +111,14 @@ fun BottomBar(onPosterSelected: () -> Unit) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
-            .height(95.dp)
-            .border(BorderStroke(2.dp, Color.LightGray))
+            .height(57.dp)
+            .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(15.dp))
+            .clip(RoundedCornerShape(15.dp))
     ) {
         BottomBarItem(
             icon = Icons.Filled.Menu,
             label = "Афиша",
-            onClick =  onPosterSelected,
+            onClick = onPosterSelected,
             iconTint = Color.Gray
         )
         BottomBarItem(
@@ -119,7 +130,7 @@ fun BottomBar(onPosterSelected: () -> Unit) {
         BottomBarItem(
             icon = Icons.Filled.Person,
             label = "Профиль",
-            onClick = {  }
+            onClick = { }
 
         )
     }
@@ -134,16 +145,25 @@ fun BottomBarItem(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 35.dp)
+        modifier = Modifier
+            .padding(horizontal = 42.dp)
+            .fillMaxHeight()
     ) {
-        IconButton(onClick = onClick) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(25.dp)
+        ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = iconTint,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
-        Text(label, color = iconTint, fontSize = 15.sp)
+        Text(
+            label,
+            color = iconTint,
+            fontSize = 11.sp,
+        )
     }
 }

@@ -19,8 +19,8 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
 
         // Обработка входящих запросов
         override fun dispatch(request: RecordedRequest): MockResponse {
-            // Обработка POST-запроса на "/users/signin"
-            if (request.path == "/users/signin" && request.method == "POST") {
+            // Обработка POST-запроса на "/users/login"
+            if (request.path == "/users/login" && request.method == "POST") {
                 val body = request.body.readUtf8()
                 val login = body.substringAfter("\"email\":\"").substringBefore("\"")
                 val password = body.substringAfter("\"password\":\"").substringBefore("\"")
@@ -52,7 +52,71 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                     }
                 }
             }
+// Обработка POST-запроса на "/auth/login/refresh"
+            if (request.path == "/auth/login/refresh" && request.method == "POST") {
+                val body = request.body.readUtf8()
+                val refreshToken = body.substringAfter("\"refresh_token\":\"").substringBefore("\"")
 
+                // Проверка корректности refresh_token
+                val responseFile = if (refreshToken == "eyJpc3MiOiJBdXRoIFKvvdte") {
+                    "newToken.json" // Файл с новыми токенами
+                } else {
+                    "error.json" // Файл с ошибкой
+                }
+
+                // Получаем содержимое файла ответа
+                val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                return MockResponse().apply {
+                    setResponseCode(HttpURLConnection.HTTP_OK)
+                    when (responseBody) {
+                        is String -> setBody(responseBody)
+                        is ByteArray -> {
+                            val buffer = Buffer().write(responseBody)
+                            setBody(buffer)
+                        }
+                        null -> {
+                            setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                        }
+                    }
+                }
+            }
+            // Обработка GET-запросов на "/users/{login}/profile"
+            if (request.method == "GET" && request.path?.startsWith("/users/") == true && request.path?.endsWith("/profile") == true) {
+                // Извлекаем логин из пути
+                val login = request.path!!.substringAfter("/users/").substringBefore("/profile")
+                val authToken = request.getHeader("Authorization")
+
+                // Проверяем корректность токена (например, если токен "Bearer valid_token" )
+                if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" ||authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                    // Возвращаем ответ в зависимости от логина
+                    val responseFile = when (login) {
+                        "user1@gmail.com" -> "user1.json"
+                        "user2@gmail.com" -> "user2.json"
+                        else -> "error.json"
+                    }
+
+                    // Получаем содержимое файла ответа
+                    val responseBody = getAssetFileContent(responseFile, "application/json")
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_OK)
+                        when (responseBody) {
+                            is String -> setBody(responseBody)
+                            is ByteArray -> {
+                                val buffer = Buffer().write(responseBody)
+                                setBody(buffer)
+                            }
+                            null -> setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                        }
+                    }
+                } else {
+                    // Если токен недействителен, возвращаем ошибку
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        setBody("{\"error\": \"Unauthorized\"}")
+                    }
+                }
+            }
             // Обработка других запросов
             val response = responses[request.path]?.poll()
 

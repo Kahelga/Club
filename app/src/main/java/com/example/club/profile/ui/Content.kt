@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -41,7 +42,10 @@ private fun UserItem(
     user: User,
     // onUpdateData: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         ProfileField(label = stringResource(R.string.user_name), value = user.firstname)
         ProfileField(label = stringResource(R.string.user_middlename), value = user.middlename)
         ProfileField(label = stringResource(R.string.user_lastname), value = user.lastname)

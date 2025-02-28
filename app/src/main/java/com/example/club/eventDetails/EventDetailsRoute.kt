@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EventDetailsRoute (
-    val eventId: String,
+    val eventId: String
 )

@@ -51,7 +51,7 @@ import com.example.club.authorization.presentation.AuthViewModel
 @Composable
 fun AuthScreen(
     authViewModel: AuthViewModel,
-    onLoginSuccess: (login:String) -> Unit,
+    onLoginSuccess: (login: String) -> Unit,
     onBackPressed: () -> Unit,
 ) {
     val authState by authViewModel.state.collectAsState()
@@ -78,7 +78,7 @@ fun AuthScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        LoginField(value = email, onValueChange = { email = it})
+        LoginField(value = email, onValueChange = { email = it })
         Spacer(modifier = Modifier.height(8.dp))
 
         PasswordField(
@@ -120,6 +120,8 @@ fun AuthScreen(
                     onLoginSuccess(userLogin)
                 }
             }
+            is AuthState.LoggedOut->{}
+
         }
 
     }
@@ -250,6 +252,7 @@ fun RegisterButton(onClick: () -> Unit) {
         Text(stringResource(id = R.string.button_registration))
     }
 }
+
 fun validateEmail(email: String): String {
     if (email.isBlank()) {
         return ""

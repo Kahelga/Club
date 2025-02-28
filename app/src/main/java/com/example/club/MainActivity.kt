@@ -4,11 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.club.authorization.data.converter.UserConvert
+import com.example.club.authorization.data.TokenManager
+import com.example.club.authorization.data.converter.AuthConvert
+import com.example.club.authorization.data.network.TokenRefreshApi
 import com.example.club.authorization.data.network.UserAuthApi
+import com.example.club.authorization.data.repository.RefreshTokenRepositoryImpl
 import com.example.club.authorization.data.repository.UserAuthRepositoryImpl
+import com.example.club.authorization.domain.repository.RefreshTokenRepository
 import com.example.club.authorization.domain.repository.UserAuthRepository
 import com.example.club.authorization.domain.usecase.AuthUseCase
+import com.example.club.authorization.domain.usecase.RefreshTokenUseCase
 import com.example.club.eventDetails.data.converter.EventDetailsConverter
 import com.example.club.eventDetails.data.network.EventDetailsApi
 import com.example.club.eventDetails.data.repository.EventRepositoryImpl
@@ -39,7 +44,7 @@ class MainActivity : ComponentActivity() {
         // Запускаем корутину для выполнения сетевых операций
         CoroutineScope(Dispatchers.IO).launch {
             networkModule = NetworkModule(this@MainActivity)
-
+            val tokenManager = TokenManager(this@MainActivity)
             // Получаем экземпляр Retrofit
             val retrofit = networkModule.getInstance()
 
@@ -54,14 +59,18 @@ class MainActivity : ComponentActivity() {
             val getEventUseCase = GetEventUseCase(eventRepository)
 
             val userAuthApi=retrofit.create(UserAuthApi::class.java)
-            val userConvert=UserConvert()
-            val userAuthRepository:UserAuthRepository=UserAuthRepositoryImpl(userAuthApi,userConvert)
+            val authConvert=AuthConvert()
+            val userAuthRepository:UserAuthRepository=UserAuthRepositoryImpl(userAuthApi,authConvert)
             val authUseCase=AuthUseCase(userAuthRepository)
 
             val profileApi=retrofit.create(ProfileApi::class.java)
             val userConverter= UserConverter()
             val profileRepository: ProfileRepository = ProfileRepositoryImpl(profileApi,userConverter)
             val getProfileUseCase= GetProfileUseCase(profileRepository)
+
+            val tokenRefreshApi=retrofit.create(TokenRefreshApi::class.java)
+            val refreshTokenRepository:RefreshTokenRepository=RefreshTokenRepositoryImpl(tokenRefreshApi,authConvert)
+            val refreshTokenUseCase=RefreshTokenUseCase(refreshTokenRepository)
 
 
             // Переключаемся на главный поток для обновления UI
@@ -72,7 +81,9 @@ class MainActivity : ComponentActivity() {
                             getEventPosterUseCase = getEventPosterUseCase,
                             getEventUseCase = getEventUseCase,
                             authUseCase=authUseCase,
-                            getProfileUseCase=getProfileUseCase
+                            getProfileUseCase=getProfileUseCase,
+                            tokenManager=tokenManager,
+                            refreshTokenUseCase=refreshTokenUseCase
                         )
                     }
                 }

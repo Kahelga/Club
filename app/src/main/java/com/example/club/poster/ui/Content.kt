@@ -41,6 +41,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,7 +81,7 @@ fun Content(
 }
 
 @Composable
-fun CalendarWithEvents(events: List<Event>/*EventResponse*/, onItemClicked: (eventId: String) -> Unit) {
+fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> Unit) {
     val calendar = Calendar.getInstance()
     var currentDate by remember { mutableStateOf(calendar.time) }
     var selectedDate by remember { mutableStateOf(formatDateString(Date())) }
@@ -94,18 +95,6 @@ fun CalendarWithEvents(events: List<Event>/*EventResponse*/, onItemClicked: (eve
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(modifier = Modifier.size(20.dp),
-                onClick = {
-                    val cal = Calendar.getInstance()
-                    cal.time = currentDate
-                    cal.add(Calendar.DAY_OF_MONTH, -4)
-                    if (formatDateString(cal.time) >= formatDateString(Date())) {
-                        currentDate = cal.time
-                    }
-                }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = null)
-            }
-
             LazyRow(
                 modifier = Modifier
                     .weight(1f)
@@ -134,16 +123,6 @@ fun CalendarWithEvents(events: List<Event>/*EventResponse*/, onItemClicked: (eve
                         )
                     }
                 }
-            }
-
-            IconButton(modifier = Modifier.size(20.dp),
-                onClick = {
-                    val cal = Calendar.getInstance()
-                    cal.time = currentDate
-                    cal.add(Calendar.DAY_OF_MONTH, 4)
-                    currentDate = cal.time
-                }) {
-                Icon(Icons.Default.ArrowForward, contentDescription = null)
             }
         }
 

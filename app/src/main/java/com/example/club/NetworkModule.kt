@@ -51,8 +51,9 @@ class NetworkModule(context: Context) {
                         "/img/poster2" to Response("poster2.jpeg", HttpURLConnection.HTTP_OK, "image/jpeg"),
                         "/img/poster3" to Response("poster3.png", HttpURLConnection.HTTP_OK, "image/png"),
                         "/img/poster4" to Response("poster4.png", HttpURLConnection.HTTP_OK, "image/png"),
-                        "/users/user1@gmail.com/profile" to Response("user1.json", HttpURLConnection.HTTP_OK),
-                        "/users/user2@gmail.com/profile" to Response("user2.json", HttpURLConnection.HTTP_OK),
+                       // "/users/user1@gmail.com/profile" to Response("user1.json", HttpURLConnection.HTTP_OK),
+                       // "/users/user2@gmail.com/profile" to Response("user2.json", HttpURLConnection.HTTP_OK),
+
                     )
                 }
                 retrofit = Retrofit.Builder().client(provideOkHttpClientWithProgress())

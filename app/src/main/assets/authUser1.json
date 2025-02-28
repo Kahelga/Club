@@ -1,4 +1,5 @@
 {
   "access_token": "eyJpc3MiOiJBdXRoIFNlcnZlciIs",
-  "refresh_token": "eyJpc3MiOiJBdXRoIFKvvdte"
+  "refresh_token": "eyJpc3MiOiJBdXRoIFKvvdte",
+  "expiration_time": 100
 }

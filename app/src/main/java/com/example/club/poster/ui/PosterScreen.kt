@@ -2,13 +2,18 @@ package com.example.club.poster.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -26,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -86,8 +92,9 @@ fun BottomBar(onProfileSelected: () -> Unit) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
-            .height(95.dp)
-            .border(BorderStroke(2.dp, Color.LightGray))
+            .height(57.dp)
+            .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(15.dp))
+            .clip(RoundedCornerShape(15.dp))
     ) {
         BottomBarItem(
             icon = Icons.Filled.Menu,
@@ -118,17 +125,26 @@ fun BottomBarItem(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(horizontal = 35.dp)
+        modifier = Modifier
+            .padding(horizontal = 42.dp)
+            .fillMaxHeight()
     ) {
-        IconButton(onClick = onClick) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.size(25.dp)
+        ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = iconTint,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
-        Text(label, color = iconTint, fontSize = 15.sp)
+        Text(
+            label,
+            color = iconTint,
+            fontSize = 11.sp,
+        )
     }
 }
 

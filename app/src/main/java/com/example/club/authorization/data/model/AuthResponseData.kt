@@ -1,4 +1,4 @@
-package com.example.club.authorization.data
+package com.example.club.authorization.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,5 +11,7 @@ data class AuthResponseData(
     @SerialName("access_token")
     val accessToken: String,
     @SerialName("refresh_token")
-    val refreshToken:String
+    val refreshToken:String,
+    @SerialName("expiration_time")
+    val expiresIn:Long
 )

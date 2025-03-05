@@ -34,6 +34,11 @@ import com.example.club.profile.data.network.ProfileApi
 import com.example.club.profile.data.repository.ProfileRepositoryImpl
 import com.example.club.profile.domain.repository.ProfileRepository
 import com.example.club.profile.domain.usecase.GetProfileUseCase
+import com.example.club.purchase.data.converter.PurchaseConverter
+import com.example.club.purchase.data.network.PurchaseApi
+import com.example.club.purchase.data.repository.PurchaseRepositoryImpl
+import com.example.club.purchase.domain.repository.PurchaseRepository
+import com.example.club.purchase.domain.usecase.PurchaseUseCase
 import com.example.club.ui.theme.ClubTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,6 +92,11 @@ class MainActivity : ComponentActivity() {
             val hallRepository: HallRepository = HallRepositoryImpl(hallApi, hallConverter)
             val getHallUseCase = GetHallUseCase(hallRepository)
 
+            val purchaseApi = retrofit.create(PurchaseApi::class.java)
+            val purchaseConverter = PurchaseConverter()
+            val purchaseRepository: PurchaseRepository =
+                PurchaseRepositoryImpl(purchaseApi, purchaseConverter)
+            val purchaseUseCase = PurchaseUseCase(purchaseRepository)
 
             // Переключаемся на главный поток для обновления UI
             withContext(Dispatchers.Main) {
@@ -97,9 +107,11 @@ class MainActivity : ComponentActivity() {
                             getEventUseCase = getEventUseCase,
                             authUseCase = authUseCase,
                             getProfileUseCase = getProfileUseCase,
-                            getHallUseCase=getHallUseCase,
+                            getHallUseCase = getHallUseCase,
+                            purchaseUseCase=purchaseUseCase,
                             tokenManager = tokenManager,
                             refreshTokenUseCase = refreshTokenUseCase
+
                         )
                     }
                 }

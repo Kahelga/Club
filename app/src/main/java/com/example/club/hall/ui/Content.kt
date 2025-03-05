@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.Column
 
-
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -72,13 +72,13 @@ import com.example.club.hall.domain.entity.Ticket
 @Composable
 fun Content(
     hall: Hall,
-    toBuySelected: (/*List<Ticket>*/) -> Unit,
+    toBuySelected: (List<Ticket>) -> Unit,
 ) {
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         item {
             HallItem(
                 hall,
-                toBuySelected = { toBuySelected() }
+                toBuySelected = { selectedTickets -> toBuySelected(selectedTickets) }
             )
         }
     }
@@ -86,7 +86,7 @@ fun Content(
 @Composable
 private fun HallItem(
     hall: Hall,
-    toBuySelected: (/*List<Ticket>*/) -> Unit,
+    toBuySelected: (List<Ticket>) -> Unit,
 ) {
     val selectedTickets = remember { mutableStateListOf<Ticket>() }
     val gridSize = 40.dp
@@ -94,7 +94,7 @@ private fun HallItem(
     var ticketToBuy by remember { mutableStateOf<Ticket?>(null) }
     val currentTicketCount = remember { mutableStateOf(0) }
     val originalTicketCount = remember { mutableStateOf(0) }
-
+    var showErrorDialog by remember { mutableStateOf(false) }
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = hall.name,
@@ -147,8 +147,26 @@ private fun HallItem(
         }
 
         SelectedTicketInfo(tickets = selectedTickets)
-        BuyTicketButton(toBuySelected)
+        BuyTicketButton {
+            if (selectedTickets.isEmpty()){
+                showErrorDialog = true
+            }else{
+                toBuySelected(selectedTickets)
+            }
 
+        }
+        if (showErrorDialog) {
+            AlertDialog(
+                onDismissRequest = { showErrorDialog = false },
+                title = { Text(text = "Ошибка") },
+                text = { Text(text = "Выберите билеты для покупки.") },
+                confirmButton = {
+                    Button(onClick = { showErrorDialog = false }) {
+                        Text("ОК")
+                    }
+                }
+            )
+        }
         if (isDialogVisible && ticketToBuy != null) {
             TicketCountDialog(
                 ticket = ticketToBuy!!,
@@ -413,7 +431,6 @@ private fun ColorBox(color: Color, label: String) {
         }
         Text(
             text = label,
-            color = Color.White,
             fontSize = 10.sp,
             modifier = Modifier.padding(start = 4.dp)
         )
@@ -423,15 +440,16 @@ private fun ColorBox(color: Color, label: String) {
 @Composable
 private fun DrawGrid(size: Offset, gridSize: Dp) {
     val gridSizePx = with(LocalDensity.current) { gridSize.toPx() }
-
+    val color = MaterialTheme.colorScheme.outline
     Canvas(
         modifier = Modifier
             .width(size.x.dp)
             .height(size.y.dp)
     ) {
+
         for (x in 0 until (size.x.toInt() / gridSizePx).coerceAtLeast(1F).toInt()) {
             drawLine(
-                Color.White,
+               color = color,
                 Offset(x * gridSizePx, 0f),
                 Offset(x * gridSizePx, size.y),
                 strokeWidth = 1f
@@ -439,14 +457,14 @@ private fun DrawGrid(size: Offset, gridSize: Dp) {
         }
         for (y in 0 until (size.y.toInt() / gridSizePx).coerceAtLeast(1F).toInt()) {
             drawLine(
-                Color.White,
+                color = color,
                 Offset(0f, y * gridSizePx),
                 Offset(size.x, y * gridSizePx),
                 strokeWidth = 1f
             )
         }
-        drawLine(Color.White, Offset(size.x, 0f), Offset(size.x, size.y), strokeWidth = 1f)
-        drawLine(Color.White, Offset(0f, size.y), Offset(size.x, size.y), strokeWidth = 1f)
+        drawLine( color = color, Offset(size.x, 0f), Offset(size.x, size.y), strokeWidth = 1f)
+        drawLine( color = color, Offset(0f, size.y), Offset(size.x, size.y), strokeWidth = 1f)
 
     }
 }
@@ -462,7 +480,7 @@ private fun BuyTicketButton(toBuySelected: () -> Unit) {
             .padding(top = 20.dp, bottom = 8.dp, start = 10.dp, end = 10.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.button_buy_ticket),
+            text = stringResource(id = R.string.button_continue),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         )
     }

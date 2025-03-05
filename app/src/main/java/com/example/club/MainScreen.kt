@@ -23,6 +23,7 @@ import com.example.club.eventDetails.presentation.EventDetailsViewModel
 import com.example.club.eventDetails.presentation.EventDetailsViewModelFactory
 import com.example.club.eventDetails.ui.EventDetailsScreen
 import com.example.club.hall.HallRoute
+import com.example.club.hall.domain.entity.Ticket
 import com.example.club.hall.domain.usecase.GetHallUseCase
 import com.example.club.hall.presentation.HallViewModel
 import com.example.club.hall.presentation.HallViewModelFactory
@@ -37,6 +38,12 @@ import com.example.club.profile.domain.usecase.GetProfileUseCase
 import com.example.club.profile.presentation.ProfileViewModel
 import com.example.club.profile.presentation.ProfileViewModelFactory
 import com.example.club.profile.ui.ProfileScreen
+import com.example.club.purchase.PurchaseRoute
+import com.example.club.purchase.domain.usecase.PurchaseUseCase
+import com.example.club.purchase.presentation.PurchaseViewModel
+import com.example.club.purchase.presentation.PurchaseViewModelFactory
+import com.example.club.purchase.ui.PurchaseScreen
+import kotlinx.serialization.json.Json
 
 
 @Composable
@@ -46,6 +53,7 @@ fun MainScreen(
     authUseCase: AuthUseCase,
     getProfileUseCase: GetProfileUseCase,
     getHallUseCase:GetHallUseCase,
+    purchaseUseCase:PurchaseUseCase,
     tokenManager: TokenManager,
     refreshTokenUseCase: RefreshTokenUseCase
 ) {
@@ -82,13 +90,13 @@ fun MainScreen(
                 EventDetailsScreen(
                     viewModel,
                     onBackPressed = { navController.popBackStack() },
-                    toBuySelected = {navController.navigate(HallRoute(eventId = destination.eventId))
-                        /*if (authState is AuthState.Success) {
+                    toBuySelected = {/*navController.navigate(HallRoute(eventId = destination.eventId))*/
+                        if (authState is AuthState.Success) {
                              navController.navigate(HallRoute(eventId = destination.eventId))//it
                         } else {
                             authViewModel.setPreviousRoute(EventDetailsRoute(destination.eventId))
                             navController.navigate(AuthRoute)
-                        }*/
+                        }
                     }
                 )
             }
@@ -138,10 +146,27 @@ fun MainScreen(
                 HallScreen(
                     viewModel,
                     onBackPressed = { navController.popBackStack() },
-                    toBuySelected = {}
+                    toBuySelected = { selectedTickets ,totalPrice->
+                        navController.navigate(PurchaseRoute(eventId = destination.eventId, seats = selectedTickets,totalPrice=totalPrice)
+                        )
+                    }
                     )
-            }
 
+            }
+            composable<PurchaseRoute>{
+                val destination = it.toRoute<PurchaseRoute>()
+                val viewModel= viewModel(PurchaseViewModel::class.java,
+                    factory = PurchaseViewModelFactory(purchaseUseCase,refreshTokenUseCase,tokenManager))
+                PurchaseScreen(
+                    viewModel,
+                    destination.seats,
+                    destination.eventId,
+                    destination.totalPrice,
+                    onBackPressed = { navController.popBackStack() },
+                    onPosterScreen = {navController.navigate(PosterRoute)}
+                )
+
+            }
 
         }
     }

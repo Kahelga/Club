@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.club.R
+import com.example.club.hall.domain.entity.Ticket
 import com.example.club.hall.presentation.HallState
 import com.example.club.hall.presentation.HallViewModel
 import com.example.club.hall.ui.Error
@@ -36,7 +38,7 @@ import com.example.club.hall.ui.Error
 fun HallScreen(
     viewModel: HallViewModel,
     onBackPressed: () -> Unit,
-    toBuySelected: () -> Unit,
+    toBuySelected: (List<String>,Int) -> Unit,
 ) {
     val hallState by viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
@@ -48,7 +50,7 @@ fun HallScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { onBackPressed() }) {
                         Icon(
-                            imageVector = Icons.Filled.Close,
+                            imageVector = Icons.Filled.ArrowBack,
                             contentDescription = null,
                             modifier = Modifier.size(30.dp)
                         )
@@ -62,10 +64,6 @@ fun HallScreen(
             }
 
         )
-       /* Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(8.dp)
-        ){*/
             when (val state = hallState) {
                 is HallState.Initial,
                 is HallState.Loading -> Loading()
@@ -76,10 +74,13 @@ fun HallScreen(
                 )
                 is HallState.Content -> Content(
                     hall = state.hall,
-                    toBuySelected = toBuySelected
+                    toBuySelected = { selectedTickets ->
+                        val seatNames = selectedTickets.map { it.seat }
+                        val totalPrice = selectedTickets.sumOf { it.price }
+                        toBuySelected(seatNames,totalPrice)
+                    }
                 )
             }
-        //}
 
     }
 

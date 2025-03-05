@@ -47,5 +47,11 @@
     <string name="ticket_dialog_add">+</string>
     <string name="ticket_dialog_close">Отмена</string>
     <string name="ticket_dialog_ok">Подтвердить</string>
+    <string name="button_continue">Продолжить</string>
+    <string name="button_buy_ticket2">Купить</string>
 
+    <string name="purchase_dialog">Билет успешно куплен!</string>
+    <string name="purchase_dialog_ok">ОК</string>
+    <string name="purchase_seats">Выбранные места:</string>
+    <string name="purchase_price">Общая стоимость: %1$d₽</string>
 </resources>

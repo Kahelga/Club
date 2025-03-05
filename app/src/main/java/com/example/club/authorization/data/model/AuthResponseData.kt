@@ -12,6 +12,4 @@ data class AuthResponseData(
     val accessToken: String,
     @SerialName("refresh_token")
     val refreshToken:String,
-    @SerialName("expiration_time")
-    val expiresIn:Long
 )

@@ -20,13 +20,13 @@ class TokenManager(context: Context) {
 
     private val ACCESS_TOKEN_KEY = "access_token"
     private val REFRESH_TOKEN_KEY = "refresh_token"
-    private val EXPIRATION_TIME_KEY = "expiration_time"
+    /*private val EXPIRATION_TIME_KEY = "expiration_time"*/
 
-    fun saveTokens(accessToken: String?, refreshToken: String, expiresIn: Long) {
+    fun saveTokens(accessToken: String?, refreshToken: String/*, expiresIn: Long*/) {
         with(sharedPreferences.edit()) {
             putString(ACCESS_TOKEN_KEY, accessToken)
             putString(REFRESH_TOKEN_KEY, refreshToken)
-            putLong(EXPIRATION_TIME_KEY, System.currentTimeMillis() + expiresIn * 1000)
+            /*putLong(EXPIRATION_TIME_KEY, System.currentTimeMillis() + expiresIn * 1000)*/
             apply()
         }
     }
@@ -34,7 +34,7 @@ class TokenManager(context: Context) {
         with(sharedPreferences.edit()) {
             accessToken?.let { putString(ACCESS_TOKEN_KEY, it) }
             remove(REFRESH_TOKEN_KEY)
-            remove(EXPIRATION_TIME_KEY)
+          /*  remove(EXPIRATION_TIME_KEY)*/
             apply()
 
         }
@@ -48,16 +48,16 @@ class TokenManager(context: Context) {
         return sharedPreferences.getString(REFRESH_TOKEN_KEY, null)
     }
 
-    fun isAccessTokenExpired(): Boolean {
+    /*fun isAccessTokenExpired(): Boolean {
         val expirationTime = sharedPreferences.getLong(EXPIRATION_TIME_KEY, 0)
         return System.currentTimeMillis() >= expirationTime
     }
-
+*/
     fun clearTokens() {
         with(sharedPreferences.edit()) {
             remove(ACCESS_TOKEN_KEY)
             remove(REFRESH_TOKEN_KEY)
-            remove(EXPIRATION_TIME_KEY)
+         /*   remove(EXPIRATION_TIME_KEY)*/
             apply()
         }
     }

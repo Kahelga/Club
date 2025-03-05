@@ -33,7 +33,7 @@ class AuthViewModel(
                 }*/
                 _state.value = AuthState.Success(response)
                 _login.value = login
-                response.accessToken?.let { tokenManager.saveTokens(it, response.refreshToken,response.expiresIn) }
+                response.accessToken?.let { tokenManager.saveTokens(it, response.refreshToken) }
             } catch (ce: CancellationException) {
                 throw ce
             } catch (e: Exception) {

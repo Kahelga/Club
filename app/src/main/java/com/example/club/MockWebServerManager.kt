@@ -1,4 +1,5 @@
 package com.example.club
+
 import android.util.Log
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -10,61 +11,67 @@ import java.util.Queue
 import java.io.IOException
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import okio.Buffer
+import java.time.Instant
 
 class MockWebServerManager(private val context: Context, private val port: Int) {
     private lateinit var server: MockWebServer
     private val dispatcher = object : Dispatcher() {
         private val responses = mutableMapOf<String, Queue<Response>>()
 
-        // Обработка входящих запросов
+        private var currentTokenInfo: TokenInfo? = null
+
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun dispatch(request: RecordedRequest): MockResponse {
-            // Обработка POST-запроса на "/users/login"
             if (request.path == "/users/login" && request.method == "POST") {
                 val body = request.body.readUtf8()
                 val login = body.substringAfter("\"email\":\"").substringBefore("\"")
                 val password = body.substringAfter("\"password\":\"").substringBefore("\"")
 
-                // Проверяем логин и пароль и выбираем соответствующий ответ
+
                 val responseFile = when {
-                    login == "user1@gmail.com" && password == "1234" -> "authUser1.json"
+                    login == "user1@gmail.com" && password == "1234" -> {
+                        currentTokenInfo =
+                            TokenInfo("eyJpc3MiOiJBdXRoIFNlcnZlciIs", Instant.now(), 30000)
+                        "authUser1.json"
+                    }
+
                     login == "user2@gmail.com" && password == "pass" -> "authUser2.json"
                     else -> "error.json"
                 }
 
-                // Получаем содержимое файла ответа
                 val responseBody = getAssetFileContent(responseFile, "application/json")
 
                 return MockResponse().apply {
                     setResponseCode(HttpURLConnection.HTTP_OK)
-                    // Проверяем тип responseBody и устанавливаем его в качестве тела ответа
+
                     when (responseBody) {
-                        is String -> setBody(responseBody) // Устанавливаем тело как строку
+                        is String -> setBody(responseBody)
                         is ByteArray -> {
                             val buffer = Buffer().write(responseBody)
-                            setBody(buffer) // Устанавливаем тело как Buffer для байтового массива
+                            setBody(buffer)
                         }
 
                         null -> {
-                            // Обработка случая, когда responseBody равен null
                             setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
                         }
                     }
                 }
             }
-// Обработка POST-запроса на "/auth/login/refresh"
+
             if (request.path == "/auth/login/refresh" && request.method == "POST") {
                 val body = request.body.readUtf8()
                 val refreshToken = body.substringAfter("\"refresh_token\":\"").substringBefore("\"")
 
-                // Проверка корректности refresh_token
-                val responseFile = if (refreshToken == "eyJpc3MiOiJBdXRoIFKvvdte") {
-                    "newToken.json" // Файл с новыми токенами
-                } else {
-                    "error.json" // Файл с ошибкой
-                }
 
-                // Получаем содержимое файла ответа
+                val responseFile = if (refreshToken == "eyJpc3MiOiJBdXRoIFKvvdte") {
+                    currentTokenInfo = TokenInfo("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102", Instant.now(), Long.MAX_VALUE)
+                    "newToken.json"
+                } else {
+                    "error.json"
+                }
                 val responseBody = getAssetFileContent(responseFile, "application/json")
 
                 return MockResponse().apply {
@@ -75,47 +82,60 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                             val buffer = Buffer().write(responseBody)
                             setBody(buffer)
                         }
+
                         null -> {
                             setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
                         }
                     }
                 }
             }
-            // Обработка GET-запросов на "/users/{login}/profile"
-            if (request.method == "GET" && request.path?.startsWith("/users/") == true && request.path?.endsWith("/profile") == true) {
-                // Извлекаем логин из пути
+
+            if (request.method == "GET" && request.path?.startsWith("/users/") == true && request.path?.endsWith(
+                    "/profile"
+                ) == true
+            ) {
+
                 val login = request.path!!.substringAfter("/users/").substringBefore("/profile")
                 val authToken = request.getHeader("Authorization")
 
-                // Проверяем корректность токена (например, если токен "Bearer valid_token" )
-                if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" ||authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
-                    // Возвращаем ответ в зависимости от логина
-                    val responseFile = when (login) {
-                        "user1@gmail.com" -> "user1.json"
-                        "user2@gmail.com" -> "user2.json"
-                        else -> "error.json"
-                    }
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
 
-                    // Получаем содержимое файла ответа
-                    val responseBody = getAssetFileContent(responseFile, "application/json")
-                    return MockResponse().apply {
-                        setResponseCode(HttpURLConnection.HTTP_OK)
-                        when (responseBody) {
-                            is String -> setBody(responseBody)
-                            is ByteArray -> {
-                                val buffer = Buffer().write(responseBody)
-                                setBody(buffer)
+                        val responseFile = when (login) {
+                            "user1@gmail.com" -> "user1.json"
+                            "user2@gmail.com" -> "user2.json"
+                            else -> "error.json"
+                        }
+
+                        // Получаем содержимое файла ответа
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
                             }
-                            null -> setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                        }
+                    } else {
+                        // Если токен недействителен, возвращаем ошибку
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                            setBody("{\"error\": \"Unauthorized\"}")
                         }
                     }
                 } else {
-                    // Если токен недействителен, возвращаем ошибку
+                    // Если токен истек, возвращаем сообщение "token is inactive"
                     return MockResponse().apply {
                         setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
-                        setBody("{\"error\": \"Unauthorized\"}")
+                        setBody("{\"error\": \"token is inactive\"}")
                     }
                 }
+
             }
             // Обработка других запросов
             val response = responses[request.path]?.poll()
@@ -161,7 +181,22 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
             val queue = responses.getOrPut(requestUrl) { LinkedList() }
             queue.add(response)
         }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        private fun isTokenValid(authToken: String?): Boolean {
+            // Проверка, установлен ли токен и действителен ли он
+            currentTokenInfo?.let { tokenInfo ->
+                if (authToken == "Bearer ${tokenInfo.token}") {
+                    val currentTime = Instant.now()
+                    // Проверка, не истек ли срок действия токена
+                    return currentTime.isBefore(tokenInfo.expiryTime)
+                }
+            }
+            return false
+        }
     }
+
+
     // Метод для загрузки файла из assets
     private fun getAssetFileContent(assetFile: String?, contentType: String?): Any? {
         return when {
@@ -172,6 +207,7 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                     inputStream.readBytes() // Возвращаем байтовый массив для изображений
                 }
             }
+
             else -> {
                 // Для текстовых файлов
                 context.assets.open(assetFile).bufferedReader().use { it.readText() }
@@ -217,6 +253,11 @@ data class Response(
     val contentType: String? = null
 )
 
+data class TokenInfo(val token: String, val issuedAt: Instant, val expiryDurationMillis: Long) {
+    val expiryTime: Instant
+        @RequiresApi(Build.VERSION_CODES.O)
+        get() = issuedAt.plusMillis(expiryDurationMillis)
+}
 
 /*class MockWebServerManager(private val context: Context, private val port: Int) {
     private lateinit var server: MockWebServer

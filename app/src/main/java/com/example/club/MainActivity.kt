@@ -19,6 +19,11 @@ import com.example.club.eventDetails.data.network.EventDetailsApi
 import com.example.club.eventDetails.data.repository.EventRepositoryImpl
 import com.example.club.eventDetails.domain.repository.EventDetailsRepository
 import com.example.club.eventDetails.domain.usecase.GetEventUseCase
+import com.example.club.hall.data.converter.HallConverter
+import com.example.club.hall.data.network.HallApi
+import com.example.club.hall.data.repository.HallRepositoryImpl
+import com.example.club.hall.domain.repository.HallRepository
+import com.example.club.hall.domain.usecase.GetHallUseCase
 import com.example.club.poster.data.converter.EventPosterConverter
 import com.example.club.poster.data.network.EventPosterApi
 import com.example.club.poster.data.repository.EventPosterRepositoryImpl
@@ -50,27 +55,37 @@ class MainActivity : ComponentActivity() {
 
             val eventPosterApi = retrofit.create(EventPosterApi::class.java)
             val eventPosterConverter = EventPosterConverter()
-            val eventPosterRepository: EventPosterRepository = EventPosterRepositoryImpl(eventPosterApi, eventPosterConverter)
+            val eventPosterRepository: EventPosterRepository =
+                EventPosterRepositoryImpl(eventPosterApi, eventPosterConverter)
             val getEventPosterUseCase = GetEventPosterUseCase(eventPosterRepository)
 
             val eventDetailsApi = retrofit.create(EventDetailsApi::class.java)
             val eventDetailsConverter = EventDetailsConverter()
-            val eventRepository: EventDetailsRepository = EventRepositoryImpl(eventDetailsApi, eventDetailsConverter)
+            val eventRepository: EventDetailsRepository =
+                EventRepositoryImpl(eventDetailsApi, eventDetailsConverter)
             val getEventUseCase = GetEventUseCase(eventRepository)
 
-            val userAuthApi=retrofit.create(UserAuthApi::class.java)
-            val authConvert=AuthConvert()
-            val userAuthRepository:UserAuthRepository=UserAuthRepositoryImpl(userAuthApi,authConvert)
-            val authUseCase=AuthUseCase(userAuthRepository)
+            val userAuthApi = retrofit.create(UserAuthApi::class.java)
+            val authConvert = AuthConvert()
+            val userAuthRepository: UserAuthRepository =
+                UserAuthRepositoryImpl(userAuthApi, authConvert)
+            val authUseCase = AuthUseCase(userAuthRepository)
 
-            val profileApi=retrofit.create(ProfileApi::class.java)
-            val userConverter= UserConverter()
-            val profileRepository: ProfileRepository = ProfileRepositoryImpl(profileApi,userConverter)
-            val getProfileUseCase= GetProfileUseCase(profileRepository)
+            val profileApi = retrofit.create(ProfileApi::class.java)
+            val userConverter = UserConverter()
+            val profileRepository: ProfileRepository =
+                ProfileRepositoryImpl(profileApi, userConverter)
+            val getProfileUseCase = GetProfileUseCase(profileRepository)
 
-            val tokenRefreshApi=retrofit.create(TokenRefreshApi::class.java)
-            val refreshTokenRepository:RefreshTokenRepository=RefreshTokenRepositoryImpl(tokenRefreshApi,authConvert)
-            val refreshTokenUseCase=RefreshTokenUseCase(refreshTokenRepository)
+            val tokenRefreshApi = retrofit.create(TokenRefreshApi::class.java)
+            val refreshTokenRepository: RefreshTokenRepository =
+                RefreshTokenRepositoryImpl(tokenRefreshApi, authConvert)
+            val refreshTokenUseCase = RefreshTokenUseCase(refreshTokenRepository)
+
+            val hallApi = retrofit.create(HallApi::class.java)
+            val hallConverter = HallConverter()
+            val hallRepository: HallRepository = HallRepositoryImpl(hallApi, hallConverter)
+            val getHallUseCase = GetHallUseCase(hallRepository)
 
 
             // Переключаемся на главный поток для обновления UI
@@ -80,10 +95,11 @@ class MainActivity : ComponentActivity() {
                         MainScreen(
                             getEventPosterUseCase = getEventPosterUseCase,
                             getEventUseCase = getEventUseCase,
-                            authUseCase=authUseCase,
-                            getProfileUseCase=getProfileUseCase,
-                            tokenManager=tokenManager,
-                            refreshTokenUseCase=refreshTokenUseCase
+                            authUseCase = authUseCase,
+                            getProfileUseCase = getProfileUseCase,
+                            getHallUseCase=getHallUseCase,
+                            tokenManager = tokenManager,
+                            refreshTokenUseCase = refreshTokenUseCase
                         )
                     }
                 }

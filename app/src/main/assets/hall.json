@@ -1,0 +1,110 @@
+{
+  "id": "hall123",
+  "name": "Зал 1",
+  "capacity": 100,
+  "seatingPlan": {
+    "row": 11,
+    "column": 11,
+    "tickets": [
+      {
+        "id": "ticket123",
+        "seat": "A1",
+        "x": 0,
+        "y": 1,
+        "price": 100,
+        "type": "TABLE",
+        "status": "FREE"
+      },
+      {
+        "id": "ticket124",
+        "seat": "A2",
+        "x": 1,
+        "y": 1,
+        "price": 100,
+        "type": "TABLE",
+        "status": "FREE"
+      },
+      {
+        "id": "ticket125",
+        "seat": "A3",
+        "x": 1,
+        "y": 2,
+        "price": 100,
+        "type": "TABLE",
+        "status": "FREE"
+      },
+      {
+        "id": "ticket126",
+        "seat": "B1",
+        "x": 0,
+        "y": 4,
+        "price": 100,
+        "type": "TABLE",
+        "status": "FREE"
+      },
+      {
+        "id": "ticket127",
+        "seat": "B2",
+        "x": 1,
+        "y": 4,
+        "price": 100,
+        "type": "TABLE",
+        "status": "FREE"
+      },
+      {
+        "id": "ticket128",
+        "seat": "B3",
+        "x": 1,
+        "y": 6,
+        "price": 100,
+        "type": "TABLE",
+        "status": "FREE"
+      },
+      {
+        "id": "danceFloor",
+        "seat": "Танцпол",
+        "x": 3,
+        "y": 1,
+        "price": 150,
+        "type": "DANCING",
+        "status": "FREE"
+      },
+      {
+        "id": "barstool1",
+        "seat": "D1",
+        "x": 9,
+        "y": 2,
+        "price": 80,
+        "type": "BAR",
+        "status": "FREE"
+      },
+      {
+        "id": "barstool2",
+        "seat": "D2",
+        "x": 9,
+        "y": 3,
+        "price": 80,
+        "type": "BAR",
+        "status": "FREE"
+      },
+      {
+        "id": "barstool3",
+        "seat": "D3",
+        "x": 9,
+        "y": 4,
+        "price": 80,
+        "type": "BAR",
+        "status": "FREE"
+      },
+      {
+        "id": "barstool4",
+        "seat": "D4",
+        "x": 10,
+        "y": 5,
+        "price": 80,
+        "type": "BAR",
+        "status": "FREE"
+      }
+    ]
+  }
+}

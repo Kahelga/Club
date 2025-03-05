@@ -22,6 +22,11 @@ import com.example.club.eventDetails.domain.usecase.GetEventUseCase
 import com.example.club.eventDetails.presentation.EventDetailsViewModel
 import com.example.club.eventDetails.presentation.EventDetailsViewModelFactory
 import com.example.club.eventDetails.ui.EventDetailsScreen
+import com.example.club.hall.HallRoute
+import com.example.club.hall.domain.usecase.GetHallUseCase
+import com.example.club.hall.presentation.HallViewModel
+import com.example.club.hall.presentation.HallViewModelFactory
+import com.example.club.hall.ui.HallScreen
 import com.example.club.poster.PosterRoute
 import com.example.club.poster.domain.usecase.GetEventPosterUseCase
 import com.example.club.poster.presentation.PosterViewModel
@@ -40,6 +45,7 @@ fun MainScreen(
     getEventUseCase: GetEventUseCase,
     authUseCase: AuthUseCase,
     getProfileUseCase: GetProfileUseCase,
+    getHallUseCase:GetHallUseCase,
     tokenManager: TokenManager,
     refreshTokenUseCase: RefreshTokenUseCase
 ) {
@@ -76,13 +82,13 @@ fun MainScreen(
                 EventDetailsScreen(
                     viewModel,
                     onBackPressed = { navController.popBackStack() },
-                    toBuySelected = {
-                        if (authState is AuthState.Success) {
-                            // navController.navigate(ProfileRoute(login = it))
+                    toBuySelected = {navController.navigate(HallRoute(eventId = destination.eventId))
+                        /*if (authState is AuthState.Success) {
+                             navController.navigate(HallRoute(eventId = destination.eventId))//it
                         } else {
                             authViewModel.setPreviousRoute(EventDetailsRoute(destination.eventId))
                             navController.navigate(AuthRoute)
-                        }
+                        }*/
                     }
                 )
             }
@@ -124,6 +130,18 @@ fun MainScreen(
                     }
                 )
             }
+            composable<HallRoute>{
+                val destination = it.toRoute<HallRoute>()
+                val viewModel = viewModel(HallViewModel::class.java,
+                    factory = HallViewModelFactory(destination.eventId,getHallUseCase,refreshTokenUseCase,tokenManager)
+                )
+                HallScreen(
+                    viewModel,
+                    onBackPressed = { navController.popBackStack() },
+                    toBuySelected = {}
+                    )
+            }
+
 
         }
     }

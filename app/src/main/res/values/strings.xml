@@ -4,6 +4,7 @@
     <string name="error_title">Произошла ошибка</string>
     <string name="error_try_again">Повторить</string>
     <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="error_close">Закрыть</string>
     <string name="min_price_event"> от %1$d₽</string>
     <string name="button_details">Подробнее</string>
 
@@ -15,6 +16,7 @@
     <string name="duration_event"> %1$d мин</string>
     <string name="venue_event"> Место проведения: %s </string>
     <string name="dataTime_event"> %s %s </string>
+    <string name="button_buy_ticket">Купить билет</string>
 
     <string name="auth_title">Авторизация </string>
     <string name="auth_login">Email </string>
@@ -22,6 +24,7 @@
     <string name="button_auth">Войти </string>
     <string name="button_registration">Зарегистрироваться</string>
     <string name="validation_error">Некорректный формат</string>
+
     <string name="button_update">Обновить данные</string>
     <string name="user_name">Имя*</string>
     <string name="user_lastname">Отчество</string>
@@ -29,4 +32,20 @@
     <string name="user_email">Почта*</string>
     <string name="user_phone">Телефон</string>
     <string name="user_city">Город</string>
+
+    <string name="hall_title"> Покупка билета </string>
+    <string name="seat_name"> Место: %s </string>
+    <string name="seat_price"> Цена:%1$d₽ </string>
+    <string name="hall_scene"> Сцена </string>
+    <string name="ticket_free"> Свободно</string>
+    <string name="ticket_reserved"> Забронировано</string>
+    <string name="ticket_occupied"> Занято</string>
+    <string name="ticket_selected"> Выбрано</string>
+    <string name="ticket_dialog_label"> Выберите количество билетов на танцпол</string>
+    <string name="ticket_dialog_count"> Количество билетов:</string>
+    <string name="ticket_dialog_remove">-</string>
+    <string name="ticket_dialog_add">+</string>
+    <string name="ticket_dialog_close">Отмена</string>
+    <string name="ticket_dialog_ok">Подтвердить</string>
+
 </resources>

@@ -14,7 +14,6 @@ class UserAuthRepositoryImpl(
     override suspend fun signIn(login: String, pass: String): AuthResponse {
         val request = AuthRequestModel(login, pass)
         val response = userAuthApi.signIn(request)
-
         return authConvert.convert(response)
     }
 }

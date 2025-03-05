@@ -10,5 +10,6 @@ data class UserModel(
     val middlename: String,
     val lastname: String,
     val email: String,
-    val city: String
+    val city: String,
+    val role:String
 )

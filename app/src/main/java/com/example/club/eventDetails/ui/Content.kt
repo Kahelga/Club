@@ -224,11 +224,11 @@ private fun EventDescription(
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) { // Добавляем внутренние отступы
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = stringResource(R.string.details_description),
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 8.dp) // Увеличиваем отступ
+                modifier = Modifier.padding(bottom = 8.dp)
             )
             if (isDescriptionExpanded) {
                 Text(text = event.description)
@@ -245,7 +245,7 @@ private fun EventDescription(
                 else stringResource(R.string.details_description_more),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .padding(top = 8.dp) // Увеличиваем отступ
+                    .padding(top = 8.dp)
                     .clickable { onDescriptionToggle(!isDescriptionExpanded) }
             )
         }
@@ -295,7 +295,7 @@ private fun BuyTicketButton( toBuySelected: () -> Unit) {
             .padding(top = 20.dp, bottom = 8.dp, start = 10.dp, end = 10.dp)
     ) {
         Text(
-            text = "Купить билет",
+            text = stringResource(id = R.string.button_buy_ticket),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         )
     }

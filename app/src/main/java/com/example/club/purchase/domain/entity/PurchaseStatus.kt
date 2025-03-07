@@ -1,5 +1,8 @@
 package com.example.club.purchase.domain.entity
 
 enum class PurchaseStatus {
-    PENDING
+    PENDING,
+    CONFIRMED,
+    PAID,
+    CANCELLED
 }

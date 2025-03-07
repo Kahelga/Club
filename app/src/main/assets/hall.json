@@ -3,23 +3,23 @@
   "name": "Зал 1",
   "capacity": 100,
   "seatingPlan": {
-    "row": 11,
-    "column": 11,
+    "row": 10,
+    "column": 10,
     "tickets": [
       {
         "id": "ticket123",
         "seat": "A1",
         "x": 0,
-        "y": 1,
+        "y": 2,
         "price": 100,
         "type": "TABLE",
-        "status": "FREE"
+        "status": "OCCUPIED"
       },
       {
         "id": "ticket124",
         "seat": "A2",
         "x": 1,
-        "y": 1,
+        "y": 2,
         "price": 100,
         "type": "TABLE",
         "status": "FREE"
@@ -27,8 +27,8 @@
       {
         "id": "ticket125",
         "seat": "A3",
-        "x": 1,
-        "y": 2,
+        "x": 2,
+        "y": 3,
         "price": 100,
         "type": "TABLE",
         "status": "FREE"
@@ -37,7 +37,7 @@
         "id": "ticket126",
         "seat": "B1",
         "x": 0,
-        "y": 4,
+        "y": 5,
         "price": 100,
         "type": "TABLE",
         "status": "FREE"
@@ -46,7 +46,7 @@
         "id": "ticket127",
         "seat": "B2",
         "x": 1,
-        "y": 4,
+        "y": 5,
         "price": 100,
         "type": "TABLE",
         "status": "FREE"
@@ -54,7 +54,7 @@
       {
         "id": "ticket128",
         "seat": "B3",
-        "x": 1,
+        "x": 2,
         "y": 6,
         "price": 100,
         "type": "TABLE",
@@ -64,7 +64,7 @@
         "id": "danceFloor",
         "seat": "Танцпол",
         "x": 3,
-        "y": 1,
+        "y": 2,
         "price": 150,
         "type": "DANCEFLOOR",
         "status": "FREE"
@@ -99,7 +99,7 @@
       {
         "id": "barstool4",
         "seat": "D4",
-        "x": 10,
+        "x": 9,
         "y": 5,
         "price": 80,
         "type": "BAR",

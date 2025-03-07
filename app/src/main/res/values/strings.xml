@@ -8,6 +8,8 @@
     <string name="min_price_event"> от %1$d₽</string>
     <string name="button_details">Подробнее</string>
 
+    <string name="bar_poster">Афиша</string>
+
     <string name="details_title">О событии</string>
     <string name="details_description">Описание:</string>
     <string name="details_artists">Исполнитель(и):</string>
@@ -25,6 +27,7 @@
     <string name="button_registration">Зарегистрироваться</string>
     <string name="validation_error">Некорректный формат</string>
 
+    <string name="profile_title">Профиль </string>
     <string name="button_update">Обновить данные</string>
     <string name="user_name">Имя*</string>
     <string name="user_lastname">Отчество</string>
@@ -54,4 +57,11 @@
     <string name="purchase_dialog_ok">ОК</string>
     <string name="purchase_seats">Выбранные места:</string>
     <string name="purchase_price">Общая стоимость: %1$d₽</string>
+
+    <string name="order_title"> Билеты</string>
+    <string name="order_idTicket"> Номер билета: %s</string>
+    <string name="order_seats"> Места: %s</string>
+    <string name="order_active">Активные</string>
+    <string name="order_archive">История</string>
+    <string name="order_error_massage">Выберите билеты для покупки.</string>
 </resources>

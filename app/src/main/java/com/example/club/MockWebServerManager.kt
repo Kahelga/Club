@@ -25,7 +25,7 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun dispatch(request: RecordedRequest): MockResponse {
-            if (request.path == "/users/login" && request.method == "POST") {
+            if (request.path == "/api/v1/auth/login" && request.method == "POST") {
                 val body = request.body.readUtf8()
                 val login = body.substringAfter("\"email\":\"").substringBefore("\"")
                 val password = body.substringAfter("\"password\":\"").substringBefore("\"")
@@ -98,6 +98,45 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                         setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
                     }
                 }
+            }
+            if (request.path == "/tickets" && request.method == "GET") {
+                val authToken = request.getHeader("Authorization")
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                        val responseFile = "tickets.json"
+
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> {
+                                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                }
+                            }
+                        }
+
+                    }else{
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+                }else{
+
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                    }
+                }
+
             }
 
             if (request.path == "/auth/login/refresh" && request.method == "POST") {
@@ -186,7 +225,7 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                     if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
 
                         val responseFile = when (eventId) {
-                            "4" -> "hall.json"
+                            "2" -> "hall.json"
                             else -> "error.json"
                         }
 

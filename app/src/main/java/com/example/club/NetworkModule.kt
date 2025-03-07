@@ -14,22 +14,23 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
 class NetworkModule(context: Context) {
     private companion object {
 
-        //  const val BASE_URL = ""
+        const val BASE_URL = "http://25.8.78.26:8762/"
         const val CONNECT_TIMEOUT = 10L
         const val WRITE_TIMEOUT = 10L
         const val READ_TIMEOUT = 10L
         const val MOCK_SERVER_PORT = 8090
     }
-
     private val mockWebServerManager = MockWebServerManager(context, MOCK_SERVER_PORT)
 
-    private lateinit var retrofit: Retrofit
+   private lateinit var retrofit: Retrofit
 
     private val initializationDeferred = CompletableDeferred<Unit>()
 
@@ -73,13 +74,13 @@ class NetworkModule(context: Context) {
         return retrofit
     }
 
-    // private val baseUrl = mockWebServerManager.getUrl()
+   // private val baseUrl = mockWebServerManager.getUrl()
     private val baseUrl: String
         get() = mockWebServerManager.getUrl()
 
     /*val retrofit = Retrofit.Builder()
         .client(provideOkHttpClientWithProgress())
-        .baseUrl(baseUrl)
+        .baseUrl(BASE_URL)
         .addConverterFactory(provideKotlinXSerializationFactory())
         .build()*/
 
@@ -95,22 +96,38 @@ class NetworkModule(context: Context) {
     private fun provideLoggingInterceptor(): Interceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
+    fun pingServer(ipAddress: String): Boolean {
+        return try {
+            // Создаем процесс для выполнения команды ping
+            val process = ProcessBuilder()
+                .command("ping", "-c", "4", ipAddress) // -c 4 означает 4 пинга
+                .redirectErrorStream(true)
+                .start()
 
-    fun shutdownMockServer() {
-        mockWebServerManager.shutdown()
+            // Читаем вывод из процесса
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            val output = StringBuilder()
+            var line: String?
+
+            while (reader.readLine().also { line = it } != null) {
+                output.append(line).append("\n")
+            }
+
+            // Ждем завершения процесса
+            process.waitFor()
+
+            // Выводим результат (для отладки)
+            println(output.toString())
+
+            // Если процесс завершился с кодом 0, значит, пинг успешен
+            process.exitValue() == 0
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
+   /* fun shutdownMockServer() {
+        mockWebServerManager.shutdown()
+    }*/
 }
 
-
-/*private val mockWebServerManager = MockWebServerManager(context, MOCK_SERVER_PORT).apply {
-    start()
-    mockResponses(
-        "/events" to Response("events.json", HttpURLConnection.HTTP_OK),
-        "/event/1" to Response("eventDetails1.json", HttpURLConnection.HTTP_OK),
-        "/event/2" to Response("eventDetails2.json", HttpURLConnection.HTTP_OK),
-        "/event/3" to Response("eventDetails3.json", HttpURLConnection.HTTP_OK),
-        "/event/4" to Response("eventDetails4.json", HttpURLConnection.HTTP_OK),
-        "/event/5" to Response("eventDetails5.json", HttpURLConnection.HTTP_OK),
-
-        )
-}*/

@@ -39,6 +39,11 @@ import com.example.club.purchase.data.network.PurchaseApi
 import com.example.club.purchase.data.repository.PurchaseRepositoryImpl
 import com.example.club.purchase.domain.repository.PurchaseRepository
 import com.example.club.purchase.domain.usecase.PurchaseUseCase
+import com.example.club.tickets.data.converter.OrderConverter
+import com.example.club.tickets.data.network.OrderApi
+import com.example.club.tickets.data.repository.OrderRepositoryImpl
+import com.example.club.tickets.domain.repository.OrderRepository
+import com.example.club.tickets.domain.usecase.GetOrderUseCase
 import com.example.club.ui.theme.ClubTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,8 +52,9 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private lateinit var networkModule: NetworkModule
-
+    //private val networkModule = NetworkModule()
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         // Запускаем корутину для выполнения сетевых операций
@@ -56,35 +62,36 @@ class MainActivity : ComponentActivity() {
             networkModule = NetworkModule(this@MainActivity)
             val tokenManager = TokenManager(this@MainActivity)
             // Получаем экземпляр Retrofit
-            val retrofit = networkModule.getInstance()
 
+            val retrofit = networkModule.getInstance()
+       /* val isReachable =networkModule.pingServer("25.8.78.26")
+        if (isReachable) {
+            println("Сервер доступен!")
+        } else {
+            println("Сервер недоступен.")
+        }*/
             val eventPosterApi = retrofit.create(EventPosterApi::class.java)
             val eventPosterConverter = EventPosterConverter()
-            val eventPosterRepository: EventPosterRepository =
-                EventPosterRepositoryImpl(eventPosterApi, eventPosterConverter)
+            val eventPosterRepository: EventPosterRepository =   EventPosterRepositoryImpl(eventPosterApi, eventPosterConverter)
             val getEventPosterUseCase = GetEventPosterUseCase(eventPosterRepository)
 
             val eventDetailsApi = retrofit.create(EventDetailsApi::class.java)
             val eventDetailsConverter = EventDetailsConverter()
-            val eventRepository: EventDetailsRepository =
-                EventRepositoryImpl(eventDetailsApi, eventDetailsConverter)
+            val eventRepository: EventDetailsRepository = EventRepositoryImpl(eventDetailsApi, eventDetailsConverter)
             val getEventUseCase = GetEventUseCase(eventRepository)
 
             val userAuthApi = retrofit.create(UserAuthApi::class.java)
             val authConvert = AuthConvert()
-            val userAuthRepository: UserAuthRepository =
-                UserAuthRepositoryImpl(userAuthApi, authConvert)
+            val userAuthRepository: UserAuthRepository = UserAuthRepositoryImpl(userAuthApi, authConvert)
             val authUseCase = AuthUseCase(userAuthRepository)
 
             val profileApi = retrofit.create(ProfileApi::class.java)
             val userConverter = UserConverter()
-            val profileRepository: ProfileRepository =
-                ProfileRepositoryImpl(profileApi, userConverter)
+            val profileRepository: ProfileRepository = ProfileRepositoryImpl(profileApi, userConverter)
             val getProfileUseCase = GetProfileUseCase(profileRepository)
 
             val tokenRefreshApi = retrofit.create(TokenRefreshApi::class.java)
-            val refreshTokenRepository: RefreshTokenRepository =
-                RefreshTokenRepositoryImpl(tokenRefreshApi, authConvert)
+            val refreshTokenRepository: RefreshTokenRepository = RefreshTokenRepositoryImpl(tokenRefreshApi, authConvert)
             val refreshTokenUseCase = RefreshTokenUseCase(refreshTokenRepository)
 
             val hallApi = retrofit.create(HallApi::class.java)
@@ -92,11 +99,15 @@ class MainActivity : ComponentActivity() {
             val hallRepository: HallRepository = HallRepositoryImpl(hallApi, hallConverter)
             val getHallUseCase = GetHallUseCase(hallRepository)
 
-            val purchaseApi = retrofit.create(PurchaseApi::class.java)
+            val purchaseApi =retrofit.create(PurchaseApi::class.java)
             val purchaseConverter = PurchaseConverter()
-            val purchaseRepository: PurchaseRepository =
-                PurchaseRepositoryImpl(purchaseApi, purchaseConverter)
+            val purchaseRepository: PurchaseRepository = PurchaseRepositoryImpl(purchaseApi, purchaseConverter)
             val purchaseUseCase = PurchaseUseCase(purchaseRepository)
+
+            val orderApi=retrofit.create(OrderApi::class.java)
+            val orderConverter=OrderConverter()
+            val orderRepository:OrderRepository=OrderRepositoryImpl(orderApi,orderConverter)
+            val getOrderUseCase=GetOrderUseCase(orderRepository)
 
             // Переключаемся на главный поток для обновления UI
             withContext(Dispatchers.Main) {
@@ -109,6 +120,7 @@ class MainActivity : ComponentActivity() {
                             getProfileUseCase = getProfileUseCase,
                             getHallUseCase = getHallUseCase,
                             purchaseUseCase=purchaseUseCase,
+                            getOrderUseCase = getOrderUseCase,
                             tokenManager = tokenManager,
                             refreshTokenUseCase = refreshTokenUseCase
 
@@ -116,12 +128,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
+       }
     }
 
-    override fun onDestroy() {
+    /*override fun onDestroy() {
         super.onDestroy()
         networkModule.shutdownMockServer()
-    }
+    }*/
 }
 

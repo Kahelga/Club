@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.lifecycle.viewModelScope
 import com.example.club.authorization.data.TokenManager
 import com.example.club.eventDetails.EventDetailsRoute
+import com.example.club.tickets.OrderRoute
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
@@ -21,6 +22,7 @@ class AuthViewModel(
     val login: StateFlow<String> = _login
 
     private var previousRoute: EventDetailsRoute? = null
+    private var previousRouteO: OrderRoute? = null
 
     fun authorize(login: String, password: String) {
         viewModelScope.launch {
@@ -47,6 +49,7 @@ class AuthViewModel(
     fun getPreviousRoute(): EventDetailsRoute? {
         return previousRoute
     }
+
     fun logout() {
         viewModelScope.launch {
             tokenManager.clearTokens()

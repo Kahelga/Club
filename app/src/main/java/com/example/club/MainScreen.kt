@@ -1,5 +1,6 @@
 package com.example.club
 
+import android.util.Log
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,6 +44,11 @@ import com.example.club.purchase.domain.usecase.PurchaseUseCase
 import com.example.club.purchase.presentation.PurchaseViewModel
 import com.example.club.purchase.presentation.PurchaseViewModelFactory
 import com.example.club.purchase.ui.PurchaseScreen
+import com.example.club.tickets.OrderRoute
+import com.example.club.tickets.domain.usecase.GetOrderUseCase
+import com.example.club.tickets.presentation.OrderViewModel
+import com.example.club.tickets.presentation.OrderViewModelFactory
+import com.example.club.tickets.ui.OrderScreen
 import kotlinx.serialization.json.Json
 
 
@@ -53,6 +59,7 @@ fun MainScreen(
     authUseCase: AuthUseCase,
     getProfileUseCase: GetProfileUseCase,
     getHallUseCase:GetHallUseCase,
+    getOrderUseCase:GetOrderUseCase,
     purchaseUseCase:PurchaseUseCase,
     tokenManager: TokenManager,
     refreshTokenUseCase: RefreshTokenUseCase
@@ -64,7 +71,7 @@ fun MainScreen(
     val authState by authViewModel.state.collectAsState()
 
     Surface {
-        NavHost(navController = navController, startDestination = PosterRoute) {
+        NavHost(navController = navController, startDestination = /*AuthRoute*/PosterRoute) {
             composable<PosterRoute> {
                 val viewModel: PosterViewModel =
                     viewModel(factory = PosterViewModelFactory(getEventPosterUseCase))
@@ -78,7 +85,12 @@ fun MainScreen(
                         } else {
                             navController.navigate(AuthRoute)
                         }
-                    }
+                    },
+                    onOrderSelected ={ if (authState is AuthState.Success) {
+                        navController.navigate(OrderRoute)
+                    } else {
+                        navController.navigate(AuthRoute)
+                    }}
                 )
             }
             composable<EventDetailsRoute> {
@@ -89,7 +101,7 @@ fun MainScreen(
                 )
                 EventDetailsScreen(
                     viewModel,
-                    onBackPressed = { navController.popBackStack() },
+                    onBackPressed = { navController.navigate(PosterRoute) },
                     toBuySelected = {/*navController.navigate(HallRoute(eventId = destination.eventId))*/
                         if (authState is AuthState.Success) {
                              navController.navigate(HallRoute(eventId = destination.eventId))//it
@@ -110,10 +122,16 @@ fun MainScreen(
                                 popUpTo(AuthRoute) { inclusive = true }
                             }
                         } else {
-                            navController.navigate(ProfileRoute(login = it))
+                            navController.navigate(PosterRoute)//ProfileRoute(login = it)
                         }
                     },
-                    onBackPressed = { navController.popBackStack() }
+                    onBackPressed = {val previousRoute = navController.previousBackStackEntry?.destination?.route
+                        Log.d("Navigation", "Previous Route: $previousRoute")
+                        if (previousRoute == "com.example.club.tickets.OrderRoute") {
+                            navController.navigate(PosterRoute)
+                        } else {
+                            navController.popBackStack()
+                        } }
                 )
             }
             composable<ProfileRoute> {
@@ -135,7 +153,9 @@ fun MainScreen(
                         navController.navigate(AuthRoute) {
                             popUpTo(ProfileRoute(login = destination.login)) { inclusive = true }
                         }
-                    }
+
+                    },
+                    onOrderSelected={navController.navigate(OrderRoute)}
                 )
             }
             composable<HallRoute>{
@@ -167,7 +187,16 @@ fun MainScreen(
                 )
 
             }
-
+            composable<OrderRoute>{
+                val viewModel= viewModel(OrderViewModel::class.java,
+                    factory = OrderViewModelFactory(getOrderUseCase,refreshTokenUseCase,tokenManager))
+                OrderScreen(
+                    viewModel,
+                    authViewModel,
+                    onProfileSelected={navController.navigate(ProfileRoute(login = it))},
+                    onPosterSelected ={navController.navigate(PosterRoute)}
+                )
+            }
         }
     }
 }

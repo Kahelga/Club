@@ -1,11 +1,10 @@
-package com.example.club.profile.ui
+package com.example.club.tickets.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
@@ -38,109 +36,86 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.club.R
-import com.example.club.profile.presentation.ProfileState
-import com.example.club.profile.presentation.ProfileViewModel
-import com.example.club.profile.ui.Error
+import com.example.club.authorization.presentation.AuthViewModel
+import com.example.club.tickets.presentation.OrderState
+import com.example.club.tickets.presentation.OrderViewModel
 
 @Composable
-fun ProfileScreen(
-    profileViewModel: ProfileViewModel,
-    onPosterSelected: () -> Unit,
-    onLogout: () -> Unit,
-    onOrderSelected:()->Unit
-    // onUpdateData: () -> Unit
+fun OrderScreen(
+    orderViewModel: OrderViewModel,
+    authViewModel: AuthViewModel,
+    onProfileSelected: (login: String) -> Unit,
+    onPosterSelected: () -> Unit
 ) {
-    val profileState by profileViewModel.state.collectAsState()
+    val orderState by orderViewModel.state.collectAsState()
+    val loginUser by authViewModel.login.collectAsState()
     LaunchedEffect(Unit) {
-        profileViewModel.loadUser()
+        orderViewModel.loadOrder()
     }
-
     Scaffold(
         bottomBar = {
-            BottomBar({onPosterSelected()},{onOrderSelected()})
+            BottomBar({ onProfileSelected(loginUser) }, { onPosterSelected() })
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.profile_title),
-                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                   // modifier = Modifier.padding(bottom = 28.dp)
-                )
-                IconButton(
-                    onClick = onLogout,
-                    modifier = Modifier.size(35.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ExitToApp,
-                        contentDescription = null,
-                        Modifier.size(35.dp)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(25.dp))
-            when (val state = profileState) {
-                is ProfileState.Initial,
-                is ProfileState.Loading -> {
-                } /*-> Loading()*/
-                is ProfileState.Failure -> Error(
+            OrderTitle()
+
+            when (val state = orderState) {
+                is OrderState.Initial,
+                is OrderState.Loading -> com.example.club.poster.ui.Loading()
+
+                is OrderState.Failure -> com.example.club.poster.ui.Error(
                     message = state.message ?: stringResource(id = R.string.error_unknown_error),
-                    onRetry = { profileViewModel.loadUser() }
+                    onRetry = { orderViewModel.loadOrder() },
                 )
 
-                is ProfileState.Content -> Content(
-                    user = state.user
+                is OrderState.Content -> Content(
+                    orders = state.orders
                 )
             }
-
         }
     }
 }
 
-
 @Composable
-fun BottomBar(onPosterSelected: () -> Unit, onOrderSelected:()->Unit) {
+fun BottomBar(onProfileSelected: () -> Unit, onPosterSelected: () -> Unit) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
             .height(60.dp)
             .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(15.dp))
             .clip(RoundedCornerShape(15.dp))
-    ) {Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start=15.dp)
-            .padding(end=15.dp)
-    ){
-        BottomBarItem(
-            icon = Icons.Filled.Menu,
-            label = stringResource(id = R.string.bar_poster),
-            onClick = onPosterSelected,
-            iconTint = Color.Gray
-        )
-        BottomBarItem(
-            icon = Icons.Filled.Star,
-            label = stringResource(id = R.string.order_title),
-            onClick = onOrderSelected,
-            iconTint = Color.Gray
-        )
-        BottomBarItem(
-            icon = Icons.Filled.Person,
-            label = stringResource(id = R.string.profile_title),
-            onClick = { }
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 15.dp)
+                .padding(end = 15.dp)
+        ) {
+            BottomBarItem(
+                icon = Icons.Filled.Menu,
+                label = stringResource(id = R.string.bar_poster),
+                onClick = onPosterSelected,
+                iconTint = Color.Gray
+            )
+            BottomBarItem(
+                icon = Icons.Filled.Star,
+                label = stringResource(id = R.string.order_title),
+                onClick = { }
 
-        )
-    }
+            )
+            BottomBarItem(
+                icon = Icons.Filled.Person,
+                label = stringResource(id = R.string.profile_title),
+                onClick = onProfileSelected,
+                iconTint = Color.Gray
+            )
+        }
 
     }
 }
@@ -174,4 +149,16 @@ fun BottomBarItem(
             fontSize = 11.sp,
         )
     }
+}
+
+@Composable
+fun OrderTitle() {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp)
+            .padding(vertical = 12.dp, horizontal = 8.dp),
+        text = stringResource(id = R.string.order_title),
+        style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
+    )
 }

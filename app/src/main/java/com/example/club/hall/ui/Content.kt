@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 
@@ -45,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -58,6 +60,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
@@ -83,6 +86,7 @@ fun Content(
         }
     }
 }
+
 @Composable
 private fun HallItem(
     hall: Hall,
@@ -95,7 +99,8 @@ private fun HallItem(
     val currentTicketCount = remember { mutableStateOf(0) }
     val originalTicketCount = remember { mutableStateOf(0) }
     var showErrorDialog by remember { mutableStateOf(false) }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize())
+    {
         Text(
             text = hall.name,
             style = MaterialTheme.typography.headlineLarge,
@@ -111,8 +116,9 @@ private fun HallItem(
         }
 
         Card(
-            modifier = Modifier.heightIn(max = 500.dp),
-            elevation = CardDefaults.cardElevation(8.dp)
+            modifier = Modifier.height(400.dp),
+               // .background(MaterialTheme.colorScheme.secondaryContainer),
+            elevation = CardDefaults.cardElevation(10.dp)
         ) {
             SeatPlanView(
                 seatPlan = hall.seatingPlan,
@@ -133,7 +139,7 @@ private fun HallItem(
                                 currentTicketCount.value = 1
                                 isDialogVisible = true
                             }
-                        }else{
+                        } else {
                             if (selectedTickets.contains(ticket)) {
                                 selectedTickets.remove(ticket)
                             } else {
@@ -148,9 +154,9 @@ private fun HallItem(
 
         SelectedTicketInfo(tickets = selectedTickets)
         BuyTicketButton {
-            if (selectedTickets.isEmpty()){
+            if (selectedTickets.isEmpty()) {
                 showErrorDialog = true
-            }else{
+            } else {
                 toBuySelected(selectedTickets)
             }
 
@@ -158,11 +164,11 @@ private fun HallItem(
         if (showErrorDialog) {
             AlertDialog(
                 onDismissRequest = { showErrorDialog = false },
-                title = { Text(text = "Ошибка") },
-                text = { Text(text = "Выберите билеты для покупки.") },
+                title = { Text(text =stringResource(id = R.string.error_title)) },
+                text = { Text(text = stringResource(id = R.string.order_error_massage)) },
                 confirmButton = {
                     Button(onClick = { showErrorDialog = false }) {
-                        Text("ОК")
+                        Text(stringResource(id = R.string.purchase_dialog_ok))
                     }
                 }
             )
@@ -197,6 +203,7 @@ private fun HallItem(
         }
     }
 }
+
 @Composable
 fun TicketCountDialog(
     ticket: Ticket,
@@ -249,7 +256,7 @@ private fun SeatPlanView(
 ) {
     val rows = seatPlan.row
     val columns = seatPlan.column
-    val sceneHeight = 100.dp
+    //val sceneHeight = 100.dp
     val boxSize = Offset(
         x = with(LocalDensity.current) { (columns * gridSize.toPx()) },
         y = with(LocalDensity.current) { (rows * gridSize.toPx()) }
@@ -257,39 +264,46 @@ private fun SeatPlanView(
     val boxWidth = columns * gridSize
     val boxHeight = rows * gridSize
 
+    // Размеры и позиция сцены
+    val sceneHeight = boxHeight * 0.1f
+    val sceneWidth = boxWidth * 0.6f
+    val sceneX = (boxWidth - sceneWidth) / 2
+    val sceneY = 0f
+
     var scale by remember { mutableStateOf(1f) }
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
+    //var offsetY by remember { mutableStateOf(0f) }
+    val color=MaterialTheme.colorScheme.surfaceVariant
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .horizontalScroll(rememberScrollState())
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
 
-                    val newScale = (scale * zoom).coerceIn(0.5f, 3f)
-                    scale = newScale
-                    offsetX += pan.x / scale
-                    offsetY += pan.y / scale
+            .pointerInput(Unit) {
+                detectTransformGestures { _, _, zoom, _ ->
+                    scale = (scale * zoom).coerceIn(0.5f, 3f)
                 }
             }
             .graphicsLayer(
                 scaleX = scale,
                 scaleY = scale,
-                translationX = offsetX,
-                translationY = offsetY
-            )
 
+            )
+            .drawBehind {
+                drawRect(
+                    color =color ,
+                    size = this.size.copy(width = boxWidth.toPx(), height = boxHeight.toPx())
+                )
+            }
+            //.size(boxWidth,boxHeight)
+           // .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         DrawGrid(boxSize, gridSize)
         Box(
             modifier = Modifier
-                .width(boxWidth)
+                .width(sceneWidth)
                 .height(sceneHeight)
-                .background(Color.Red.copy(alpha = 0.3f), shape = RoundedCornerShape(20.dp)),
-
-            ) {
+                .offset(sceneX, sceneY.dp)
+                .background(Color.Red.copy(alpha = 0.3f), shape = RoundedCornerShape(10.dp))
+        ) {
             Text(
                 stringResource(id = R.string.hall_scene),
                 color = Color.White,
@@ -300,8 +314,8 @@ private fun SeatPlanView(
 
         Box(
             modifier = Modifier
-                .padding(top = sceneHeight)
                 .wrapContentHeight()
+               // .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             seatPlan.tickets.forEach { ticket ->
                 SeatView(
@@ -326,7 +340,7 @@ private fun SeatView(
     gridSize: Dp,
     boxWidth: Dp,
     boxHeight: Dp,
-    boxSize:Offset
+    boxSize: Offset
 ) {
     val shape = when (ticket.type) {
         SeatType.DANCEFLOOR -> RectangleShape
@@ -344,7 +358,10 @@ private fun SeatView(
         else -> Color.Gray
     }
     val seatSize = when (ticket.type) {
-        SeatType.DANCEFLOOR ->Size(boxSize.x* 0.2f, boxSize.y * 0.2f) /*Size(boxWidth.value * 0.25f, boxHeight.value * 0.25f)*/
+        SeatType.DANCEFLOOR -> Size(
+            boxWidth.value * 0.5f,
+            boxHeight.value * 0.6f/*boxSize.x* 0.2f, boxSize.y * 0.2f*/
+        )//boxWidth*0,5f,boxHeight*0,6f
         else -> Size(gridSize.value, gridSize.value)
     }
     Box(
@@ -352,7 +369,7 @@ private fun SeatView(
             .size(seatSize.width.dp, seatSize.height.dp)
             .offset(
                 x = (ticket.x * gridSize.value).dp,
-                y = (ticket.y * gridSize.value - gridSize.value / 2).dp
+                y = (ticket.y * gridSize.value).dp
             )
 
             .background(backgroundColor, shape = shape)
@@ -403,7 +420,10 @@ private fun SelectedTicketInfo(tickets: List<Ticket>) {
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Text(
-                                    text =stringResource(R.string.seat_price, selectedTicket.price) ,
+                                    text = stringResource(
+                                        R.string.seat_price,
+                                        selectedTicket.price
+                                    ),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
@@ -445,11 +465,12 @@ private fun DrawGrid(size: Offset, gridSize: Dp) {
         modifier = Modifier
             .width(size.x.dp)
             .height(size.y.dp)
+
     ) {
 
         for (x in 0 until (size.x.toInt() / gridSizePx).coerceAtLeast(1F).toInt()) {
             drawLine(
-               color = color,
+                color = color,
                 Offset(x * gridSizePx, 0f),
                 Offset(x * gridSizePx, size.y),
                 strokeWidth = 1f
@@ -463,8 +484,8 @@ private fun DrawGrid(size: Offset, gridSize: Dp) {
                 strokeWidth = 1f
             )
         }
-        drawLine( color = color, Offset(size.x, 0f), Offset(size.x, size.y), strokeWidth = 1f)
-        drawLine( color = color, Offset(0f, size.y), Offset(size.x, size.y), strokeWidth = 1f)
+        drawLine(color = color, Offset(size.x, 0f), Offset(size.x, size.y), strokeWidth = 1f)
+        drawLine(color = color, Offset(0f, size.y), Offset(size.x, size.y), strokeWidth = 1f)
 
     }
 }

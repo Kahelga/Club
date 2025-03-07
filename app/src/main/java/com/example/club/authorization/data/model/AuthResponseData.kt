@@ -12,4 +12,5 @@ data class AuthResponseData(
     val accessToken: String,
     @SerialName("refresh_token")
     val refreshToken:String,
+   // val massage:String
 )

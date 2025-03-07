@@ -1,0 +1,47 @@
+[
+  {
+    "ticketId": "booking123",
+    "userId": "user456",
+    "event":{
+      "id": "event123",
+      "title": "Ночь Рока",
+      "date": "2025-03-02T20:00:00Z",
+      "genre": [
+        "Рок",
+        "Поп"
+      ],
+      "ageRating": "NC17",
+      "minPrice": 1500,
+      "imgPreview": "http://localhost:8090/img/poster1",
+      "status": "ARCHIVED"
+    },
+    "seats": [
+      "A1",
+      "A2"
+    ],
+    "issueDate": "2025-03-01T12:00:00Z",
+    "status": "PAID"
+  },
+  {
+    "ticketId": "booking123",
+    "userId": "user456",
+    "event":{
+      "id": "4",
+      "title": "Электро Ночь",
+      "date": "2025-03-04T22:00:00Z",
+      "genre": [
+        "Электронная"
+      ],
+      "ageRating": "NC17",
+      "minPrice": 1300,
+      "imgPreview": "http://localhost:8090/img/poster4",
+      "status": "ACTIVE"
+    },
+    "seats": [
+      "A1",
+      "A2"
+    ],
+    "issueDate": "2025-03-01T12:00:00Z",
+    "status": "CANCELLED"
+  }
+]

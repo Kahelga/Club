@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 
@@ -44,13 +45,13 @@ import com.example.club.poster.presentation.PosterState
 import com.example.club.poster.presentation.PosterViewModel
 
 
-
 @Composable
 fun PosterScreen(
     posterViewModel: PosterViewModel,
     authViewModel: AuthViewModel,
     onItemSelected: (eventId: String) -> Unit,
-    onProfileSelected: (login:String) -> Unit
+    onProfileSelected: (login: String) -> Unit,
+    onOrderSelected: (login: String) -> Unit
 ) {
     val posterState by posterViewModel.state.collectAsState()
     val loginUser by authViewModel.login.collectAsState()
@@ -61,7 +62,7 @@ fun PosterScreen(
 
     Scaffold(
         bottomBar = {
-            BottomBar { onProfileSelected(loginUser) }
+            BottomBar({ onProfileSelected(loginUser) }, { onOrderSelected(loginUser) })
         }
     ) { paddingValues ->
         Column(
@@ -74,10 +75,12 @@ fun PosterScreen(
             when (val state = posterState) {
                 is PosterState.Initial,
                 is PosterState.Loading -> Loading()
+
                 is PosterState.Failure -> Error(
                     message = state.message ?: stringResource(id = R.string.error_unknown_error),
                     onRetry = { posterViewModel.loadEvents() },
                 )
+
                 is PosterState.Content -> Content(
                     events = state.events,
                     onItemClicked = onItemSelected,
@@ -88,32 +91,43 @@ fun PosterScreen(
 }
 
 @Composable
-fun BottomBar(onProfileSelected: () -> Unit) {
+fun BottomBar(onProfileSelected: () -> Unit, onOrderSelected: () -> Unit) {
+
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier
-            .height(57.dp)
+            .height(60.dp)
             .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(15.dp))
             .clip(RoundedCornerShape(15.dp))
     ) {
-        BottomBarItem(
-            icon = Icons.Filled.Menu,
-            label = "Афиша",
-            onClick = { /* Обработка клика для Афиши */ }
-        )
-        BottomBarItem(
-            icon = Icons.Filled.Star,
-            label = "Билеты",
-            onClick = { /* Обработка клика для Билетов */ },
-            iconTint = Color.Gray
-        )
-        BottomBarItem(
-            icon = Icons.Filled.Person,
-            label = "Профиль",
-            onClick = onProfileSelected,
-            iconTint = Color.Gray
-        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start=15.dp)
+                .padding(end=15.dp)
+        ) {
+            BottomBarItem(
+                icon = Icons.Filled.Menu,
+                label = stringResource(id = R.string.bar_poster),
+                onClick = { }
+            )
+            BottomBarItem(
+                icon = Icons.Filled.Star,
+                label = stringResource(id = R.string.order_title),
+                onClick = onOrderSelected,
+                iconTint = Color.Gray
+            )
+            BottomBarItem(
+                icon = Icons.Filled.Person,
+                label = stringResource(id = R.string.profile_title),
+                onClick = onProfileSelected,
+                iconTint = Color.Gray
+            )
+        }
     }
+
+
 }
 
 @Composable
@@ -126,7 +140,6 @@ fun BottomBarItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(horizontal = 42.dp)
             .fillMaxHeight()
     ) {
         IconButton(

@@ -216,7 +216,6 @@ fun EventImage(item: Event) {
             .fillMaxWidth()
             .padding(top = 8.dp, start = 5.dp, end = 5.dp)
     ) {
-        // загрузка изображения
         val context = LocalContext.current
         val imageRequest = ImageRequest.Builder(context)
             .data(imagePath)
@@ -322,7 +321,7 @@ fun formatDate(date: String): String {
 
 fun formatDateSelected(date: String): String {
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
+       // timeZone = TimeZone.getTimeZone("UTC")
     }
     val outputFormat = SimpleDateFormat("EEE, d MMM", Locale("ru"))
 

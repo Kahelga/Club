@@ -21,12 +21,12 @@ class UserConverter {
         return User(
             id=model.id,
             phone = model.phone,
+            lastname = model.lastname,
             firstname = model.firstname,
             middlename = model.middlename,
-            lastname = model.lastname,
             email = model.email,
-            city = model.city
-
+            city = model.city,
+            role=model.role
 
         )
 

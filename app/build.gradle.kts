@@ -86,6 +86,8 @@ dependencies {
     //безопасность
     implementation(libs.androidx.security.crypto)
 
+    implementation(libs.compose)
+    implementation (libs.androidx.material.icons.extended)
     testImplementation(libs.junit)
     implementation(libs.kotlinx.coroutines.test)
 

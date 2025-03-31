@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.club.authorization.data.TokenManager
 import com.example.club.authorization.domain.usecase.RefreshTokenUseCase
+import com.example.club.profile.domain.entity.User
 import com.example.club.profile.domain.usecase.GetProfileUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,22 +13,27 @@ import kotlinx.coroutines.launch
 
 
 class ProfileViewModel(
-    private val login:String,
+    private var login: String,
     private val getProfileUseCase: GetProfileUseCase,
     private val refreshTokenUseCase: RefreshTokenUseCase,
     private val tokenManager: TokenManager
-):ViewModel() {
+) : ViewModel() {
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)
     val state: StateFlow<ProfileState> = _state
     private var accessToken: String? = null
+    private val _user = MutableStateFlow<User>(
+        User("", "", "", "", "", "", "", ""),
+    )
+    val user: StateFlow<User> = _user
 
-    fun loadUser () {
+    fun loadUser() {
         viewModelScope.launch {
             _state.value = ProfileState.Loading
             try {
                 accessToken = tokenManager.getAccessToken()
-                val user = getProfileUseCase(login, "Bearer $accessToken")
-                _state.value = ProfileState.Content(user)
+                val response = getProfileUseCase(login, "Bearer $accessToken")
+                _user.value = response
+                _state.value = ProfileState.Content(response)
 
             } catch (ex: Exception) {
                 Log.e("Error", "Exception occurred", ex)
@@ -40,8 +46,9 @@ class ProfileViewModel(
                             accessToken = newToken.accessToken
                             tokenManager.updateAccessToken(accessToken)
 
-                            val user = getProfileUseCase(login, "Bearer $accessToken")
-                            _state.value = ProfileState.Content(user)
+                            val response = getProfileUseCase(login, "Bearer $accessToken")
+                            _user.value = response
+                            _state.value = ProfileState.Content(response)
                         } else {
                             _state.value = ProfileState.Failure("Refresh token is not available.")
                         }
@@ -53,5 +60,8 @@ class ProfileViewModel(
                 }
             }
         }
+    }
+ fun setLogin(newLogin: String){
+        login=newLogin
     }
 }

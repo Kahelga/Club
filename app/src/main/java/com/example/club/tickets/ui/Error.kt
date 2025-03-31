@@ -9,14 +9,19 @@ import androidx.compose.ui.res.stringResource
 import com.example.club.R
 
 @Composable
-fun Error(message: String, onRetry: () -> Unit) {
+fun Error(message: String, onRetry: () -> Unit,onCancel: () -> Unit) {
     AlertDialog(
-        onDismissRequest = {},
+        onDismissRequest = onCancel,
         title = { Text(text = stringResource(id = R.string.error_title)) },
         text = { Text(text = message) },
         confirmButton = {
             Button(onClick = onRetry) {
                 Text(text = stringResource(id = R.string.error_try_again))
+            }
+        },
+        dismissButton = {
+            Button(onClick = onCancel) {
+                Text(text = stringResource(id = R.string.error_close))
             }
         },
         modifier = Modifier,

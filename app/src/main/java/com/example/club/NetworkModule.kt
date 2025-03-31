@@ -7,7 +7,9 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -15,8 +17,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
+import java.net.InetAddress
 import java.util.concurrent.TimeUnit
 
 class NetworkModule(context: Context) {
@@ -75,17 +79,18 @@ class NetworkModule(context: Context) {
     }
 
    // private val baseUrl = mockWebServerManager.getUrl()
-    private val baseUrl: String
-        get() = mockWebServerManager.getUrl()
+    /*private val baseUrl: String
+        get() = mockWebServerManager.getUrl()*/
 
-    /*val retrofit = Retrofit.Builder()
+   /* val retrofit = Retrofit.Builder()
         .client(provideOkHttpClientWithProgress())
         .baseUrl(BASE_URL)
         .addConverterFactory(provideKotlinXSerializationFactory())
         .build()*/
-
+   val cacheSize = 10 * 1024 * 1024 // 10 MB
+    val cache = Cache(File(context.cacheDir, "http_cache"), cacheSize.toLong())
     private fun provideOkHttpClientWithProgress(): OkHttpClient =
-        OkHttpClient().newBuilder().connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+        OkHttpClient().newBuilder()./*cache(cache).*/connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS).addInterceptor(provideLoggingInterceptor())
             .build()
@@ -96,7 +101,7 @@ class NetworkModule(context: Context) {
     private fun provideLoggingInterceptor(): Interceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
-    fun pingServer(ipAddress: String): Boolean {
+    /*fun pingServer(ipAddress: String): Boolean {
         return try {
             // Создаем процесс для выполнения команды ping
             val process = ProcessBuilder()
@@ -125,9 +130,11 @@ class NetworkModule(context: Context) {
             e.printStackTrace()
             false
         }
-    }
-   /* fun shutdownMockServer() {
-        mockWebServerManager.shutdown()
     }*/
+
+
+    /* fun shutdownMockServer() {
+         mockWebServerManager.shutdown()
+     }*/
 }
 

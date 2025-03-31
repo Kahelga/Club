@@ -8,9 +8,9 @@ data class AuthResponseData(
     /*  val success: Boolean,
     val reason: String?,
     val user: User?,*/
-    @SerialName("access_token")
+   // @SerialName("access_token")
     val accessToken: String,
-    @SerialName("refresh_token")
+   // @SerialName("refresh_token")
     val refreshToken:String,
-   // val massage:String
+    val message:String
 )

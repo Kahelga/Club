@@ -1,9 +1,9 @@
 {
   "id": "us1",
   "phone": "89990009999",
-  "firstname": "firstname",
-  "middlename": "middlename",
-  "lastname": "lastname",
+  "lastname": "Фамилия",
+  "firstname": "Имя",
+  "middlename": "Отчество",
   "email": "user1@gmail.com",
   "city": "city",
   "role": "client"

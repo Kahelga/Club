@@ -1,5 +1,7 @@
 package com.example.club.poster.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +50,7 @@ import com.example.club.poster.presentation.PosterState
 import com.example.club.poster.presentation.PosterViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PosterScreen(
     posterViewModel: PosterViewModel,
@@ -55,11 +61,27 @@ fun PosterScreen(
 ) {
     val posterState by posterViewModel.state.collectAsState()
     val loginUser by authViewModel.login.collectAsState()
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val error =stringResource(id = R.string.error_unknown_error)
 
     LaunchedEffect(Unit) {
         posterViewModel.loadEvents()
     }
-
+    LaunchedEffect(posterState) {
+        when (posterState) {
+            is PosterState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (posterState as PosterState.Failure).message ?: error
+            }
+            is PosterState.Content -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
+            else -> {}
+        }
+    }
     Scaffold(
         bottomBar = {
             BottomBar({ onProfileSelected(loginUser) }, { onOrderSelected(loginUser) })
@@ -71,19 +93,27 @@ fun PosterScreen(
                 .padding(paddingValues)
         ) {
             PosterTitle()
-
             when (val state = posterState) {
                 is PosterState.Initial,
                 is PosterState.Loading -> Loading()
 
-                is PosterState.Failure -> Error(
-                    message = state.message ?: stringResource(id = R.string.error_unknown_error),
-                    onRetry = { posterViewModel.loadEvents() },
-                )
-
+                is PosterState.Failure ->{}
                 is PosterState.Content -> Content(
                     events = state.events,
                     onItemClicked = onItemSelected,
+                )
+
+            }
+            if (showErrorDialog) {
+                Error(
+                    message = errorMessage,
+                    onRetry = {
+                        posterViewModel.loadEvents()
+                        showErrorDialog = false
+                    },
+                    onCancel = {
+                        showErrorDialog = false
+                    }
                 )
             }
         }

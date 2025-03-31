@@ -5,5 +5,6 @@ import com.example.club.poster.domain.entity.Event
 import com.example.club.poster.domain.repository.EventPosterRepository
 
 class GetEventPosterUseCase(private val repository: EventPosterRepository) {
-    suspend operator fun invoke(): /*EventResponse*/List<Event> = repository.getAll()
+    suspend operator fun invoke(): List<Event> = repository.getAll()
 }
+

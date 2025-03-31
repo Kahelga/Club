@@ -24,13 +24,13 @@ import com.example.club.profile.domain.entity.User
 @Composable
 fun Content(
     user: User,
-    // onUpdateData: () -> Unit
+     onUpdateData: () -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         item {
             UserItem(
                 user,
-                /*onUpdateData = { onItemClicked() }*/
+                onUpdateData = {onUpdateData()}
             )
         }
     }
@@ -40,15 +40,16 @@ fun Content(
 @Composable
 private fun UserItem(
     user: User,
-    // onUpdateData: () -> Unit
+     onUpdateData: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        ProfileField(label = stringResource(R.string.user_lastname), value = user.lastname)
         ProfileField(label = stringResource(R.string.user_name), value = user.firstname)
         ProfileField(label = stringResource(R.string.user_middlename), value = user.middlename)
-        ProfileField(label = stringResource(R.string.user_lastname), value = user.lastname)
+
         ProfileField(label = stringResource(R.string.user_phone), value = user.phone)
         ProfileField(label = stringResource(R.string.user_email), value = user.email)
         ProfileField(label = stringResource(R.string.user_city), value = user.city)
@@ -56,7 +57,7 @@ private fun UserItem(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Обновить данные */ },
+            onClick = onUpdateData,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(R.string.button_update))

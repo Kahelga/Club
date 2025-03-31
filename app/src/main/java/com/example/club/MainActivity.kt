@@ -1,9 +1,11 @@
 package com.example.club
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import com.example.club.authorization.data.TokenManager
 import com.example.club.authorization.data.converter.AuthConvert
 import com.example.club.authorization.data.network.TokenRefreshApi
@@ -34,11 +36,20 @@ import com.example.club.profile.data.network.ProfileApi
 import com.example.club.profile.data.repository.ProfileRepositoryImpl
 import com.example.club.profile.domain.repository.ProfileRepository
 import com.example.club.profile.domain.usecase.GetProfileUseCase
+import com.example.club.profileUpdate.data.network.ProfileUpdateApi
+import com.example.club.profileUpdate.data.repository.ProfileUpdateRepositoryImpl
+import com.example.club.profileUpdate.domain.repository.ProfileUpdateRepository
+import com.example.club.profileUpdate.domain.usecase.UpdateProfileUseCase
 import com.example.club.purchase.data.converter.PurchaseConverter
 import com.example.club.purchase.data.network.PurchaseApi
 import com.example.club.purchase.data.repository.PurchaseRepositoryImpl
 import com.example.club.purchase.domain.repository.PurchaseRepository
 import com.example.club.purchase.domain.usecase.PurchaseUseCase
+import com.example.club.registration.data.converter.RegConvert
+import com.example.club.registration.data.network.UserRegApi
+import com.example.club.registration.data.repository.UserRegRepositoryImpl
+import com.example.club.registration.domain.repository.UserRegRepository
+import com.example.club.registration.domain.usecase.RegUseCase
 import com.example.club.tickets.data.converter.OrderConverter
 import com.example.club.tickets.data.network.OrderApi
 import com.example.club.tickets.data.repository.OrderRepositoryImpl
@@ -53,24 +64,20 @@ import kotlinx.coroutines.withContext
 class MainActivity : ComponentActivity() {
     private lateinit var networkModule: NetworkModule
     //private val networkModule = NetworkModule()
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Запускаем корутину для выполнения сетевых операций
+
         CoroutineScope(Dispatchers.IO).launch {
             networkModule = NetworkModule(this@MainActivity)
             val tokenManager = TokenManager(this@MainActivity)
-            // Получаем экземпляр Retrofit
+
 
             val retrofit = networkModule.getInstance()
-       /* val isReachable =networkModule.pingServer("25.8.78.26")
-        if (isReachable) {
-            println("Сервер доступен!")
-        } else {
-            println("Сервер недоступен.")
-        }*/
-            val eventPosterApi = retrofit.create(EventPosterApi::class.java)
+
+            val eventPosterApi =retrofit.create(EventPosterApi::class.java)
             val eventPosterConverter = EventPosterConverter()
             val eventPosterRepository: EventPosterRepository =   EventPosterRepositoryImpl(eventPosterApi, eventPosterConverter)
             val getEventPosterUseCase = GetEventPosterUseCase(eventPosterRepository)
@@ -85,16 +92,25 @@ class MainActivity : ComponentActivity() {
             val userAuthRepository: UserAuthRepository = UserAuthRepositoryImpl(userAuthApi, authConvert)
             val authUseCase = AuthUseCase(userAuthRepository)
 
+            val userRegApi = retrofit.create(UserRegApi::class.java)
+            val regConvert = RegConvert()
+            val userRegRepository: UserRegRepository = UserRegRepositoryImpl(userRegApi, regConvert)
+            val regUseCase = RegUseCase(userRegRepository)
+
             val profileApi = retrofit.create(ProfileApi::class.java)
             val userConverter = UserConverter()
             val profileRepository: ProfileRepository = ProfileRepositoryImpl(profileApi, userConverter)
             val getProfileUseCase = GetProfileUseCase(profileRepository)
 
-            val tokenRefreshApi = retrofit.create(TokenRefreshApi::class.java)
+            val profileUpdateApi = retrofit.create(ProfileUpdateApi::class.java)
+            val profileUpdateRepository: ProfileUpdateRepository = ProfileUpdateRepositoryImpl(profileUpdateApi, userConverter)
+            val updateProfileUseCase = UpdateProfileUseCase(profileUpdateRepository)
+
+            val tokenRefreshApi =retrofit.create(TokenRefreshApi::class.java)
             val refreshTokenRepository: RefreshTokenRepository = RefreshTokenRepositoryImpl(tokenRefreshApi, authConvert)
             val refreshTokenUseCase = RefreshTokenUseCase(refreshTokenRepository)
 
-            val hallApi = retrofit.create(HallApi::class.java)
+            val hallApi =retrofit.create(HallApi::class.java)
             val hallConverter = HallConverter()
             val hallRepository: HallRepository = HallRepositoryImpl(hallApi, hallConverter)
             val getHallUseCase = GetHallUseCase(hallRepository)
@@ -109,7 +125,7 @@ class MainActivity : ComponentActivity() {
             val orderRepository:OrderRepository=OrderRepositoryImpl(orderApi,orderConverter)
             val getOrderUseCase=GetOrderUseCase(orderRepository)
 
-            // Переключаемся на главный поток для обновления UI
+
             withContext(Dispatchers.Main) {
                 setContent {
                     ClubTheme {
@@ -117,7 +133,9 @@ class MainActivity : ComponentActivity() {
                             getEventPosterUseCase = getEventPosterUseCase,
                             getEventUseCase = getEventUseCase,
                             authUseCase = authUseCase,
+                            regUseCase=regUseCase,
                             getProfileUseCase = getProfileUseCase,
+                            updateProfileUseCase=updateProfileUseCase,
                             getHallUseCase = getHallUseCase,
                             purchaseUseCase=purchaseUseCase,
                             getOrderUseCase = getOrderUseCase,

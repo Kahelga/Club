@@ -26,6 +26,4 @@ class PosterViewModel(private val getEventPosterUseCase: GetEventPosterUseCase) 
             }
         }
     }
-
-
 }

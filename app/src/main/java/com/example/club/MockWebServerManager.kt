@@ -13,7 +13,10 @@ import java.io.IOException
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.club.profile.data.model.UserModel
+import com.example.club.profile.domain.entity.User
 import okio.Buffer
+import java.io.File
 import java.time.Instant
 
 class MockWebServerManager(private val context: Context, private val port: Int) {
@@ -61,6 +64,31 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 }
             }
 
+            if (request.path == "/api/v1/auth/register" && request.method == "POST") {
+                val body = request.body.readUtf8()
+                Log.d("MockWebServerManager", "Request: $body")
+
+                val responseFile =  "registration.json"
+
+                val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                return MockResponse().apply {
+                    setResponseCode(HttpURLConnection.HTTP_OK)
+
+                    when (responseBody) {
+                        is String -> setBody(responseBody)
+                        is ByteArray -> {
+                            val buffer = Buffer().write(responseBody)
+                            setBody(buffer)
+                        }
+
+                        null -> {
+                            setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                        }
+                    }
+                }
+            }
+
             if (request.path == "/tickets" && request.method == "POST") {
                 val body = request.body.readUtf8()
                 val authToken = request.getHeader("Authorization")
@@ -69,6 +97,53 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                     if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
                         val responseFile = "successful.json"
 
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> {
+                                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                }
+                            }
+                        }
+                    }else {
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+                }else {
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                    }
+                }
+            }
+
+            if (request.method == "PUT" && request.path?.startsWith("/users/") == true && request.path?.endsWith(
+                    "/profile"
+                ) == true
+            ) {
+                val body = request.body.readUtf8()
+                val login = request.path!!.substringAfter("/users/").substringBefore("/profile")
+                val authToken = request.getHeader("Authorization")
+
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                        val responseFile = when (login) {
+                            "user1@gmail.com" -> "user2.json"
+                            else -> "error.json"
+                        }
+                        /*val file = File(context.filesDir,responseFile)
+                        file.writeText(body)*/
                         val responseBody = getAssetFileContent(responseFile, "application/json")
 
                         return MockResponse().apply {
@@ -313,19 +388,18 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
     }
 
 
-    // Метод для загрузки файла из assets
+
     private fun getAssetFileContent(assetFile: String?, contentType: String?): Any? {
         return when {
             assetFile == null -> null
             contentType?.startsWith("image/") == true -> {
-                // Если это изображение, возвращаем его как байтовый массив
+
                 context.assets.open(assetFile).use { inputStream ->
-                    inputStream.readBytes() // Возвращаем байтовый массив для изображений
+                    inputStream.readBytes()
                 }
             }
 
             else -> {
-                // Для текстовых файлов
                 context.assets.open(assetFile).bufferedReader().use { it.readText() }
             }
         }
@@ -374,106 +448,3 @@ data class TokenInfo(val token: String, val issuedAt: Instant, val expiryDuratio
         @RequiresApi(Build.VERSION_CODES.O)
         get() = issuedAt.plusMillis(expiryDurationMillis)
 }
-
-/*class MockWebServerManager(private val context: Context, private val port: Int) {
-    private lateinit var server: MockWebServer
-    private val dispatcher = object : Dispatcher() {
-        private val responses = mutableMapOf<String, Queue<Response>>()
-
-        // Обработка входящих запросов
-        override fun dispatch(request: RecordedRequest): MockResponse {
-            val response = responses[request.path]?.poll()
-
-            if (response == null) {
-                Log.w("MockWebServer", "No response found for path: ${request.path}")
-                return MockResponse().apply {
-                    setResponseCode(HttpURLConnection.HTTP_NOT_FOUND)
-                }
-            }
-
-            Log.d("MockWebServer", "Loading file from assets: ${response.assetFile}")
-
-            val body = try {
-                getAssetFileContent(response.assetFile, response.contentType) // Метод для загрузки из assets
-            } catch (e: IOException) {
-                Log.e("MockWebServer", "File not found: ${response.assetFile}", e)
-                return MockResponse().apply {
-                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
-                }
-            }
-
-            // Формируем и возвращаем ответ
-            return MockResponse().apply {
-                setResponseCode(response.statusCode)
-                when (body) {
-                    is ByteArray -> {
-                        // Используем Buffer для установки байтового массива
-                        val buffer = Buffer().write(body)
-                        setBody(buffer) // Устанавливаем тело как Buffer для изображений
-                    }
-                    is String -> setBody(body) // Устанавливаем тело как строку для текстовых файлов
-                }
-                response.contentType?.let { setHeader("Content-Type", it) }
-            }
-        }
-
-        fun addMockResponse(requestUrl: String, response: Response) {
-            val queue = responses.getOrPut(requestUrl) { LinkedList() }
-            queue.add(response)
-        }
-    }
-
-    // Метод для загрузки файла из assets
-    private fun getAssetFileContent(assetFile: String?, contentType: String?): Any? {
-        return when {
-            assetFile == null -> null
-            contentType?.startsWith("image/") == true -> {
-                // Если это изображение, возвращаем его как байтовый массив
-                context.assets.open(assetFile).use { inputStream ->
-                    inputStream.readBytes() // Возвращаем байтовый массив для изображений
-                }
-            }
-            else -> {
-                // Для текстовых файлов
-                context.assets.open(assetFile).bufferedReader().use { it.readText() }
-            }
-        }
-    }
-
-    fun start() {
-        server = MockWebServer()
-        server.dispatcher = dispatcher
-
-        try {
-            server.start(port)
-            println("MockWebServer successfully launched on port $port")
-        } catch (e: IOException) {
-            println("Error when starting MockWebServer: ${e.message}")
-        }
-    }
-
-    fun shutdown() {
-        try {
-            server.shutdown()
-            println("MockWebServer successfully shut down.")
-        } catch (e: Throwable) {
-            println("Error when shutting down MockWebServer: ${e.message}")
-        }
-    }
-
-    fun mockResponses(vararg pairs: Pair<String, Response>) {
-        pairs.forEach { (request, response) ->
-            dispatcher.addMockResponse(request, response)
-        }
-    }
-
-    fun getUrl(): String {
-        return server.url("/").toString()
-    }
-}
-
-data class Response(
-    val assetFile: String? = null,
-    val statusCode: Int = HttpURLConnection.HTTP_OK,
-    val contentType: String? = null
-)*/

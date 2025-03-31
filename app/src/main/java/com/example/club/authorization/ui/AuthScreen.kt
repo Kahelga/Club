@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -41,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.club.R
 
@@ -52,7 +55,9 @@ import com.example.club.authorization.presentation.AuthViewModel
 fun AuthScreen(
     authViewModel: AuthViewModel,
     onLoginSuccess: (login: String) -> Unit,
+    onRegisterPressed:()->Unit,
     onBackPressed: () -> Unit,
+
 ) {
     val authState by authViewModel.state.collectAsState()
     val userLogin by authViewModel.login.collectAsState()
@@ -105,7 +110,7 @@ fun AuthScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        RegisterButton(onClick = { /*onRegisterPressed()*/ })
+        RegisterButton(onClick = { onRegisterPressed() })
 
         when (val state = authState) {
             is AuthState.Initial -> {
@@ -129,6 +134,8 @@ fun AuthScreen(
 
 @Composable
 fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boolean) {
+    var isPasswordVisible by remember { mutableStateOf(false) } // Состояние для видимости пароля
+
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -140,6 +147,16 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boole
                 contentDescription = null,
             )
         },
+        trailingIcon = {
+            val icon = if (isPasswordVisible) {
+                Icons.Default.Visibility
+            } else {
+                Icons.Default.VisibilityOff
+            }
+            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                Icon(imageVector = icon, contentDescription = null)
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
@@ -150,9 +167,8 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boole
                 ),
                 shape = RoundedCornerShape(8.dp)
             ),
-        visualTransformation = PasswordVisualTransformation()
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
     )
-
 }
 
 @Composable
@@ -173,28 +189,9 @@ fun TopBar(onBackPressed: () -> Unit) {
     }
 }
 
-/*
+
 @Composable
-fun LoginField(value: String, onValueChange: (String) -> Unit) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(stringResource(id = R.string.auth_login)) },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = null
-            )
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-    )
-}
-*/
-@Composable
-fun LoginField(value: String, onValueChange: (String) -> Unit) {
+private  fun LoginField(value: String, onValueChange: (String) -> Unit) {
     var errorMessage by remember { mutableStateOf("") }
 
     LaunchedEffect(value) {
@@ -205,7 +202,7 @@ fun LoginField(value: String, onValueChange: (String) -> Unit) {
         if (errorMessage.isNotEmpty()) {
             Text(
                 text = errorMessage,
-                color = Color.Red,
+                color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -253,7 +250,7 @@ fun RegisterButton(onClick: () -> Unit) {
     }
 }
 
-fun validateEmail(email: String): String {
+private fun validateEmail(email: String): String {
     if (email.isBlank()) {
         return ""
     }

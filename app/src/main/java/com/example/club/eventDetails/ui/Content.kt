@@ -303,9 +303,7 @@ private fun BuyTicketButton( toBuySelected: () -> Unit) {
 
 fun formatTimeSelected(date: String): String {
     // Указываем формат входящей даты
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("UTC") // Устанавливаем временную зону UTC
-    }
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
     // Указываем формат выходной времени
     val outputFormat = SimpleDateFormat("HH:mm", Locale("ru"))
 

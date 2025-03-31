@@ -20,28 +20,28 @@
       "A2"
     ],
     "issueDate": "2025-03-01T12:00:00Z",
-    "status": "PAID"
+    "status": "CANCELLED"
   },
   {
     "ticketId": "booking123",
     "userId": "user456",
     "event":{
-      "id": "4",
-      "title": "Электро Ночь",
-      "date": "2025-03-04T22:00:00Z",
+      "id": "2",
+      "title": "Фолк Фестиваль",
+      "date": "2025-03-09T17:00:00Z",
       "genre": [
-        "Электронная"
+        "Фолк"
       ],
-      "ageRating": "NC17",
-      "minPrice": 1300,
-      "imgPreview": "http://localhost:8090/img/poster4",
+      "ageRating": "G",
+      "minPrice": 1000,
+      "imgPreview": "http://localhost:8090/img/poster2",
       "status": "ACTIVE"
     },
     "seats": [
-      "A1",
-      "A2"
+      "B1",
+      "B2"
     ],
     "issueDate": "2025-03-01T12:00:00Z",
-    "status": "CANCELLED"
+    "status": "PAID"
   }
 ]

@@ -26,6 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.club.R
 import com.example.club.authorization.presentation.AuthViewModel
+
 import com.example.club.tickets.presentation.OrderState
 import com.example.club.tickets.presentation.OrderViewModel
 
@@ -49,9 +53,28 @@ fun OrderScreen(
 ) {
     val orderState by orderViewModel.state.collectAsState()
     val loginUser by authViewModel.login.collectAsState()
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val error =stringResource(id = R.string.error_unknown_error)
+
     LaunchedEffect(Unit) {
         orderViewModel.loadOrder()
     }
+    LaunchedEffect(orderState) {
+        when (orderState) {
+            is OrderState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (orderState as OrderState.Failure).message ?: error
+            }
+            is OrderState.Content -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
+            else -> {}
+        }
+    }
+
     Scaffold(
         bottomBar = {
             BottomBar({ onProfileSelected(loginUser) }, { onPosterSelected() })
@@ -66,15 +89,24 @@ fun OrderScreen(
 
             when (val state = orderState) {
                 is OrderState.Initial,
-                is OrderState.Loading -> com.example.club.poster.ui.Loading()
+                is OrderState.Loading -> Loading()
 
-                is OrderState.Failure -> com.example.club.poster.ui.Error(
-                    message = state.message ?: stringResource(id = R.string.error_unknown_error),
-                    onRetry = { orderViewModel.loadOrder() },
-                )
+                is OrderState.Failure ->{}
 
                 is OrderState.Content -> Content(
                     orders = state.orders
+                )
+            }
+            if (showErrorDialog) {
+                com.example.club.poster.ui.Error(
+                    message = errorMessage,
+                    onRetry = {
+                        orderViewModel.loadOrder()
+                        showErrorDialog = false
+                    },
+                    onCancel = {
+                        showErrorDialog = false
+                    }
                 )
             }
         }

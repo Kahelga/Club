@@ -27,14 +27,26 @@
     <string name="button_registration">Зарегистрироваться</string>
     <string name="validation_error">Некорректный формат</string>
 
+    <string name="reg_title">Регистрация</string>
+    <string name="repeat_password">Повтор пароля</string>
+    <string name="error_password_mismatch"> Пароли не совпадают </string>
+    <string name="error_register">Неверно заполнены данные!</string>
+    <string name="error_empty">Поле обязательно для заполнения.</string>
+    <string name="error_matches">Недопустимые символы. Используйте только буквы и пробелы.</string>
+    <string name="error_contains">Недопустимо использовать несколько пробелов подряд.</string>
+    <string name="error_With">"Недопустим ввод пробела в начале или конце."</string>
+    <string name="error_pass_blank">Пароль не должен быть пустым</string>
+    <string name="error_pass_matches">Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву, одну цифру и один специальный символ, а также быть не менее 8 символов</string>
+
     <string name="profile_title">Профиль </string>
     <string name="button_update">Обновить данные</string>
-    <string name="user_name">Имя*</string>
-    <string name="user_lastname">Отчество</string>
-    <string name="user_middlename">Фамилия*</string>
-    <string name="user_email">Почта*</string>
+    <string name="user_name">Имя</string>
+    <string name="user_lastname">Фамилия</string>
+    <string name="user_middlename">Отчество</string>
+    <string name="user_email">Почта</string>
     <string name="user_phone">Телефон</string>
     <string name="user_city">Город</string>
+    <string name="profile_update">Данные успешно обновлены!</string>
 
     <string name="hall_title"> Покупка билета </string>
     <string name="seat_name"> Место: %s </string>
@@ -64,4 +76,7 @@
     <string name="order_active">Активные</string>
     <string name="order_archive">История</string>
     <string name="order_error_massage">Выберите билеты для покупки.</string>
+
+
+
 </resources>

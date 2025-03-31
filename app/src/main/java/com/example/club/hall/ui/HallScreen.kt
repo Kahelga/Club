@@ -22,6 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,6 +35,8 @@ import com.example.club.hall.domain.entity.Ticket
 import com.example.club.hall.presentation.HallState
 import com.example.club.hall.presentation.HallViewModel
 import com.example.club.hall.ui.Error
+import com.example.club.poster.presentation.PosterState
+import com.example.club.poster.ui.Error
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,9 +46,29 @@ fun HallScreen(
     toBuySelected: (List<String>,Int) -> Unit,
 ) {
     val hallState by viewModel.state.collectAsState()
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val error =stringResource(id = R.string.error_unknown_error)
+
     LaunchedEffect(Unit) {
         viewModel.loadHall()
     }
+
+    LaunchedEffect(hallState) {
+        when (hallState) {
+            is HallState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (hallState as HallState.Failure).message ?: error
+            }
+            is HallState.Content -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
+            else -> {}
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = {
@@ -67,11 +92,7 @@ fun HallScreen(
             when (val state = hallState) {
                 is HallState.Initial,
                 is HallState.Loading -> Loading()
-                is HallState.Failure->Error(
-                    message = state.message ?: stringResource(id = R.string.error_unknown_error),
-                    onRetry = {viewModel.loadHall()},
-                    onDismiss = {onBackPressed}
-                )
+                is HallState.Failure->{}
                 is HallState.Content -> Content(
                     hall = state.hall,
                     toBuySelected = { selectedTickets ->
@@ -81,6 +102,18 @@ fun HallScreen(
                     }
                 )
             }
+        if (showErrorDialog) {
+            Error(
+                message = errorMessage,
+                onRetry = {
+                    viewModel.loadHall()
+                    showErrorDialog = false
+                },
+                onCancel = {
+                    showErrorDialog = false
+                }
+            )
+        }
 
     }
 

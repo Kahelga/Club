@@ -47,8 +47,8 @@ fun ProfileScreen(
     profileViewModel: ProfileViewModel,
     onPosterSelected: () -> Unit,
     onLogout: () -> Unit,
-    onOrderSelected:()->Unit
-    // onUpdateData: () -> Unit
+     onOrderSelected:()->Unit,
+     onUpdateData: () -> Unit
 ) {
     val profileState by profileViewModel.state.collectAsState()
     LaunchedEffect(Unit) {
@@ -87,6 +87,8 @@ fun ProfileScreen(
                     )
                 }
             }
+
+
             Spacer(modifier = Modifier.height(25.dp))
             when (val state = profileState) {
                 is ProfileState.Initial,
@@ -98,7 +100,8 @@ fun ProfileScreen(
                 )
 
                 is ProfileState.Content -> Content(
-                    user = state.user
+                    user = state.user,
+                    onUpdateData=onUpdateData
                 )
             }
 

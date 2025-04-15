@@ -10,6 +10,33 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/design" />
+            <option value="$PROJECT_DIR$/design/resources" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/admin" />
+            <option value="$PROJECT_DIR$/feature/admin/events" />
+            <option value="$PROJECT_DIR$/feature/admin/reports" />
+            <option value="$PROJECT_DIR$/feature/auth" />
+            <option value="$PROJECT_DIR$/feature/eventDetails" />
+            <option value="$PROJECT_DIR$/feature/hall" />
+            <option value="$PROJECT_DIR$/feature/poster" />
+            <option value="$PROJECT_DIR$/feature/profile" />
+            <option value="$PROJECT_DIR$/feature/profileUpdate" />
+            <option value="$PROJECT_DIR$/feature/purchase" />
+            <option value="$PROJECT_DIR$/feature/registration" />
+            <option value="$PROJECT_DIR$/feature/tickets" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/shared/event" />
+            <option value="$PROJECT_DIR$/shared/report" />
+            <option value="$PROJECT_DIR$/shared/tickets" />
+            <option value="$PROJECT_DIR$/shared/user" />
+            <option value="$PROJECT_DIR$/shared/user/auth" />
+            <option value="$PROJECT_DIR$/shared/user/profile" />
+            <option value="$PROJECT_DIR$/util" />
+            <option value="$PROJECT_DIR$/util/formatting" />
+            <option value="$PROJECT_DIR$/util/manager" />
+            <option value="$PROJECT_DIR$/util/manager/token" />
+            <option value="$PROJECT_DIR$/util/validation" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

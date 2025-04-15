@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Club</string>
+    <string name="poster_title"> Афиша событий</string>
+    <string name="error_title">Произошла ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="error_close">Закрыть</string>
+    <string name="min_price_event"> от %1$d₽</string>
+    <string name="button_details">Подробнее</string>
+
+    <string name="bar_poster">Афиша</string>
+
+    <string name="profile_title">Профиль </string>
+
+    <string name="order_title"> Билеты</string>
+
+
+
+
+</resources>

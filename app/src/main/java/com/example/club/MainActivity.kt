@@ -6,55 +6,72 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import com.example.club.authorization.data.TokenManager
-import com.example.club.authorization.data.converter.AuthConvert
-import com.example.club.authorization.data.network.TokenRefreshApi
-import com.example.club.authorization.data.network.UserAuthApi
-import com.example.club.authorization.data.repository.RefreshTokenRepositoryImpl
-import com.example.club.authorization.data.repository.UserAuthRepositoryImpl
-import com.example.club.authorization.domain.repository.RefreshTokenRepository
-import com.example.club.authorization.domain.repository.UserAuthRepository
-import com.example.club.authorization.domain.usecase.AuthUseCase
-import com.example.club.authorization.domain.usecase.RefreshTokenUseCase
-import com.example.club.eventDetails.data.converter.EventDetailsConverter
-import com.example.club.eventDetails.data.network.EventDetailsApi
-import com.example.club.eventDetails.data.repository.EventRepositoryImpl
-import com.example.club.eventDetails.domain.repository.EventDetailsRepository
-import com.example.club.eventDetails.domain.usecase.GetEventUseCase
-import com.example.club.hall.data.converter.HallConverter
-import com.example.club.hall.data.network.HallApi
-import com.example.club.hall.data.repository.HallRepositoryImpl
-import com.example.club.hall.domain.repository.HallRepository
-import com.example.club.hall.domain.usecase.GetHallUseCase
-import com.example.club.poster.data.converter.EventPosterConverter
-import com.example.club.poster.data.network.EventPosterApi
-import com.example.club.poster.data.repository.EventPosterRepositoryImpl
-import com.example.club.poster.domain.repository.EventPosterRepository
-import com.example.club.poster.domain.usecase.GetEventPosterUseCase
-import com.example.club.profile.data.converter.UserConverter
-import com.example.club.profile.data.network.ProfileApi
-import com.example.club.profile.data.repository.ProfileRepositoryImpl
-import com.example.club.profile.domain.repository.ProfileRepository
-import com.example.club.profile.domain.usecase.GetProfileUseCase
-import com.example.club.profileUpdate.data.network.ProfileUpdateApi
-import com.example.club.profileUpdate.data.repository.ProfileUpdateRepositoryImpl
-import com.example.club.profileUpdate.domain.repository.ProfileUpdateRepository
-import com.example.club.profileUpdate.domain.usecase.UpdateProfileUseCase
-import com.example.club.purchase.data.converter.PurchaseConverter
-import com.example.club.purchase.data.network.PurchaseApi
-import com.example.club.purchase.data.repository.PurchaseRepositoryImpl
-import com.example.club.purchase.domain.repository.PurchaseRepository
-import com.example.club.purchase.domain.usecase.PurchaseUseCase
-import com.example.club.registration.data.converter.RegConvert
-import com.example.club.registration.data.network.UserRegApi
-import com.example.club.registration.data.repository.UserRegRepositoryImpl
-import com.example.club.registration.domain.repository.UserRegRepository
-import com.example.club.registration.domain.usecase.RegUseCase
-import com.example.club.tickets.data.converter.OrderConverter
-import com.example.club.tickets.data.network.OrderApi
-import com.example.club.tickets.data.repository.OrderRepositoryImpl
-import com.example.club.tickets.domain.repository.OrderRepository
-import com.example.club.tickets.domain.usecase.GetOrderUseCase
+import com.example.club.util.manager.token.TokenManager
+import com.example.shared.user.auth.data.converter.AuthConvert
+import com.example.shared.user.auth.data.network.TokenRefreshApi
+import com.example.shared.user.auth.data.network.UserAuthApi
+import com.example.shared.user.auth.data.repository.RefreshTokenRepositoryImpl
+import com.example.shared.user.auth.data.repository.UserAuthRepositoryImpl
+import com.example.shared.user.auth.domain.repository.RefreshTokenRepository
+import com.example.shared.user.auth.domain.repository.UserAuthRepository
+import com.example.shared.user.auth.domain.usecase.AuthUseCase
+import com.example.shared.user.auth.domain.usecase.RefreshTokenUseCase
+import com.example.club.shared.event.data.converter.EventDetailsConverter
+import com.example.club.shared.event.data.network.EventDetailsApi
+import com.example.club.shared.event.data.repository.EventRepositoryImpl
+import com.example.club.shared.event.domain.repository.EventDetailsRepository
+import com.example.club.shared.event.domain.usecase.GetEventUseCase
+import com.example.club.shared.event.data.converter.HallConverter
+import com.example.club.shared.event.data.network.HallApi
+import com.example.club.shared.event.data.repository.HallRepositoryImpl
+import com.example.club.shared.event.domain.repository.HallRepository
+import com.example.club.shared.event.domain.usecase.GetHallUseCase
+import com.example.club.shared.event.data.converter.EventPosterConverter
+import com.example.club.shared.event.data.network.EventPosterApi
+import com.example.club.shared.event.data.network.EventsAdminApi
+import com.example.club.shared.event.data.repository.EventPosterRepositoryImpl
+import com.example.club.shared.event.data.repository.EventsAdminRepositoryImpl
+import com.example.club.shared.event.domain.repository.EventPosterRepository
+import com.example.club.shared.event.domain.repository.EventsAdminRepository
+import com.example.club.shared.event.domain.usecase.GetEventPosterUseCase
+import com.example.club.shared.event.domain.usecase.GetEventsAdminUseCase
+import com.example.club.shared.report.data.converter.ReportConverter
+import com.example.club.shared.report.data.network.EventReportApi
+import com.example.club.shared.report.data.network.ReportPeriodApi
+import com.example.club.shared.report.data.network.UserReportApi
+import com.example.club.shared.report.data.repository.EventReportRepositoryImpl
+import com.example.club.shared.report.data.repository.PeriodReportRepositoryImpl
+import com.example.club.shared.report.data.repository.UserReportRepositoryImpl
+import com.example.club.shared.report.domain.repository.EventReportRepository
+import com.example.club.shared.report.domain.repository.PeriodReportRepository
+import com.example.club.shared.report.domain.repository.UserReportRepository
+import com.example.club.shared.report.domain.usecase.GetReportEventUseCase
+import com.example.club.shared.report.domain.usecase.GetReportPeriodUseCase
+import com.example.club.shared.report.domain.usecase.GetReportUserUseCase
+import com.example.club.shared.user.profile.data.converter.UserConverter
+import com.example.club.shared.user.profile.data.network.ProfileApi
+import com.example.club.shared.user.profile.data.repository.ProfileRepositoryImpl
+import com.example.club.shared.user.profile.domain.repository.ProfileRepository
+import com.example.club.shared.user.profile.domain.usecase.GetProfileUseCase
+import com.example.club.shared.user.profile.data.network.ProfileUpdateApi
+import com.example.club.shared.user.profile.data.repository.ProfileUpdateRepositoryImpl
+import com.example.club.shared.user.profile.domain.repository.ProfileUpdateRepository
+import com.example.club.shared.user.profile.domain.usecase.UpdateProfileUseCase
+import com.example.club.shared.tickets.data.converter.PurchaseConverter
+import com.example.club.shared.tickets.data.network.PurchaseApi
+import com.example.club.shared.tickets.data.repository.PurchaseRepositoryImpl
+import com.example.club.shared.tickets.domain.repository.PurchaseRepository
+import com.example.club.shared.tickets.domain.usecase.PurchaseUseCase
+import com.example.shared.user.auth.data.converter.RegConvert
+import com.example.shared.user.auth.data.network.UserRegApi
+import com.example.shared.user.auth.data.repository.UserRegRepositoryImpl
+import com.example.shared.user.auth.domain.repository.UserRegRepository
+import com.example.shared.user.auth.domain.usecase.RegUseCase
+import com.example.club.shared.tickets.data.converter.OrderConverter
+import com.example.club.shared.tickets.data.network.OrderApi
+import com.example.club.shared.tickets.data.repository.OrderRepositoryImpl
+import com.example.club.shared.tickets.domain.repository.OrderRepository
+import com.example.club.shared.tickets.domain.usecase.GetOrderUseCase
 import com.example.club.ui.theme.ClubTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -89,8 +106,13 @@ class MainActivity : ComponentActivity() {
 
             val userAuthApi = retrofit.create(UserAuthApi::class.java)
             val authConvert = AuthConvert()
-            val userAuthRepository: UserAuthRepository = UserAuthRepositoryImpl(userAuthApi, authConvert)
-            val authUseCase = AuthUseCase(userAuthRepository)
+            val userAuthRepository: UserAuthRepository =
+               UserAuthRepositoryImpl(
+                    userAuthApi,
+                    authConvert
+                )
+            val authUseCase =
+                AuthUseCase(userAuthRepository)
 
             val userRegApi = retrofit.create(UserRegApi::class.java)
             val regConvert = RegConvert()
@@ -107,8 +129,15 @@ class MainActivity : ComponentActivity() {
             val updateProfileUseCase = UpdateProfileUseCase(profileUpdateRepository)
 
             val tokenRefreshApi =retrofit.create(TokenRefreshApi::class.java)
-            val refreshTokenRepository: RefreshTokenRepository = RefreshTokenRepositoryImpl(tokenRefreshApi, authConvert)
-            val refreshTokenUseCase = RefreshTokenUseCase(refreshTokenRepository)
+            val refreshTokenRepository: RefreshTokenRepository =
+                RefreshTokenRepositoryImpl(
+                    tokenRefreshApi,
+                    authConvert
+                )
+            val refreshTokenUseCase =
+                RefreshTokenUseCase(
+                    refreshTokenRepository
+                )
 
             val hallApi =retrofit.create(HallApi::class.java)
             val hallConverter = HallConverter()
@@ -121,10 +150,26 @@ class MainActivity : ComponentActivity() {
             val purchaseUseCase = PurchaseUseCase(purchaseRepository)
 
             val orderApi=retrofit.create(OrderApi::class.java)
-            val orderConverter=OrderConverter()
-            val orderRepository:OrderRepository=OrderRepositoryImpl(orderApi,orderConverter)
-            val getOrderUseCase=GetOrderUseCase(orderRepository)
+            val orderConverter= OrderConverter()
+            val orderRepository: OrderRepository = OrderRepositoryImpl(orderApi,orderConverter)
+            val getOrderUseCase= GetOrderUseCase(orderRepository)
 
+            val eventReportApi=retrofit.create(EventReportApi::class.java)
+            val reportConvert=ReportConverter()
+            val eventReportRepository:EventReportRepository= EventReportRepositoryImpl(eventReportApi,reportConvert)
+            val getReportEventUseCase=GetReportEventUseCase(eventReportRepository)
+
+            val userReportApi=retrofit.create(UserReportApi::class.java)
+            val userReportRepository: UserReportRepository = UserReportRepositoryImpl(userReportApi,reportConvert)
+            val getReportUserUseCase= GetReportUserUseCase(userReportRepository)
+
+            val reportPeriodApi=retrofit.create(ReportPeriodApi::class.java)
+            val periodReportRepository: PeriodReportRepository = PeriodReportRepositoryImpl(reportPeriodApi,reportConvert)
+            val getReportPeriodUseCase= GetReportPeriodUseCase(periodReportRepository)
+
+            val eventsAdminApi=retrofit.create(EventsAdminApi::class.java)
+            val eventsAdminRepository:EventsAdminRepository=EventsAdminRepositoryImpl(eventsAdminApi,eventDetailsConverter)
+            val getEventsAdminUseCase=GetEventsAdminUseCase(eventsAdminRepository)
 
             withContext(Dispatchers.Main) {
                 setContent {
@@ -139,6 +184,10 @@ class MainActivity : ComponentActivity() {
                             getHallUseCase = getHallUseCase,
                             purchaseUseCase=purchaseUseCase,
                             getOrderUseCase = getOrderUseCase,
+                            getReportPeriodUseCase = getReportPeriodUseCase,
+                            getReportEventUseCase = getReportEventUseCase,
+                            getReportUserUseCase = getReportUserUseCase,
+                            getEventsAdminUseCase=getEventsAdminUseCase,
                             tokenManager = tokenManager,
                             refreshTokenUseCase = refreshTokenUseCase
 

@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Club</string>
+    <string name="poster_title"> Афиша событий</string>
+    <string name="error_title">Произошла ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="error_close">Закрыть</string>
+
+
+    <string name="bar_poster">Афиша</string>
+
+    <string name="details_title">О событии</string>
+    <string name="details_description">Описание:</string>
+    <string name="details_artists">Исполнитель(и):</string>
+    <string name="details_description_more">Показать больше</string>
+    <string name="details_description_less">Скрыть</string>
+    <string name="duration_event"> %1$d мин</string>
+    <string name="venue_event"> Место проведения: %s </string>
+    <string name="dataTime_event"> %s %s </string>
+    <string name="button_return">Вернуть билет</string>
+    <string name="button_return_d">Вернуть </string>
+    <string name="profile_title">Профиль </string>
+    <string name="confirmation_title">Подтверждение</string>
+    <string name="confirmation_message">Вернуть билет?</string>
+
+    <string name="button_cancel">Отменить</string>
+
+    <string name="order_title"> Билеты</string>
+    <string name="order_idTicket"> Номер билета: %s</string>
+    <string name="order_seats"> Места: %s</string>
+    <string name="order_active">Активные</string>
+    <string name="order_archive">История</string>
+
+
+</resources>

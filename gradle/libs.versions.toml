@@ -16,6 +16,7 @@ composeBom = "2024.04.01"
 loggingInterceptor = "4.12.0"
 materialIconsExtended = "1.7.8"
 navigationCompose = "2.8.5"
+pieChart = "0.7.0"
 retrofit = "2.11.0"
 retrofit2KotlinxSerializationConverter = "0.8.0"
 retrofitKotlinxSerialization = "0.8.0"
@@ -24,6 +25,9 @@ mockwebserver = "4.12.0"
 mockwebserverVersion = "4.11.0"
 monitor = "1.7.2"
 securityCrypto = "1.1.0-alpha06"
+appcompat = "1.7.0"
+material = "1.12.0"
+vico = "2.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +53,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
+pie-chart = { module = "ir.mahozad.android:pie-chart", version.ref = "pieChart" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-kotlinx-serialization = { module = "com.jakewharton.retrofit:retrofit-kotlinx-serialization", version.ref = "retrofitKotlinxSerialization" }
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
@@ -56,10 +61,15 @@ mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "
 mockwebserver-v4110 = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserverVersion" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 

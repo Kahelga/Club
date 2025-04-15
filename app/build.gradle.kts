@@ -52,6 +52,26 @@ android {
 }
 
 dependencies {
+    implementation(project(":util:formatting"))
+    implementation(project(":util:validation"))
+    implementation(project(":util:manager:token"))
+    implementation(project(":design:resources"))
+    implementation(project(":shared:user:auth"))
+    implementation(project(":shared:user:profile"))
+    implementation(project(":shared:event"))
+    implementation(project(":shared:tickets"))
+    implementation(project(":shared:report"))
+    implementation(project(":feature:poster"))
+    implementation(project(":feature:eventDetails"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:registration"))
+    implementation(project(":feature:profile"))
+    implementation(project(":feature:profileUpdate"))
+    implementation(project(":feature:purchase"))
+    implementation(project(":feature:tickets"))
+    implementation(project(":feature:hall"))
+    implementation(project(":feature:admin:events"))
+    implementation(project(":feature:admin:reports"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

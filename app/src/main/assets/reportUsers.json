@@ -1,0 +1,29 @@
+[
+  {
+    "userId": "user123",
+    "report": {
+      "profit": 1000,
+      "ticketSold": 100,
+      "expenses": 500,
+      "netProfit": 500
+    }
+  },
+  {
+    "userId": "user456",
+    "report": {
+      "profit": 2000,
+      "ticketSold": 150,
+      "expenses": 800,
+      "netProfit": 1200
+    }
+  },
+  {
+    "userId": "user789",
+    "report": {
+      "profit": 1500,
+      "ticketSold": 120,
+      "expenses": 700,
+      "netProfit": 800
+    }
+  }
+]

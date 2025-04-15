@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Club</string>
+    <string name="poster_title"> Афиша событий</string>
+    <string name="error_title">Произошла ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="error_close">Закрыть</string>
+
+
+
+    <string name="tabRow_0">Общий отчет</string>
+    <string name="tabRow_1">Отчеты по мероприятиям</string>
+    <string name="tabRow_2">"Отчеты по пользователям"</string>
+
+    <string name="button_details">Подробнее</string>
+    <string name="title_reportE">График доходов</string>
+    <string name="title_reportPie">Диаграмма расходов и чистой прибыли</string>
+    <string name="title_reportTicket">График по проданным билетам</string>
+    <string name="report">Отчет</string>
+    <string name="totalIncome">Общий доход: %1$.2f₽</string>
+    <string name="totalTicket">Всего проданных билетов: %1d</string>
+    <string name="table_eventId">ID События</string>
+    <string name="table_userId">ID Пользователя</string>
+    <string name="table_profit">Прибыль</string>
+    <string name="table_ticketSold">Проданные билеты</string>
+    <string name="table_expenses">Расходы</string>
+    <string name="table_netProfit">Чистая прибыль</string>
+    <string name="bar_report">Отчеты</string>
+
+    <string name="profile_title">Сотрудники</string>
+
+    <string name="event_title">Мероприятия</string>
+
+
+
+
+</resources>

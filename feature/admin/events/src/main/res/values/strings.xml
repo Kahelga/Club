@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Club</string>
+    <string name="poster_title"> Афиша событий</string>
+    <string name="error_title">Произошла ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="error_close">Закрыть</string>
+
+    <string name="button_details">Подробнее</string>
+    <string name="dropdownMenu_select">All</string>
+    <string name="dropdownMenu_title">Выберите статус</string>
+    <string name="event_warning">Нет событий для отображения</string>
+
+    <string name="event_dataTime">Дата и время: %s %s</string>
+    <string name="event_ageRating">Возрастной рейтинг: %s</string>
+    <string name="event_genre">Жанр(ы): %s</string>
+    <string name="event_status">Статус: %s</string>
+
+    <string name="bar_poster">Афиша</string>
+    <string name="profile_title">Профиль </string>
+    <string name="diolog_hall">Состояние зала</string>
+
+    <string name="eventDetail_title">Мероприятие: %s</string>
+    <string name="eventDetail_dataTime">Дата и время:</string>
+    <string name="eventDetail_duration">Длительность:</string>
+    <string name="eventDetail_genre">Жанр(ы):</string>
+    <string name="eventDetail_ageRating">Возрастной рейтинг:</string>
+    <string name="eventDetail_description">Описание:</string>
+    <string name="eventDetail_artists">Артист(ы):</string>
+    <string name="eventDetail_status">Статус:</string>
+
+    <string name="bar_report"> Отчеты</string>
+    <string name="event_title"> Мероприятия</string>
+    <string name="hall_scene"> Сцена </string>
+    <string name="ticket_free"> Свободно</string>
+    <string name="ticket_reserved"> Забронировано</string>
+    <string name="ticket_occupied"> Занято</string>
+
+
+</resources>

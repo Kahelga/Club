@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Club</string>
+    <string name="error_title">Произошла ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="error_close">Закрыть</string>
+
+    <string name="all_title"> Выбор места </string>
+    <string name="data_title"> Ваши данные </string>
+    <string name="progress"> Шаг %1$d из %2$d </string>
+    <string name="dataTime">Дата и время\n%s %s</string>
+    <string name="button_buy_ticket2">Купить</string>
+
+    <string name="purchase_dialog">Билет успешно куплен!</string>
+    <string name="purchase_dialog_ok">ОК</string>
+    <string name="purchase_seats">Места</string>
+    <string name="purchase_price">Общая стоимость: %1$d₽</string>
+    <string name="user_name">Имя</string>
+    <string name="user_lastname">Фамилия</string>
+    <string name="user_middlename">Отчество</string>
+    <string name="user_email">Почта</string>
+    <string name="user_phone">Телефон</string>
+    <string name="user_city">Город</string>
+    <string name="error_register">Неверно заполнены данные!</string>
+    <string name="button_next">Продолжить</string>
+
+
+</resources>

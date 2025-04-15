@@ -1,0 +1,10 @@
+{
+  "startDate": "2025-03-10T00:00:00Z",
+  "endDate": "2025-04-10T00:00:00Z",
+  "report": {
+    "profit": 1000,
+    "ticketSold": 100,
+    "expenses": 500,
+    "netProfit": 1500
+  }
+}

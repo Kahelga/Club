@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mdThemeDarkSurfaceVariant">#524343</color>
+    <color name="mdThemeDarkOnSurfaceVariant">#ECE0DF</color>
+    <color name="mdThemeDarkOutline">#A08C8C</color>
+    <color name="mdThemeDarkInverseOnSurface">#201A1A</color>
+</resources>

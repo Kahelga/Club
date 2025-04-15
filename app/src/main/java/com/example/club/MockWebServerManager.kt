@@ -1,5 +1,6 @@
 package com.example.club
 
+import android.annotation.SuppressLint
 import android.util.Log
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -13,8 +14,8 @@ import java.io.IOException
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.club.profile.data.model.UserModel
-import com.example.club.profile.domain.entity.User
+import com.example.club.shared.user.profile.data.model.UserModel
+import com.example.club.shared.user.profile.domain.entity.User
 import okio.Buffer
 import java.io.File
 import java.time.Instant
@@ -26,6 +27,7 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
 
         private var currentTokenInfo: TokenInfo? = null
 
+        @SuppressLint("SuspiciousIndentation")
         @RequiresApi(Build.VERSION_CODES.O)
         override fun dispatch(request: RecordedRequest): MockResponse {
             if (request.path == "/api/v1/auth/login" && request.method == "POST") {
@@ -175,6 +177,7 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 }
             }
             if (request.path == "/tickets" && request.method == "GET") {
+
                 val authToken = request.getHeader("Authorization")
                 if (isTokenValid(authToken)) {
                     if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
@@ -213,7 +216,144 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 }
 
             }
+            if (request.path == "/admin/report/events" && request.method == "GET") {
+                val startDate = request.getHeader("startDate") // Получаем startDate из заголовков
+                val endDate = request.getHeader("endDate") // Получаем endDate из заголовков
+                val authToken = request.getHeader("Authorization")
+                    if (isTokenValid(authToken)) {
+                        if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                            val responseFile = if (startDate == "2025-03-10T00:00:00Z" && endDate == "2025-04-10T00:00:00Z") {
+                                "reportEvents.json"
+                            } else {
+                                "error.json"
+                            }
+                            val responseBody = getAssetFileContent(responseFile, "application/json")
 
+                            return MockResponse().apply {
+                                setResponseCode(HttpURLConnection.HTTP_OK)
+
+                                when (responseBody) {
+                                    is String -> setBody(responseBody)
+                                    is ByteArray -> {
+                                        val buffer = Buffer().write(responseBody)
+                                        setBody(buffer)
+                                    }
+
+                                    null -> {
+                                        setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                    }
+                                }
+                            }
+
+                        }else{
+
+                            return MockResponse().apply {
+                                setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                            }
+                        }
+
+                    }else{
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+
+
+            }
+            if (request.path == "/admin/reports" && request.method == "GET") {
+                val startDate = request.getHeader("startDate") // Получаем startDate из заголовков
+                val endDate = request.getHeader("endDate") // Получаем endDate из заголовков
+                val authToken = request.getHeader("Authorization")
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                        val responseFile = if (startDate == "2025-03-10T00:00:00Z" && endDate == "2025-04-10T00:00:00Z") {
+                            "reportPeriod.json"
+                        } else {
+                            "error.json"
+                        }
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> {
+                                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                }
+                            }
+                        }
+
+                    }else{
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+                }else{
+
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                    }
+                }
+
+
+
+            }
+            if (request.path == "/admin/report/users" && request.method == "GET") {
+                val startDate = request.getHeader("startDate") // Получаем startDate из заголовков
+                val endDate = request.getHeader("endDate") // Получаем endDate из заголовков
+                val authToken = request.getHeader("Authorization")
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                        val responseFile = if (startDate == "2025-03-10T00:00:00Z" && endDate == "2025-04-10T00:00:00Z") {
+                            "reportUsers.json"
+                        } else {
+                            "error.json"
+                        }
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> {
+                                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                }
+                            }
+                        }
+
+                    }else{
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+                }else{
+
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                    }
+                }
+
+
+
+            }
             if (request.path == "/auth/login/refresh" && request.method == "POST") {
                 val body = request.body.readUtf8()
                 val refreshToken = body.substringAfter("\"refresh_token\":\"").substringBefore("\"")
@@ -329,6 +469,46 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                         setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
                     }
                 }
+
+            }
+            if (request.path == "/admin/events" && request.method == "GET") {
+                val authToken = request.getHeader("Authorization")
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                        val responseFile = "eventDetails.json"
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> {
+                                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                }
+                            }
+                        }
+
+                    }else{
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+                }else{
+
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                    }
+                }
+
+
 
             }
             // Обработка других запросов

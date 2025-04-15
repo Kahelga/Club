@@ -1,0 +1,38 @@
+[
+  {
+    "eventId": "event_001",
+    "report": {
+      "profit": 50000,
+      "ticketSold": 100,
+      "expenses": 500,
+      "netProfit": 500
+    }
+  },
+  {
+    "eventId": "event_002",
+    "report": {
+      "profit": 600000,
+      "ticketSold": 200,
+      "expenses": 800,
+      "netProfit": 1200
+    }
+  },
+  {
+    "eventId": "event_003",
+    "report": {
+      "profit": 150000,
+      "ticketSold": 150,
+      "expenses": 700,
+      "netProfit": 800
+    }
+  },
+  {
+    "eventId": "event_004",
+    "report": {
+      "profit": 250000,
+      "ticketSold": 250,
+      "expenses": 1000,
+      "netProfit": 1500
+    }
+  }
+]

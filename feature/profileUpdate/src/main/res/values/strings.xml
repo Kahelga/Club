@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Club</string>
+    <string name="error_title">Произошла ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="error_unknown_error">Неизвестная ошибка</string>
+    <string name="error_close">Закрыть</string>
+
+
+    <string name="auth_title">Авторизация </string>
+    <string name="auth_login">Email </string>
+    <string name="auth_pass">Пароль </string>
+    <string name="validation_error">Некорректный формат</string>
+
+    <string name="error_register">Неверно заполнены данные!</string>
+    <string name="error_empty">Поле обязательно для заполнения.</string>
+    <string name="error_matches">Недопустимые символы. Используйте только буквы и пробелы.</string>
+    <string name="error_contains">Недопустимо использовать несколько пробелов подряд.</string>
+    <string name="error_With">"Недопустим ввод пробела в начале или конце."</string>
+    <string name="error_pass_blank">Пароль не должен быть пустым</string>
+    <string name="error_pass_matches">Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву, одну цифру и один специальный символ, а также быть не менее 8 символов</string>
+
+    <string name="profile_title">Профиль </string>
+    <string name="button_update">Обновить данные</string>
+    <string name="user_name">Имя</string>
+    <string name="user_lastname">Фамилия</string>
+    <string name="user_middlename">Отчество</string>
+    <string name="user_email">Почта</string>
+    <string name="user_phone">Телефон</string>
+    <string name="user_city">Город</string>
+    <string name="profile_update">Данные успешно обновлены!</string>
+    <string name="purchase_dialog_ok">ОК</string>
+
+
+</resources>

@@ -83,8 +83,7 @@ fun DataScreen(
         }
         when (val state = profileState) {
             is ProfileState.Initial,
-            is ProfileState.Loading -> {
-            } /*-> Loading()*/
+            is ProfileState.Loading -> {}
             is ProfileState.Failure -> Error(
                 message = state.message
                     ?: stringResource(id = R.string.error_unknown_error),

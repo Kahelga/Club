@@ -99,7 +99,10 @@ private fun OrderItem(item: Order, showReturnButton: Boolean) {
             .fillMaxWidth()
             .padding(vertical = 30.dp, horizontal = 12.dp),
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
     ) {
         Column(
             modifier = Modifier

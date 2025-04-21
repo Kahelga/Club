@@ -38,7 +38,7 @@ import com.example.club.util.validation.validateSurname
 @Composable
 fun ContentData(
     user: User,
-    toBuySelected: (/*List<String>,eventId: String,userId:String*/) -> Unit,
+    toBuySelected: () -> Unit,
 ) {
     val id by remember { mutableStateOf(user.id ) }
     var firstname by remember { mutableStateOf(user.firstname ) }
@@ -64,7 +64,8 @@ fun ContentData(
                 onEmailChange = { email = it },
                 onPhoneChange = { phone = it },
                 onCityChange = { city = it },
-                onUpdateData = {}
+                toBuySelected=toBuySelected
+
             )
         }
     }
@@ -83,7 +84,7 @@ private fun UserItem(
     onEmailChange: (String) -> Unit,
     onPhoneChange: (String) -> Unit,
     onCityChange: (String) -> Unit,
-    onUpdateData: () -> Unit
+    toBuySelected: () -> Unit
 ) {
     var firstnameError by remember { mutableStateOf("") }
     var lastnameError by remember { mutableStateOf("") }
@@ -164,7 +165,7 @@ private fun UserItem(
                 focusManager.clearFocus()
                 if (firstnameError.isEmpty() && lastnameError.isEmpty() && middlenameError.isEmpty() &&
                     emailError.isEmpty() && phoneError.isEmpty() && cityError.isEmpty()) {
-                    onUpdateData()
+                    toBuySelected()
                 } else {
                     showDialog = true
                 }
@@ -193,7 +194,7 @@ fun ProfileField(label: String, value: String, onValueChange: (String) -> Unit, 
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.onSurfaceVariant )
+            .background(MaterialTheme.colorScheme.surfaceVariant )
     )
     if (errorMessage.isNotEmpty()) {
         Text(

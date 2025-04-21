@@ -117,8 +117,10 @@ private fun HallItem(
 
         Card(
             modifier = Modifier.height(400.dp),
-               // .background(MaterialTheme.colorScheme.secondaryContainer),
-            elevation = CardDefaults.cardElevation(10.dp)
+            elevation = CardDefaults.cardElevation(10.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
         ) {
             SeatPlanView(
                 seatPlan = hall.seatingPlan,
@@ -407,7 +409,10 @@ private fun SelectedTicketInfo(tickets: List<Ticket>) {
                                 .padding(4.dp)
                                 .heightIn(max = 100.dp)
                                 .weight(1f),
-                            elevation = CardDefaults.cardElevation(8.dp)
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            ),
                         ) {
                             Column(
                                 modifier = Modifier

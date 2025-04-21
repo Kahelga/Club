@@ -7,9 +7,11 @@
 
     <string name="all_title"> Выбор места </string>
     <string name="data_title"> Ваши данные </string>
+    <string name="card_title">Карта оплаты </string>
     <string name="progress"> Шаг %1$d из %2$d </string>
     <string name="dataTime">Дата и время\n%s %s</string>
     <string name="button_buy_ticket2">Купить</string>
+    <string name="button_buy">Оплатить</string>
 
     <string name="purchase_dialog">Билет успешно куплен!</string>
     <string name="purchase_dialog_ok">ОК</string>
@@ -23,6 +25,10 @@
     <string name="user_city">Город</string>
     <string name="error_register">Неверно заполнены данные!</string>
     <string name="button_next">Продолжить</string>
-
+    <string name="label_cardNumber">Номер карты</string>
+    <string name="example_cardNumber">0000 0000 0000 0000</string>
+    <string name="label_date">ММ/ГГ</string>
+    <string name="example_date">01/23</string>
+    <string name="label_cvv">CVV</string>
 
 </resources>

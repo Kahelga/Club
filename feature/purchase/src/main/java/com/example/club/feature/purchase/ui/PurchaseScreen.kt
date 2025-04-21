@@ -45,65 +45,21 @@ import com.example.club.feature.purchase.presentation.PurchaseViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PurchaseScreen(
-   // viewModel: PurchaseViewModel,
     viewModelEvent: EventDetailsViewModel,
     seats: List<String>,
     totalPrice: Int,
     onBackPressed: () -> Unit,
     onData: () -> Unit
 ) {
-  //  val purchaseState by viewModel.state.collectAsState()
+
     val detailsState by viewModelEvent.state.collectAsState()
-    //val purchaseRequest = PurchaseRequest(eventId, seats)
-    var showDialog by remember { mutableStateOf(false) }
     val progress = 1
     val totalSteps = 3
+
     LaunchedEffect(Unit) {
         viewModelEvent.loadEvent()
     }
-  /*  when (val state = purchaseState) {
-        is PurchaseState.Initial -> {
-        }
 
-        is PurchaseState.Loading -> {
-            Loading()
-        }
-
-        is PurchaseState.Success -> {
-            if (!showDialog) {
-                showDialog = true
-            }
-        }
-
-        is PurchaseState.Failure -> {
-            Error(
-                message = state.message ?: stringResource(id = R.string.error_unknown_error),
-                onRetry = { viewModel.buyTicket(purchaseRequest) }
-            )
-        }
-    }
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            text = {
-                Text(
-                    stringResource(id = R.string.purchase_dialog),
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showDialog = false
-                        onPosterScreen()
-                    }
-                ) {
-                    Text(stringResource(id = R.string.purchase_dialog_ok))
-                }
-            }
-        )
-    }*/
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         TopAppBar(

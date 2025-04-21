@@ -57,11 +57,13 @@ import com.example.club.shared.user.profile.domain.usecase.UpdateProfileUseCase
 import com.example.club.feature.profileupdate.presentation.ProfileUpdateViewModel
 import com.example.club.feature.profileupdate.presentation.ProfileUpdateViewModelFactory
 import com.example.club.feature.profileupdate.ui.ProfileUpdateScreen
+import com.example.club.feature.purchase.CardRoute
 import com.example.club.feature.purchase.DataRoute
 import com.example.club.feature.purchase.PurchaseRoute
 import com.example.club.shared.tickets.domain.usecase.PurchaseUseCase
 import com.example.club.feature.purchase.presentation.PurchaseViewModel
 import com.example.club.feature.purchase.presentation.PurchaseViewModelFactory
+import com.example.club.feature.purchase.ui.CardScreen
 import com.example.club.feature.purchase.ui.DataScreen
 import com.example.club.feature.purchase.ui.PurchaseScreen
 import com.example.club.feature.registration.RegRoute
@@ -115,7 +117,7 @@ fun MainScreen(
         )
     )
     Surface {
-        NavHost(navController = navController, startDestination = AuthRoute/*PosterRoute*/) {
+        NavHost(navController = navController, startDestination = /*AuthRoute*/PosterRoute) {
             composable<PosterRoute> {
                 val viewModel: PosterViewModel =
                     viewModel(factory = PosterViewModelFactory(getEventPosterUseCase))
@@ -169,7 +171,7 @@ fun MainScreen(
                                 popUpTo(AuthRoute) { inclusive = true }
                             }
                         } else {//(if role=admin)
-                            navController.navigate(ReportsRoute/*PosterRoute*/)//ProfileRoute(login = it)
+                            navController.navigate(/*ReportsRoute*/PosterRoute)//ProfileRoute(login = it)
                         }
                     },
                     onRegisterPressed={navController.navigate(RegRoute){popUpTo(AuthRoute) { inclusive = true }} },
@@ -262,25 +264,17 @@ fun MainScreen(
             }
             composable<PurchaseRoute> {
                 val destination = it.toRoute<PurchaseRoute>()
-               /* val viewModel = viewModel(
-                    PurchaseViewModel::class.java,
-                    factory = PurchaseViewModelFactory(
-                        purchaseUseCase,
-                        refreshTokenUseCase,
-                        tokenManager
-                    )
-                )*/
+
                 val viewModelEvent = viewModel(
                     EventDetailsViewModel::class.java,
                     factory = EventDetailsViewModelFactory(destination.eventId, getEventUseCase)
                 )
                 PurchaseScreen(
-                   // viewModel,
                     viewModelEvent,
                     destination.seats,
                     destination.totalPrice,
                     onBackPressed = { navController.popBackStack() },
-                    onData = {navController.navigate(DataRoute(eventId = destination.eventId, seats = destination.seats)) }//navController.navigate(PosterRoute)
+                    onData = {navController.navigate(DataRoute(eventId = destination.eventId, seats = destination.seats)) }
                 )
 
             }
@@ -288,9 +282,28 @@ fun MainScreen(
                 val destination = it.toRoute<DataRoute>()
                 DataScreen(
                     viewModelProfile,
-
                     onBackPressed = { navController.popBackStack() },
-                    toBuySelected = {}
+                    toBuySelected = {navController.navigate(CardRoute(destination.eventId,destination.seats))}
+                )
+
+            }
+            composable<CardRoute>{
+                val destination = it.toRoute<CardRoute>()
+                 val viewModel = viewModel(
+                   PurchaseViewModel::class.java,
+                   factory = PurchaseViewModelFactory(
+                       purchaseUseCase,
+                       refreshTokenUseCase,
+                       tokenManager
+                   )
+               )
+                CardScreen(
+                    destination.eventId,
+                    destination.seats,
+                    viewModel,
+                    onBackPressed = { navController.popBackStack() },
+                    //navController.navigate(PosterRoute)
+
                 )
 
             }

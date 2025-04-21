@@ -28,6 +28,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 
@@ -143,12 +145,14 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boole
         onValueChange = onValueChange,
         label = { Text(stringResource(id = R.string.auth_pass)) },
         isError = isError,
+
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = null,
             )
         },
+
         trailingIcon = {
             val icon = if (isPasswordVisible) {
                 Icons.Default.Visibility
@@ -158,7 +162,9 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boole
             IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                 Icon(imageVector = icon, contentDescription = null)
             }
+
         },
+
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
@@ -169,6 +175,7 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boole
                 ),
                 shape = RoundedCornerShape(8.dp)
             ),
+
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
     )
 }

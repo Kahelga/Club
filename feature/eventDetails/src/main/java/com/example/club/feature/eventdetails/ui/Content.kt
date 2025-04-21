@@ -156,7 +156,10 @@ fun EventInfoCard(event: EventDetails) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant // Установите нужный цвет здесь
+        ),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             EventTitle(event)
@@ -221,7 +224,10 @@ private fun EventDescription(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant // Установите нужный цвет здесь
+        ),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(

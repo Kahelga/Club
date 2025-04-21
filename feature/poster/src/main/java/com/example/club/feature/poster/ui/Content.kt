@@ -511,7 +511,8 @@ fun SearchBar(query: String, onQueryChange: (String) -> Unit, focusRequester: Fo
                 if (!focusState.hasFocus && query.isEmpty()) {
                     keyboardController?.hide()
                 }
-            }
+            },
+
     )
 }
 
@@ -525,7 +526,10 @@ private fun EventItem(
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 6.dp),
         shape = RoundedCornerShape(5.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             EventImage(item)

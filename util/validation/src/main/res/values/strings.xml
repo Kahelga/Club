@@ -1,0 +1,18 @@
+<resources>
+    <string name="error_field_required">Поле обязательно для заполнения.</string>
+    <string name="error_invalid_characters">Недопустимые символы. Используйте только буквы и пробелы.</string>
+    <string name="error_invalid_format">Некорректный формат.</string>
+    <string name="error_multiple_spaces">Недопустимо использовать несколько пробелов подряд.</string>
+    <string name="error_space_start_end">Недопустим ввод пробела в начале или конце.</string>
+    <string name="error_password_requirements">Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву, одну цифру и один специальный символ, а также быть не менее 8 символов.</string>
+    <string name="error_password_mismatch">Пароли не совпадают.</string>
+    <string name="error_phone_format">Номер телефона должен содержать только цифры и быть в диапазоне от 10 до 15 цифр.</string>
+    <string name="error_city_format">Некорректный формат. Используйте только буквы, цифры и символы: - .</string>
+    <string name="error_card_number">Код должен содержать 8 цифр.</string>
+    <string name="error_cvv">Код должен содержать 4 цифры.</string>
+    <string name="error_expiration_date">Срок действия должен содержать 2 цифры для месяца и 2 для года.</string>
+    <string name="error_month_limit">Максимально допустимое число месяца 12.</string>
+    <string name="error_year_limit">Максимально допустимое число для года 99.</string>
+
+
+</resources>

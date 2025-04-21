@@ -1,5 +1,6 @@
 package com.example.club.util.validation
 
+
 fun validateSurname(surname: String): String {
     val regex = Regex("^[А-Яа-яЁёA-Za-z' -]{1,60}$")
     return when {
@@ -72,6 +73,7 @@ fun validatePhone(phone: String): String {
         else -> ""
     }
 }
+
 fun validateCity(city: String): String {
     if (city.isBlank()) {
         return ""
@@ -86,6 +88,35 @@ fun validateCity(city: String): String {
             "Недопустим ввод спец. символов в начале и в конце строки."
         hasCyrillic && hasLatin -> "Значение должно быть задано с использованием одного из следующих алфавитов: кириллического или латинского."
         city.contains("--") || city.contains("  ") -> "Недопустимо использовать несколько пробелов или дефисов подряд."
+        else -> ""
+    }
+}
+
+fun validateCardNumber(cardNumber: String): String {
+    return when {
+        cardNumber.isEmpty() -> "Поле обязательно для заполнения."
+        !cardNumber.all { it.isDigit() } -> "Допустимы только цифры."
+        cardNumber.length != 16 -> "Номер карты должен содержать 16 цифр."
+        else -> ""
+    }
+}
+
+fun validateCVV(cvv: String): String {
+    return when {
+        cvv.isEmpty() -> "Поле обязательно для заполнения."
+        !cvv.all { it.isDigit() } -> "Допустимы только цифры."
+        cvv.length != 3 -> "Код должен содержать 3 цифры."
+        else -> ""
+    }
+}
+
+fun validateExpirationDate(month: String, year: String): String {
+    return when {
+        month.isEmpty() || year.isEmpty() -> "Поле обязательно для заполнения."
+        !month.all { it.isDigit() } || !year.all { it.isDigit() } -> "Допустимы только цифры."
+        month.length != 2 || year.length != 2 -> "Срок действия должен содержать 2 цифры для месяца и 2 для года."
+        month.toInt() !in 1..12 -> "Максимально допустимое число месяца 12."
+        year.toInt() > 99 -> "Максимально допустимое число для года 99."
         else -> ""
     }
 }

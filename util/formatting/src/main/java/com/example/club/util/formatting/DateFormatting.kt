@@ -109,8 +109,26 @@ fun formatDateString(date: Date): String {
     val outputFormat = SimpleDateFormat("dd.MM.yyyy", Locale("ru"))
     return outputFormat.format(date)
 }
+fun formatDateToDDMMYYYY(dateString: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        if (date != null) outputFormat.format(date) else ""
+    } catch (e: Exception) {
+        ""
+    }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
  fun localDateToDate(localDate: LocalDate): Date {
     return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+}
+
+fun getMonthNameInNominative(month: Int): String {
+    val months = arrayOf(
+        "январь", "февраль", "март", "апрель", "май", "июнь",
+        "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"
+    )
+    return months[month - 1]
 }

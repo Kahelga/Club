@@ -32,9 +32,10 @@ class NetworkModule(context: Context) {
         const val READ_TIMEOUT = 10L
         const val MOCK_SERVER_PORT = 8090
     }
+
     private val mockWebServerManager = MockWebServerManager(context, MOCK_SERVER_PORT)
 
-   private lateinit var retrofit: Retrofit
+    private lateinit var retrofit: Retrofit
 
     private val initializationDeferred = CompletableDeferred<Unit>()
 
@@ -56,9 +57,9 @@ class NetworkModule(context: Context) {
                         "/img/poster2" to Response("poster2.jpeg", HttpURLConnection.HTTP_OK, "image/jpeg"),
                         "/img/poster3" to Response("poster3.png", HttpURLConnection.HTTP_OK, "image/png"),
                         "/img/poster4" to Response("poster4.png", HttpURLConnection.HTTP_OK, "image/png"),
+                        "/bookings/booking123" to Response("bookedTicket.json", HttpURLConnection.HTTP_OK),
 
-
-                    )
+                        )
                 }
                 retrofit = Retrofit.Builder().client(provideOkHttpClientWithProgress())
                     .baseUrl(mockWebServerManager.getUrl())
@@ -78,19 +79,20 @@ class NetworkModule(context: Context) {
         return retrofit
     }
 
-   // private val baseUrl = mockWebServerManager.getUrl()
+    // private val baseUrl = mockWebServerManager.getUrl()
     /*private val baseUrl: String
         get() = mockWebServerManager.getUrl()*/
 
-   /* val retrofit = Retrofit.Builder()
-        .client(provideOkHttpClientWithProgress())
-        .baseUrl(BASE_URL)
-        .addConverterFactory(provideKotlinXSerializationFactory())
-        .build()*/
-   val cacheSize = 10 * 1024 * 1024 // 10 MB
+    /* val retrofit = Retrofit.Builder()
+         .client(provideOkHttpClientWithProgress())
+         .baseUrl(BASE_URL)
+         .addConverterFactory(provideKotlinXSerializationFactory())
+         .build()*/
+    val cacheSize = 10 * 1024 * 1024 // 10 MB
     val cache = Cache(File(context.cacheDir, "http_cache"), cacheSize.toLong())
     private fun provideOkHttpClientWithProgress(): OkHttpClient =
-        OkHttpClient().newBuilder()./*cache(cache).*/connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+        OkHttpClient().newBuilder()
+            ./*cache(cache).*/connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS).addInterceptor(provideLoggingInterceptor())
             .build()

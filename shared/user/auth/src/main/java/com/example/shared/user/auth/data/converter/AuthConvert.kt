@@ -12,6 +12,7 @@ class AuthConvert {
 
             accessToken = model.accessToken,
             refreshToken = model.refreshToken,
+            role=model.role
         )
 
    }

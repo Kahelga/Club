@@ -75,6 +75,7 @@ dependencies {
     implementation(project(":shared:user:profile"))
     implementation(project(":util:validation"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:booking"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

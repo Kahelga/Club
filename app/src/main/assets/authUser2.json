@@ -1,4 +1,6 @@
 {
-  "access_token": "eyJpc3MiOiJBdXRoIFKvvdte",
-  "refresh_token": "eyJpc3MiOiJBdXRoIFNlcnZlciIs"
+  "accessToken": "eyJpc3MiOiJBdXRoIFNlcnZlciIs",
+  "refreshToken": "eyJpc3MiOiJBdXRoIFKvvdte",
+  "message": " ",
+  "role": "admin"
 }

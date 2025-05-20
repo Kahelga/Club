@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class SeatPlanModel(
     val row:Int,
     val column:Int,
-    val tickets:List<TicketModel>
+    val tickets:List<TicketModel>,
+    val available: Boolean
 )

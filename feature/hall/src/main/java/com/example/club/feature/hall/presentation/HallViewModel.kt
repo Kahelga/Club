@@ -22,6 +22,9 @@ class HallViewModel(
     val state: StateFlow<HallState> = _state
     private var accessToken: String? = null
 
+    fun setHallStateToInitial() {
+        _state.value = HallState.Initial
+    }
 
     fun setEventId(id: String) {
         eventId = id

@@ -31,4 +31,11 @@
     <string name="example_date">01/23</string>
     <string name="label_cvv">CVV</string>
 
+    <string name="title_event">Название мероприятия</string>
+    <string name="event_dataTime">Дата и время</string>
+    <string name="seats"> Места</string>
+
+    <string name="button_poster">На главную</string>
+    <string name="button_order">Детали заказа</string>
+
 </resources>

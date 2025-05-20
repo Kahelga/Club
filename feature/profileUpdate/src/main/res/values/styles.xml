@@ -1,0 +1,17 @@
+<resources>
+
+    <style name="CustomDatePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/mdThemeDarkSurfaceVariant</item>
+        <item name="android:background">@color/mdThemeDarkInverseOnSurface</item>
+        <item name="android:textColorPrimary">@color/mdThemeDarkOnSurfaceVariant</item>
+        <item name="android:textColorSecondary">@color/mdThemeDarkOutline</item>
+        <item name="android:datePickerStyle">@style/CustomDatePickerStyle</item>
+    </style>
+
+    <style name="CustomDatePickerStyle" parent="android:Widget.DatePicker">
+        <item name="android:calendarTextColor">@color/mdThemeDarkOnSurfaceVariant</item>
+        <item name="android:headerBackground">@color/mdThemeDarkSurfaceVariant</item>
+
+    </style>
+</resources>
+

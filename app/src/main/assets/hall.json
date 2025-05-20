@@ -1,6 +1,6 @@
 {
   "id": "hall123",
-  "name": "Зал 1",
+  "name": "Малый зал",
   "capacity": 100,
   "seatingPlan": {
     "row": 10,
@@ -9,33 +9,37 @@
       {
         "id": "ticket123",
         "seat": "A1",
+        "capacity": 1,
         "x": 0,
         "y": 2,
         "price": 100,
-        "type": "TABLE",
+        "type": "VIPTABLE",
         "status": "OCCUPIED"
       },
       {
         "id": "ticket124",
         "seat": "A2",
+        "capacity": 1,
         "x": 1,
         "y": 2,
         "price": 100,
-        "type": "TABLE",
+        "type": "VIPTABLE",
         "status": "FREE"
       },
       {
         "id": "ticket125",
         "seat": "A3",
+        "capacity": 1,
         "x": 2,
         "y": 3,
         "price": 100,
-        "type": "TABLE",
+        "type": "VIPTABLE",
         "status": "FREE"
       },
       {
         "id": "ticket126",
         "seat": "B1",
+        "capacity": 1,
         "x": 0,
         "y": 5,
         "price": 100,
@@ -45,6 +49,7 @@
       {
         "id": "ticket127",
         "seat": "B2",
+        "capacity": 1,
         "x": 1,
         "y": 5,
         "price": 100,
@@ -54,6 +59,7 @@
       {
         "id": "ticket128",
         "seat": "B3",
+        "capacity": 1,
         "x": 2,
         "y": 6,
         "price": 100,
@@ -63,6 +69,7 @@
       {
         "id": "danceFloor",
         "seat": "Танцпол",
+        "capacity": 10,
         "x": 3,
         "y": 2,
         "price": 150,
@@ -72,6 +79,7 @@
       {
         "id": "barstool1",
         "seat": "D1",
+        "capacity": 1,
         "x": 9,
         "y": 2,
         "price": 80,
@@ -81,6 +89,7 @@
       {
         "id": "barstool2",
         "seat": "D2",
+        "capacity": 1,
         "x": 9,
         "y": 3,
         "price": 80,
@@ -90,21 +99,24 @@
       {
         "id": "barstool3",
         "seat": "D3",
+        "capacity": 1,
         "x": 9,
         "y": 4,
         "price": 80,
         "type": "BAR",
-        "status": "FREE"
+        "status": "RESERVED"
       },
       {
         "id": "barstool4",
         "seat": "D4",
+        "capacity": 1,
         "x": 9,
         "y": 5,
         "price": 80,
         "type": "BAR",
         "status": "FREE"
       }
-    ]
+    ],
+    "available": true
   }
 }

@@ -2,28 +2,28 @@
   {
     "userId": "user123",
     "report": {
-      "profit": 1000,
-      "ticketSold": 100,
-      "expenses": 500,
-      "netProfit": 500
+      "profit": 10000,
+      "ticketSold": 1000,
+      "expenses": 5000,
+      "netProfit": 5000
     }
   },
   {
     "userId": "user456",
     "report": {
-      "profit": 2000,
-      "ticketSold": 150,
-      "expenses": 800,
-      "netProfit": 1200
+      "profit": 20000,
+      "ticketSold": 1500,
+      "expenses": 8000,
+      "netProfit": 12000
     }
   },
   {
     "userId": "user789",
     "report": {
-      "profit": 1500,
-      "ticketSold": 120,
-      "expenses": 700,
-      "netProfit": 800
+      "profit": 15000,
+      "ticketSold": 1200,
+      "expenses": 7000,
+      "netProfit": 8000
     }
   }
 ]

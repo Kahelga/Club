@@ -25,11 +25,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -59,6 +61,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -104,16 +107,86 @@ private fun HallItem(
         Text(
             text = hall.name,
             style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 13.dp)
         )
+        Card(
+            modifier = Modifier.padding(bottom = 10.dp),
+            elevation = CardDefaults.cardElevation(10.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
 
-        Row(modifier = Modifier.padding(bottom = 16.dp)) {
-            ColorBox(Color.Gray, stringResource(id = R.string.ticket_free))
-            Spacer(modifier = Modifier.width(8.dp))
-            ColorBox(Color.Red, stringResource(id = R.string.ticket_occupied))
-            Spacer(modifier = Modifier.width(8.dp))
-            ColorBox(Color.Green, stringResource(id = R.string.ticket_selected))
+            ) {
+                val dancefloorTickets = hall.seatingPlan.tickets.filter { it.type == SeatType.DANCEFLOOR }
+                val priceDancefloor= dancefloorTickets.sumOf { it.price }
+                val barTickets = hall.seatingPlan.tickets.filter { it.type == SeatType.BAR }
+                val priceBar= barTickets[0].price
+                val tableATickets = hall.seatingPlan.tickets.filter { it.type == SeatType.VIPTABLE}
+                val priceTableA= tableATickets[0].price
+                val tableBTickets = hall.seatingPlan.tickets.filter { it.type == SeatType.TABLE}
+                val priceTableB= tableBTickets[0].price
+                Text(
+                    text =stringResource(
+                        R.string.dancefloorSeat_price,
+                        priceDancefloor
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 3.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(
+                        R.string.barSeat_price,
+                        priceBar
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 3.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(
+                        R.string.tableASeat_price,
+                        priceTableA
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 3.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(
+                        R.string.tableBSeat_price,
+                        priceTableB
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 3.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+            }
         }
+        Card(
+            modifier = Modifier.padding(bottom = 10.dp),
+            elevation = CardDefaults.cardElevation(10.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+        ){
+            Row(modifier = Modifier.padding(bottom = 16.dp)) {
+                ColorBox(Color.Gray, stringResource(id = R.string.ticket_free))
+
+                ColorBox(Color.Yellow, stringResource(id = R.string.ticket_reserved))
+
+                ColorBox(Color.Red, stringResource(id = R.string.ticket_occupied))
+
+                ColorBox(Color.Green, stringResource(id = R.string.ticket_selected))
+            }
+        }
+
 
         Card(
             modifier = Modifier.height(400.dp),
@@ -135,10 +208,10 @@ private fun HallItem(
                                 currentTicketCount.value = originalTicketCount.value
                                 isDialogVisible = true
                             } else {
-                                selectedTickets.add(ticket)
+                                originalTicketCount.value = 0
+                                currentTicketCount.value = 0
+                                //selectedTickets.add(ticket)
                                 ticketToBuy = ticket
-                                originalTicketCount.value = 1
-                                currentTicketCount.value = 1
                                 isDialogVisible = true
                             }
                         } else {
@@ -166,7 +239,7 @@ private fun HallItem(
         if (showErrorDialog) {
             AlertDialog(
                 onDismissRequest = { showErrorDialog = false },
-                title = { Text(text =stringResource(id = R.string.error_title)) },
+                title = { Text(text = stringResource(id = R.string.error_title)) },
                 text = { Text(text = stringResource(id = R.string.order_error_massage)) },
                 confirmButton = {
                     Button(onClick = { showErrorDialog = false }) {
@@ -200,6 +273,7 @@ private fun HallItem(
                 onDismiss = {
                     currentTicketCount.value = originalTicketCount.value
                     isDialogVisible = false
+
                 }
             )
         }
@@ -214,13 +288,26 @@ fun TicketCountDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(id = R.string.ticket_dialog_label)) },
+        title = {
+            Text(
+                stringResource(id = R.string.ticket_dialog_label),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        },
         text = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(id = R.string.ticket_dialog_count))
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    stringResource(id = R.string.ticket_dialog_count),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Row(horizontalArrangement = Arrangement.Center) {
                     Button(onClick = { onCountChange((ticketCount - 1).coerceAtLeast(0)) }) {
                         Text(stringResource(id = R.string.ticket_dialog_remove))
                     }
@@ -230,7 +317,7 @@ fun TicketCountDialog(
                         style = MaterialTheme.typography.headlineMedium
                     )
                     Spacer(modifier = Modifier.width(16.dp))
-                    Button(onClick = { onCountChange(ticketCount + 1) }) {
+                    Button(onClick = { onCountChange((ticketCount + 1).coerceAtMost(ticket.capacity)) }) {
                         Text(stringResource(id = R.string.ticket_dialog_add))
                     }
                 }
@@ -258,7 +345,6 @@ private fun SeatPlanView(
 ) {
     val rows = seatPlan.row
     val columns = seatPlan.column
-    //val sceneHeight = 100.dp
     val boxSize = Offset(
         x = with(LocalDensity.current) { (columns * gridSize.toPx()) },
         y = with(LocalDensity.current) { (rows * gridSize.toPx()) }
@@ -273,8 +359,7 @@ private fun SeatPlanView(
     val sceneY = 0f
 
     var scale by remember { mutableStateOf(1f) }
-    //var offsetY by remember { mutableStateOf(0f) }
-    val color=MaterialTheme.colorScheme.surfaceVariant
+    val color = MaterialTheme.colorScheme.surfaceVariant
 
     Box(
         modifier = Modifier
@@ -288,15 +373,15 @@ private fun SeatPlanView(
                 scaleX = scale,
                 scaleY = scale,
 
-            )
+                )
             .drawBehind {
                 drawRect(
-                    color =color ,
+                    color = color,
                     size = this.size.copy(width = boxWidth.toPx(), height = boxHeight.toPx())
                 )
             }
-            //.size(boxWidth,boxHeight)
-           // .background(MaterialTheme.colorScheme.surfaceVariant)
+        //.size(boxWidth,boxHeight)
+        // .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         DrawGrid(boxSize, gridSize)
         Box(
@@ -317,7 +402,7 @@ private fun SeatPlanView(
         Box(
             modifier = Modifier
                 .wrapContentHeight()
-               // .background(MaterialTheme.colorScheme.surfaceVariant)
+            // .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             seatPlan.tickets.forEach { ticket ->
                 SeatView(
@@ -392,45 +477,49 @@ private fun SeatView(
 private fun SelectedTicketInfo(tickets: List<Ticket>) {
     if (tickets.isNotEmpty()) {
         val groupedTickets = tickets.chunked(3)
-        Column(
+
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(max = 200.dp)
                 .padding(top = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            groupedTickets.forEach { group ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    group.forEach { selectedTicket ->
-                        Card(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .heightIn(max = 100.dp)
-                                .weight(1f),
-                            elevation = CardDefaults.cardElevation(8.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            ),
-                        ) {
-                            Column(
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                groupedTickets.forEach { group ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        group.forEach { selectedTicket ->
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                    .padding(4.dp)
+                                    .heightIn(max = 100.dp)
+                                    .weight(1f),
+                                elevation = CardDefaults.cardElevation(8.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                ),
                             ) {
-                                Text(
-                                    text = stringResource(R.string.seat_name, selectedTicket.seat),
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = stringResource(
-                                        R.string.seat_price,
-                                        selectedTicket.price
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.seat_name, selectedTicket.seat),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.seat_price, selectedTicket.price),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
                             }
                         }
                     }
@@ -444,7 +533,7 @@ private fun SelectedTicketInfo(tickets: List<Ticket>) {
 private fun ColorBox(color: Color, label: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(end = 8.dp)
+        modifier = Modifier.padding(end = 25.dp)
     ) {
         Box(
             modifier = Modifier
@@ -457,13 +546,14 @@ private fun ColorBox(color: Color, label: String) {
         Text(
             text = label,
             fontSize = 10.sp,
-            modifier = Modifier.padding(start = 4.dp)
+            modifier = Modifier.padding(start = 4.dp),
+            style = MaterialTheme.typography.headlineSmall
         )
     }
 }
 
 @Composable
- fun DrawGrid(size: Offset, gridSize: Dp) {
+fun DrawGrid(size: Offset, gridSize: Dp) {
     val gridSizePx = with(LocalDensity.current) { gridSize.toPx() }
     val color = MaterialTheme.colorScheme.outline
     Canvas(

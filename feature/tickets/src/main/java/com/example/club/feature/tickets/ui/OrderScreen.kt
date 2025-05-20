@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.club.feature.auth.presentation.AuthViewModel
 import com.example.club.feature.tickets.R
+import com.example.club.feature.tickets.presentation.CancelOrderViewModel
 
 
 import com.example.club.feature.tickets.presentation.OrderState
@@ -50,8 +51,11 @@ import com.example.club.feature.tickets.presentation.OrderViewModel
 fun OrderScreen(
     orderViewModel: OrderViewModel,
     authViewModel: AuthViewModel,
+    cancelOrderViewModel: CancelOrderViewModel,
     onProfileSelected: (login: String) -> Unit,
-    onPosterSelected: () -> Unit
+    onPosterSelected: () -> Unit,
+    onBuy:(bookedId:String)-> Unit,
+    onOrderScreen: () -> Unit
 ) {
     val orderState by orderViewModel.state.collectAsState()
     val loginUser by authViewModel.login.collectAsState()
@@ -73,7 +77,7 @@ fun OrderScreen(
                     showErrorDialog = false
                 }
             }
-            else -> {}
+           // else -> {}
         }
     }
 
@@ -96,7 +100,11 @@ fun OrderScreen(
                 is OrderState.Failure ->{}
 
                 is OrderState.Content -> Content(
-                    orders = state.orders
+                    cancelOrderViewModel,
+                    orders = state.orders,
+                    onBuy,
+                    onPosterSelected,
+                    onOrderScreen
                 )
             }
             if (showErrorDialog) {

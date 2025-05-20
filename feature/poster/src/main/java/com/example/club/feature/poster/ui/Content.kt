@@ -1,5 +1,6 @@
 package com.example.club.feature.poster.ui
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,11 +37,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -47,6 +54,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,12 +80,16 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.club.feature.poster.R
+import com.example.club.shared.event.domain.entity.AgeRatings
 import com.example.club.shared.event.domain.entity.Event
+import com.example.club.shared.event.domain.entity.EventStatus
 import com.example.club.util.formatting.MonthData
 import com.example.club.util.formatting.formatDateSelected
 import com.example.club.util.formatting.formatDateString
 import com.example.club.util.formatting.getCalendarMonthData
+import com.example.club.util.formatting.getMonthNameInNominative
 import com.example.club.util.formatting.localDateToDate
+import com.google.android.material.chip.Chip
 import com.kizitonwose.calendar.core.OutDateStyle
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -114,6 +126,9 @@ fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> 
 
     var filteredEvents by remember { mutableStateOf(events) }
 
+
+    val monthName = getMonthNameInNominative(currentMonth.monthValue)
+
     LaunchedEffect(searchQuery, selectedGenres) {
         filteredEvents = filterEvents(
             events,
@@ -139,8 +154,7 @@ fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp)
-            ,
+                .padding(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             SearchBar(query = searchQuery, onQueryChange = { newText ->
@@ -148,29 +162,64 @@ fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> 
             }, focusRequester = focusRequester)
             Icon(
                 Icons.Default.DateRange,
-                contentDescription = "Открыть календарь",
+                contentDescription = "",
                 modifier = Modifier
                     .size(35.dp)
                     .clickable {
                         focusRequester.requestFocus()
-                        isCalendarVisible = !isCalendarVisible }
+                        isCalendarVisible = !isCalendarVisible
+                    }
+                    .padding(end = 5.dp)
+            )
+
+            GenreDropdown(
+                genres = genres,
+                //  selectedGenres = selectedGenres,
+                onGenreSelected = { genre ->
+                    if (selectedGenres.contains(genre)) {
+                        selectedGenres = selectedGenres - genre
+                    } else {
+                        selectedGenres = selectedGenres + genre
+                    }
+                },
+                focusRequester = focusRequester
             )
 
         }
 
-        GenreDropdown(genres = genres,
-            selectedGenres = selectedGenres,
-            onGenreSelected = { genre, isSelected ->
-                if (isSelected) {
-                    selectedGenres = selectedGenres + genre
-                } else {
-                    selectedGenres = selectedGenres - genre
+        if (selectedGenres.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                selectedGenres.forEach { genre ->
+                    Row(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(5.dp)
+                            )
+                            .padding(2.dp)
+                            .height(30.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = genre, style = MaterialTheme.typography.bodyMedium)
+                        IconButton(onClick = {
+                            selectedGenres = selectedGenres - genre
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "",
+                                modifier = Modifier.size(15.dp)
+                            )
+                        }
+                    }
                 }
-
-            },
-            focusRequester = focusRequester
-        )
-
+            }
+        }
         if (isCalendarVisible) {
             Box(
                 modifier = Modifier
@@ -191,18 +240,19 @@ fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> 
                         IconButton(onClick = { currentMonth = currentMonth.minusMonths(1) }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Previous Month"
+                                contentDescription = ""
                             )
                         }
                         Text(
-                            text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+                            text = "$monthName ${currentMonth.year}",//currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
                             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                            modifier = Modifier.align(Alignment.CenterVertically)
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            color=MaterialTheme.colorScheme.surface
                         )
                         IconButton(onClick = { currentMonth = currentMonth.plusMonths(1) }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowForward,
-                                contentDescription = "Next Month"
+                                contentDescription = ""
                             )
                         }
                     }
@@ -214,7 +264,8 @@ fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> 
                                 text = day.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
                                 modifier = Modifier.weight(1f),
                                 textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                color=MaterialTheme.colorScheme.surface
                             )
                         }
                     }
@@ -252,7 +303,7 @@ fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> 
                             )
                             isCalendarVisible = false
                         }) {
-                            Text("Готово")
+                            Text(stringResource(R.string.button_calendar_done))
                         }
                         Button(onClick = {
                             selectedStartDateState.value = ""
@@ -261,18 +312,25 @@ fun CalendarWithEvents(events: List<Event>, onItemClicked: (eventId: String) -> 
                             selectedGenres = emptySet()
                             filteredEvents = filterEvents(events, "", "", "", listOf())
                         }) {
-                            Text("Сбросить")
+                            Text(stringResource(R.string.button_calendar_reset))
                         }
                     }
                 }
             }
+        }else{
+            currentMonth=YearMonth.now()
         }
 
-        EventList(filteredEvents, onItemClicked,focusRequester)
+        EventList(filteredEvents, onItemClicked, focusRequester)
     }
 }
+
 @Composable
-fun EventList(events: List<Event>, onItemClicked: (eventId: String) -> Unit, focusRequester: FocusRequester) {
+fun EventList(
+    events: List<Event>,
+    onItemClicked: (eventId: String) -> Unit,
+    focusRequester: FocusRequester
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
@@ -286,10 +344,13 @@ fun EventList(events: List<Event>, onItemClicked: (eventId: String) -> Unit, foc
             }
     ) {
         items(events) { event ->
-            EventItem(
-                item = event,
-                onItemClicked = { onItemClicked(event.id)}
-            )
+            if (event.status == EventStatus.ACTIVE) {
+                EventItem(
+                    item = event,
+                    onItemClicked = { onItemClicked(event.id) }
+                )
+            }
+
         }
     }
 }
@@ -297,8 +358,8 @@ fun EventList(events: List<Event>, onItemClicked: (eventId: String) -> Unit, foc
 @Composable
 fun GenreDropdown(
     genres: List<String>,
-    selectedGenres: Set<String>,
-    onGenreSelected: (String, Boolean) -> Unit,
+    //  selectedGenres: Set<String>,
+    onGenreSelected: (String) -> Unit,
     focusRequester: FocusRequester
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -306,75 +367,51 @@ fun GenreDropdown(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(top=17.dp, end = 10.dp, start = 10.dp)
             .clip(RoundedCornerShape(10.dp))
-
-
     ) {
-        Column {
-            Row(
+        Column( modifier = Modifier.fillMaxWidth()){
+            Icon(
+                imageVector = Icons.Default.FilterList,
+                contentDescription = "Filter",
                 modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable { expanded = true
+                    .size(35.dp)
+                    .clickable {
+                        expanded = true
                         focusRequester.requestFocus()
                     }
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(5.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Выбрать жанр"
-                )
-                Text(
-                    text = if (selectedGenres.isEmpty()) "Жанры" else selectedGenres.joinToString(", "),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
 
-            }
+
+            )
+            Spacer(modifier = Modifier.height(20.dp))
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
                     .align(Alignment.End)
-                    .background(
-                        MaterialTheme.colorScheme.outline,
-                        shape = MaterialTheme.shapes.medium
-                    )
+                    .background(MaterialTheme.colorScheme.outline)
+
 
             ) {
                 genres.forEach { genre ->
+                    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
                     DropdownMenuItem(onClick = {
-                        val isSelected = !selectedGenres.contains(genre)
-                        onGenreSelected(genre, isSelected)
+                        onGenreSelected(genre)
                         expanded = false
                     },
                         text = {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                            ) {
-                                Checkbox(
-                                    checked = selectedGenres.contains(genre),
-                                    onCheckedChange = null
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = genre,
-                                    color = MaterialTheme.colorScheme.surface
-                                )
-                            }
+                            Text(
+                                text = genre,
+                                color = MaterialTheme.colorScheme.surface
+                            )
                         }
-
                     )
                 }
             }
         }
     }
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 private fun filterEvents(
@@ -493,27 +530,42 @@ fun CalendarView(
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun SearchBar(query: String, onQueryChange: (String) -> Unit, focusRequester: FocusRequester) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    TextField(
-        value = query,
-        onValueChange = { newText ->
-            onQueryChange(newText)
-        },
-        label = { Text("Поиск событий") },
-        modifier = Modifier
-            .padding(5.dp)
-            .focusRequester(focusRequester)
-            .focusable()
-            .onFocusChanged { focusState ->
-                if (!focusState.hasFocus && query.isEmpty()) {
-                    keyboardController?.hide()
-                }
+        TextField(
+            value = query,
+            onValueChange = { newText ->
+                onQueryChange(newText)
             },
-
-    )
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null
+                )
+            },
+            textStyle=MaterialTheme.typography.bodyMedium,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
+            ),
+            singleLine = false,
+            maxLines = 1,
+            modifier = Modifier
+                .width(300.dp)
+                .padding(end = 10.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                .focusRequester(focusRequester)
+                .focusable()
+                .onFocusChanged { focusState ->
+                    if (!focusState.hasFocus && query.isEmpty()) {
+                        keyboardController?.hide()
+                    }
+                },
+            )
 }
 
 @Composable
@@ -597,10 +649,17 @@ fun EventImage(item: Event) {
 
 @Composable
 fun EventTitle(item: Event) {
+    val ageRatingText = when (item.ageRating) {
+        AgeRatings.G -> "Для всех"
+        AgeRatings.PG -> "С родительским контролем"
+        AgeRatings.PG13 -> "13+"
+        AgeRatings.R -> "16+"
+        AgeRatings.NC17 -> "18+"
+    }
     Text(
         text = buildAnnotatedString {
             append(item.title)
-            append(" (${item.ageRating})")
+            append(" (${ageRatingText})")
         },
         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
         modifier = Modifier.padding(top = 6.dp, start = 8.dp, end = 8.dp)

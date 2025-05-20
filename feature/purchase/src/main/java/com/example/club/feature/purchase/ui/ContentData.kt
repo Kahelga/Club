@@ -38,7 +38,7 @@ import com.example.club.util.validation.validateSurname
 @Composable
 fun ContentData(
     user: User,
-    toBuySelected: () -> Unit,
+    toBuySelected: (userId:String) -> Unit,
 ) {
     val id by remember { mutableStateOf(user.id ) }
     var firstname by remember { mutableStateOf(user.firstname ) }
@@ -64,7 +64,7 @@ fun ContentData(
                 onEmailChange = { email = it },
                 onPhoneChange = { phone = it },
                 onCityChange = { city = it },
-                toBuySelected=toBuySelected
+                toBuySelected= { toBuySelected(id) }
 
             )
         }
@@ -190,6 +190,7 @@ fun ProfileField(label: String, value: String, onValueChange: (String) -> Unit, 
     Text(text = label, style = MaterialTheme.typography.bodyMedium)
     TextField(
         value = value,
+        readOnly=true,
         onValueChange = onValueChange,
         modifier = Modifier
             .fillMaxWidth()

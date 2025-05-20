@@ -1,12 +1,15 @@
 package com.example.club.feature.admin.events.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -17,9 +20,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,12 +58,14 @@ import com.example.club.shared.event.domain.entity.SeatPlan
 import com.example.club.shared.event.domain.entity.SeatStatus
 import com.example.club.shared.event.domain.entity.SeatType
 import com.example.club.shared.event.domain.entity.Ticket
+import okhttp3.internal.wait
 
 
 @Composable
 fun HallPlan(
     hall: Hall,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    update: () -> Unit
 ) {
     Popup(alignment = Alignment.Center) {
         Column(
@@ -65,30 +75,129 @@ fun HallPlan(
                     MaterialTheme.colorScheme.surfaceVariant,
                     shape = MaterialTheme.shapes.medium
                 )
-                .verticalScroll(rememberScrollState())
-            ,
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = MaterialTheme.shapes.small
+                )
+                .verticalScroll(rememberScrollState()),
         ) {
             val gridSize = 40.dp
-            Text(
-                text = hall.name,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                //horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = hall.name,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .weight(1f)
+                )
+                IconButton(
+                    onClick = update,
+                    modifier = Modifier.size(35.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Update,
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp)
 
-            Row(modifier = Modifier.padding(bottom = 16.dp)) {
-                ColorBox(Color.Gray, stringResource(id = R.string.ticket_free))
-                Spacer(modifier = Modifier.width(8.dp))
-                ColorBox(Color.Red, stringResource(id = R.string.ticket_occupied))
+                    )
+                }
 
             }
+
+            Card(
+                modifier = Modifier.padding(bottom = 10.dp),
+                elevation = CardDefaults.cardElevation(10.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                ) {
+                    val hasDanceFloor =
+                        hall.seatingPlan.tickets.any { it.type == SeatType.DANCEFLOOR }
+                    val hasTable =
+                        hall.seatingPlan.tickets.any { it.type == SeatType.TABLE || it.type == SeatType.VIPTABLE }
+                    val hasBar = hall.seatingPlan.tickets.any { it.type == SeatType.BAR }
+
+                    if (hasDanceFloor) {
+                        val dancefloorTickets =
+                            hall.seatingPlan.tickets.filter { it.type == SeatType.DANCEFLOOR }
+                        val countDanceFloor =
+                            if (dancefloorTickets.isNotEmpty()) dancefloorTickets[0].capacity else 0
+
+                        Text(
+                            text = stringResource(R.string.count_danceFloor, countDanceFloor),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 3.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+
+                        )
+                    }
+
+                    if (hasTable) {
+                        val countTable =
+                            hall.seatingPlan.tickets.filter { it.type == SeatType.TABLE || it.type == SeatType.VIPTABLE && it.status == SeatStatus.FREE }
+                                .count()
+
+                        Text(
+                            text = stringResource(R.string.count_table, countTable),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 3.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    if (hasBar) {
+                        val countBar =
+                            hall.seatingPlan.tickets.filter { it.type == SeatType.BAR && it.status == SeatStatus.FREE }
+                                .count()
+
+                        Text(
+                            text = stringResource(R.string.count_bar, countBar),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 3.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            Card(
+                modifier = Modifier.padding(bottom = 10.dp),
+                elevation = CardDefaults.cardElevation(10.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+            ) {
+                Row(modifier = Modifier.padding(bottom = 16.dp)) {
+                    ColorBox(Color.Green, stringResource(id = R.string.ticket_free))
+                    // Spacer(modifier = Modifier.width(8.dp))
+                    ColorBox(Color.Red, stringResource(id = R.string.ticket_occupied))
+                    //Spacer(modifier = Modifier.width(8.dp))
+                    ColorBox(Color.Yellow, stringResource(id = R.string.ticket_reserved))
+
+                }
+            }
+
             Card(
                 modifier = Modifier.height(400.dp),
-                elevation = CardDefaults.cardElevation(10.dp)
-            ) {
-               SeatPlanView(
+                elevation = CardDefaults.cardElevation(10.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+
+                ) {
+                SeatPlanView(
                     seatPlan = hall.seatingPlan,
                     gridSize = gridSize,
-                   )
+                )
 
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -122,11 +231,14 @@ private fun SeatPlanView(
 
     var scale by remember { mutableStateOf(1f) }
 
-    val color=MaterialTheme.colorScheme.surfaceVariant
+    val color = MaterialTheme.colorScheme.surfaceVariant
 
     Box(
         modifier = Modifier
-
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant,
+                shape = MaterialTheme.shapes.medium
+            )
             .pointerInput(Unit) {
                 detectTransformGestures { _, _, zoom, _ ->
                     scale = (scale * zoom).coerceIn(0.5f, 3f)
@@ -139,7 +251,7 @@ private fun SeatPlanView(
                 )
             .drawBehind {
                 drawRect(
-                    color =color ,
+                    color = color,
                     size = this.size.copy(width = boxWidth.toPx(), height = boxHeight.toPx())
                 )
             }
@@ -199,8 +311,8 @@ private fun SeatView(
     val backgroundColor = when {
         ticket.status == SeatStatus.OCCUPIED -> Color.Red
         ticket.status == SeatStatus.RESERVED -> Color.Yellow
-        ticket.type == SeatType.DANCEFLOOR -> Color.Gray.copy(alpha = 0.3f)
-        else -> Color.Gray
+        ticket.type == SeatType.DANCEFLOOR -> if (ticket.capacity != 0) Color.Green.copy(alpha = 0.3f) else Color.Red
+        else -> Color.Green
     }
     val seatSize = when (ticket.type) {
         SeatType.DANCEFLOOR -> Size(

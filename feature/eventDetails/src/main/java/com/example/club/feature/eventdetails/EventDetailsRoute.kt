@@ -6,3 +6,4 @@ import kotlinx.serialization.Serializable
 data class EventDetailsRoute (
     val eventId: String
 )
+

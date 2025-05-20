@@ -1,6 +1,7 @@
 [
   {
-    "ticketId": "booking123",
+    "ticketId": "booking122",
+    "bookingId": "booking122",
     "userId": "user456",
     "event":{
       "id": "event123",
@@ -19,11 +20,13 @@
       "A1",
       "A2"
     ],
+    "ticketCode": "QR1234567890",
     "issueDate": "2025-03-01T12:00:00Z",
     "status": "CANCELLED"
   },
   {
-    "ticketId": "booking123",
+    "ticketId": "booking133",
+    "bookingId": "booking133",
     "userId": "user456",
     "event":{
       "id": "2",
@@ -41,7 +44,31 @@
       "B1",
       "B2"
     ],
+    "ticketCode": "QR574893059867",
     "issueDate": "2025-03-01T12:00:00Z",
     "status": "PAID"
+  },
+  {
+    "ticketId": "booking123",
+    "bookingId": "booking123",
+    "userId": "user456",
+    "event":{
+      "id": "2",
+      "title": "Фолк Фестиваль",
+      "date": "2025-03-09T17:00:00Z",
+      "genre": [
+        "Фолк"
+      ],
+      "ageRating": "G",
+      "minPrice": 1000,
+      "imgPreview": "http://localhost:8090/img/poster2",
+      "status": "ACTIVE"
+    },
+    "seats": [
+      "D4"
+    ],
+    "ticketCode": "QR4673890365",
+    "issueDate": "2025-03-01T12:00:00Z",
+    "status": "PENDING"
   }
 ]

@@ -19,6 +19,7 @@ class ProfileUpdateRepositoryImpl(
             newUser.middlename,
             newUser.email,
             newUser.city,
+            newUser.birthDate,
             newUser.role
         )
         val response=profileUpdateApi.updateProfile(login,token,request)

@@ -5,6 +5,7 @@
   "middlename": "middlename",
   "lastname": "lastname",
   "email": "user2@gmail.com",
-  "city": "city1",
+  "city": "city2",
+  "birthDate": "2003-05-18",
   "role": "client"
 }

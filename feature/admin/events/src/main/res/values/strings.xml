@@ -7,7 +7,7 @@
     <string name="error_close">Закрыть</string>
 
     <string name="button_details">Подробнее</string>
-    <string name="dropdownMenu_select">All</string>
+    <string name="dropdownMenu_select">Все</string>
     <string name="dropdownMenu_title">Выберите статус</string>
     <string name="event_warning">Нет событий для отображения</string>
 
@@ -17,7 +17,7 @@
     <string name="event_status">Статус: %s</string>
 
     <string name="bar_poster">Афиша</string>
-    <string name="profile_title">Профиль </string>
+    <string name="exit_title">Выход </string>
     <string name="diolog_hall">Состояние зала</string>
 
     <string name="eventDetail_title">Мероприятие: %s</string>
@@ -35,6 +35,11 @@
     <string name="ticket_free"> Свободно</string>
     <string name="ticket_reserved"> Забронировано</string>
     <string name="ticket_occupied"> Занято</string>
+
+    <string name="count_danceFloor"> Свободных мест на танцполе: %1$d</string>
+    <string name="count_table"> Свободных столов: %1$d</string>
+    <string name="count_bar"> Свободных мест у бара: %1$d</string>
+
 
 
 </resources>

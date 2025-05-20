@@ -1,5 +1,6 @@
 package com.example.club.feature.purchase.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,7 +39,7 @@ import com.example.club.feature.purchase.R
 fun DataScreen(
     profileViewModel: ProfileViewModel,
     onBackPressed: () -> Unit,
-    toBuySelected: (/*List<String>,eventId: String,userId:String*/) -> Unit
+    toBuySelected: (userId:String/*List<String>,eventId: String,userId:String*/) -> Unit
 ) {
     val profileState by profileViewModel.state.collectAsState()
     val progress = 2
@@ -74,11 +75,20 @@ fun DataScreen(
                 text = stringResource(R.string.progress, progress,totalSteps),
                 style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = progress / totalSteps.toFloat(),
-                modifier = Modifier.fillMaxWidth()
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                LinearProgressIndicator(
+                    progress = progress / totalSteps.toFloat(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    // .clip(RoundedCornerShape(10.dp)),
+                    trackColor = MaterialTheme.colorScheme.outline
+                )
+
+            }
 
         }
         when (val state = profileState) {

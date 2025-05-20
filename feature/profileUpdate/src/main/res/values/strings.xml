@@ -27,6 +27,7 @@
     <string name="user_email">Почта</string>
     <string name="user_phone">Телефон</string>
     <string name="user_city">Город</string>
+    <string name="user_birth_date">Дата рождения</string>
     <string name="profile_update">Данные успешно обновлены!</string>
     <string name="purchase_dialog_ok">ОК</string>
 

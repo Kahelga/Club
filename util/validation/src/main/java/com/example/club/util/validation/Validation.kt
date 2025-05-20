@@ -1,5 +1,9 @@
 package com.example.club.util.validation
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+
 
 fun validateSurname(surname: String): String {
     val regex = Regex("^[А-Яа-яЁёA-Za-z' -]{1,60}$")
@@ -119,4 +123,18 @@ fun validateExpirationDate(month: String, year: String): String {
         year.toInt() > 99 -> "Максимально допустимое число для года 99."
         else -> ""
     }
+}
+fun validateAge(birthDate: String): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val birthDateParsed = dateFormat.parse(birthDate) ?: return "Некорректная дата."
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    val birthYear = Calendar.getInstance().apply { time = birthDateParsed }.get(Calendar.YEAR)
+
+    val age = currentYear - birthYear
+    return when { /*try {*/
+
+        age < 18-> "Вы должны быть не моложе 18 лет."
+          else->""
+    }
+
 }

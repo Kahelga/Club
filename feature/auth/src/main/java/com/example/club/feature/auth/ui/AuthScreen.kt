@@ -93,9 +93,8 @@ fun AuthScreen(
         PasswordField(
             value = password,
             onValueChange = {
+                isError=false
                 password = it
-                isError = false
-
             },
             isError = isError
         )
@@ -106,7 +105,9 @@ fun AuthScreen(
             isError = false
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 authViewModel.authorize(email, password)
+
             } else {
+                password=""
                 isError = true
             }
         })
@@ -118,6 +119,7 @@ fun AuthScreen(
 
         when (val state = authState) {
             is AuthState.Initial -> {
+               // isError = false
             }
 
             is AuthState.Failure -> {
@@ -142,9 +144,12 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boole
 
     TextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange ={ newValue->
+            val trimmedValue = newValue.replace(" ", "")
+            onValueChange(trimmedValue)
+        } ,
         label = { Text(stringResource(id = R.string.auth_pass)) },
-        isError = isError,
+        //isError = isError,
 
         leadingIcon = {
             Icon(
@@ -164,14 +169,15 @@ fun PasswordField(value: String, onValueChange: (String) -> Unit, isError: Boole
             }
 
         },
-
+        singleLine = false,
+        maxLines = 1,
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .border(
                 BorderStroke(
                     width = 1.dp,
-                    color = if (isError) Color.Red else Color.Gray,
+                    color = if (isError) Color.Red  else Color.Gray,
                 ),
                 shape = RoundedCornerShape(8.dp)
             ),
@@ -229,6 +235,8 @@ private  fun LoginField(value: String, onValueChange: (String) -> Unit) {
                     contentDescription = null
                 )
             },
+            singleLine = false,
+            maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))

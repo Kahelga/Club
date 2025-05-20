@@ -1,5 +1,6 @@
 package com.example.club.feature.tickets.ui
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,13 +53,29 @@ import com.example.club.shared.tickets.domain.entity.PurchaseStatus
 import com.example.club.shared.tickets.domain.entity.Order
 import com.example.club.util.formatting.formatDateSelected
 import com.example.club.util.formatting.formatTimeSelected
-
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import android.graphics.Color.BLACK
+import android.graphics.Color.WHITE
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import com.example.club.feature.tickets.presentation.CancelOrderState
+import com.example.club.feature.tickets.presentation.CancelOrderViewModel
+import com.example.club.feature.tickets.presentation.OrderState
+import com.example.club.shared.tickets.domain.entity.CancelOrderRequest
+import com.example.club.feature.tickets.ui.Error
 
 @Composable
 fun Content(
-    orders: List<Order>
+    cancelOrderViewModel: CancelOrderViewModel,
+    orders: List<Order>,
+    onBuy: (bookedId: String) -> Unit,
+    onPosterScreen: () -> Unit,
+    onOrderScreen: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(0) }
+
 
     Column {
         TabRow(selectedTabIndex = selectedTab) {
@@ -83,7 +101,11 @@ fun Content(
             items(filteredOrders) { order ->
                 OrderItem(
                     item = order,
-                    showReturnButton = selectedTab == 0
+                    cancelOrderViewModel = cancelOrderViewModel,
+                    showReturnButton = order.status.name == "PAID",//selectedTab == 0,
+                    onBuy = { onBuy(order.bookingId) },
+                    onPosterScreen,
+                    onOrderScreen
                 )
             }
         }
@@ -91,9 +113,42 @@ fun Content(
 }
 
 @Composable
-private fun OrderItem(item: Order, showReturnButton: Boolean) {
-    var showDialog by remember { mutableStateOf(false) }
+private fun OrderItem(
+    item: Order,
+    cancelOrderViewModel: CancelOrderViewModel,
+    showReturnButton: Boolean,
+    onBuy: () -> Unit,
+    onPosterScreen: () -> Unit,
+    onOrderScreen: () -> Unit
+) {
 
+    var showDialog by remember { mutableStateOf(false) }
+    var showCancel by remember { mutableStateOf(false) }
+    var showQRCodeDialog by remember { mutableStateOf(false) }
+    val cancelOrderState by cancelOrderViewModel.state.collectAsState()
+    val cancelOrderRequest = CancelOrderRequest(item.ticketId)
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val error = stringResource(id = R.string.error_unknown_error)
+
+    val qrCodeBitmap = generateQRCode(item.ticketCode)
+
+    LaunchedEffect(cancelOrderState) {
+        when (cancelOrderState) {
+            is CancelOrderState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (cancelOrderState as CancelOrderState.Failure).message ?: error
+            }
+
+            is CancelOrderState.Success -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
+
+            else -> {}
+        }
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,16 +166,17 @@ private fun OrderItem(item: Order, showReturnButton: Boolean) {
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
                     text = formatDateSelected(item.issueDate),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.align(Alignment.TopStart)
                 )
                 Text(
                     text = formatTimeSelected(item.issueDate),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.align(Alignment.TopEnd)
                 )
             }
 
@@ -129,20 +185,25 @@ private fun OrderItem(item: Order, showReturnButton: Boolean) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 EventTitle(eventName = item.event.title)
-                Spacer(modifier = Modifier.height(8.dp))
                 SeatList(seats = item.seats)
             }
 
-            Box(modifier = Modifier.fillMaxWidth()) {
-                StatusText(status = item.status, modifier = Modifier.align(Alignment.BottomStart))
-                TicketIdText(
-                    ticketId = item.ticketId,
-                    modifier = Modifier.align(Alignment.BottomEnd)
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                StatusText(status = item.status)
+                TicketIdText(ticketId = item.ticketId)
             }
 
             if (showReturnButton) {
-                ReturnButton(onClick = { showDialog = true })
+                ReturnButton { showDialog = true }
+                QRButton { showQRCodeDialog = true }
+            } else {
+                if(item.status.name == "PENDING"){
+                    BuyButton { onBuy() }
+                }
+
             }
         }
     }
@@ -150,13 +211,31 @@ private fun OrderItem(item: Order, showReturnButton: Boolean) {
     if (showDialog) {
         ConfirmationDialog(
             onConfirm = {
-                // Логика возврата билета
-
+                cancelOrderViewModel.cancelTicket(cancelOrderRequest)
                 showDialog = false
+                showCancel=true
             },
             onDismiss = { showDialog = false }
         )
     }
+    if (showQRCodeDialog) {
+        QRCodeDialog(
+            qrCodeBitmap = qrCodeBitmap,
+          //  ticketCode=item.ticketCode,
+            onDismiss = { showQRCodeDialog = false }
+        )
+    }
+    if(showCancel){
+        when (val state = cancelOrderState) {
+            is CancelOrderState.Initial,
+            is CancelOrderState.Loading,
+            is CancelOrderState.Failure->{}
+            is CancelOrderState.Success -> {
+                CancelScreen(state.response,onPosterScreen, onOrderScreen)
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -215,7 +294,7 @@ fun ConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun CircularIcon(icon: @Composable () -> Unit) {
+private fun CircularIcon(icon: @Composable () -> Unit) {
     Surface(
         modifier = Modifier.size(55.dp),
         shape = MaterialTheme.shapes.extraLarge,
@@ -237,7 +316,9 @@ private fun EventTitle(eventName: String) {
         text = eventName,
         style = MaterialTheme.typography.titleSmall.copy(fontSize = 20.sp),
         textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
     )
 }
 
@@ -253,21 +334,28 @@ private fun SeatList(seats: List<String>) {
 
 
 @Composable
-private fun StatusText(status: PurchaseStatus, modifier: Modifier = Modifier) {
+private fun StatusText(status: PurchaseStatus) {
     val statusColor = when (status) {
         PurchaseStatus.PAID -> Color.Green.copy(0.3f)
         PurchaseStatus.CANCELLED -> Color.Red.copy(0.3f)
         else -> Color.Gray
     }
+    val statusText = when (status) {
+        PurchaseStatus.PENDING -> stringResource(R.string.status_pending)
+        //   PurchaseStatus.CONFIRMED -> stringResource(R.string.status_confirmed)
+        PurchaseStatus.PAID -> stringResource(R.string.status_paid)
+        PurchaseStatus.CANCELLED -> stringResource(R.string.status_cancelled)
+        else->{""}
+    }
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .background(color = statusColor, shape = RoundedCornerShape(50))
             .padding(horizontal = 8.dp, vertical = 4.dp),
 
         ) {
         Text(
-            text = status.name,
+            text = statusText,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.align(Alignment.Center)
         )
@@ -275,11 +363,10 @@ private fun StatusText(status: PurchaseStatus, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun TicketIdText(ticketId: String, modifier: Modifier = Modifier) {
+private fun TicketIdText(ticketId: String) {
     Text(
         text = stringResource(id = R.string.order_idTicket, ticketId),
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = modifier
+        style = MaterialTheme.typography.bodyMedium
     )
 }
 
@@ -293,4 +380,72 @@ fun ReturnButton(onClick: () -> Unit) {
     ) {
         Text(stringResource(id = R.string.button_return))
     }
+}
+
+@Composable
+fun QRButton(onClick: () -> Unit) {
+
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 5.dp),
+    ) {
+        Text(stringResource(id = R.string.button_show_qr))
+    }
+
+}
+
+@Composable
+fun BuyButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 5.dp),
+    ) {
+        Text(stringResource(id = R.string.button_paid))
+    }
+
+}
+
+fun generateQRCode(data: String): Bitmap {
+    val bitMatrix: BitMatrix = MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, 1300, 1300)
+    val width = bitMatrix.width
+    val height = bitMatrix.height
+    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+    for (x in 0 until width) {
+        for (y in 0 until height) {
+            bmp.setPixel(x, y, if (bitMatrix[x, y]) BLACK else WHITE)
+        }
+    }
+    return bmp
+}
+
+@Composable
+fun QRCodeDialog(/*ticketCode:String*/qrCodeBitmap: Bitmap, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(id = R.string.qr_code_title)) },
+        text = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+              //  val qrCodeBitmap = generateQRCode(ticketCode)
+                Image(
+                    bitmap = qrCodeBitmap.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.size(300.dp),
+                    alignment = Alignment.Center
+                )
+
+            }
+        },
+        confirmButton = {
+
+            Button(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(id = R.string.error_close))
+            }
+
+        }
+    )
 }

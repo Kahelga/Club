@@ -11,6 +11,7 @@ data class TicketModel(
     val x:Float,
     val y:Float,
     val seat:String,
+    val capacity:Int,
     val price:Int,
     val type: SeatType,
     val status: SeatStatus

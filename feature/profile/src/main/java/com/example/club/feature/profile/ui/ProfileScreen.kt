@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.LocalActivity
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomAppBar
@@ -70,22 +72,35 @@ fun ProfileScreen(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(id = R.string.profile_title),
                     style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                   // modifier = Modifier.padding(bottom = 28.dp)
+                    modifier = Modifier.weight(1f)
+
                 )
+                /*IconButton(
+                    onClick ={},
+                    modifier = Modifier.size(35.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Notifications,
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))*/
                 IconButton(
                     onClick = onLogout,
-                    modifier = Modifier.size(35.dp)
+                    modifier = Modifier.size(35.dp),
+
                 ) {
                     Icon(
                         imageVector = Icons.Filled.ExitToApp,
                         contentDescription = null,
-                        Modifier.size(35.dp)
+                        modifier = Modifier.size(35.dp)
                     )
                 }
             }

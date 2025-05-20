@@ -1,6 +1,7 @@
 package com.example.club.feature.admin.events.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,12 +18,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EventAvailable
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.example.club.feature.admin.events.R
 import com.example.club.feature.hall.presentation.HallState
 import com.example.club.feature.hall.presentation.HallViewModel
+import com.example.club.shared.event.domain.entity.AgeRatings
 import com.example.club.shared.event.domain.entity.EventDetails
 import com.example.club.shared.event.domain.entity.EventStatus
 import com.example.club.util.formatting.formatDateSelected
@@ -51,17 +56,17 @@ fun Content(
     events: List<EventDetails>,
     hallViewModel: HallViewModel,
 ) {
-    // Состояние для показа деталей
+
     var showDetailsDialog by remember { mutableStateOf(false) }
     var selectedEventItem by remember { mutableStateOf<EventDetails?>(null) }
 
     var showHallDialog by remember { mutableStateOf(false) }
 
-    // Состояние для выбранного статуса
+
     var selectedStatus by remember { mutableStateOf<EventStatus?>(null) }
     val allStatuses = EventStatus.entries
 
-    // Состояние для открытого выпадающего списка статусов
+
     var expandedStatusMenu by remember { mutableStateOf(false) }
     var eventsPreview by remember { mutableStateOf(events) }
 
@@ -90,35 +95,69 @@ fun Content(
         Row(modifier = Modifier.padding(1.dp)) {
             Box {
                 TextButton(onClick = { expandedStatusMenu = !expandedStatusMenu }) {
+                    val statusName = when (selectedStatus?.name) {
+                        EventStatus.ACTIVE.name -> "Активные"
+                        EventStatus.EDITING.name -> "Редактированные"
+                        EventStatus.ARCHIVED.name-> "Архивные"
+                        EventStatus.CANCELED.name-> "Отмененные"
+                        EventStatus.SCHEDULED.name -> "Запланированные"
+                        else -> {stringResource(R.string.dropdownMenu_title)}
+                    }
                     Text(
-                        text = selectedStatus?.name ?: stringResource(R.string.dropdownMenu_title),
-                        style = MaterialTheme.typography.bodyMedium
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(8.dp)
+                            ),
+
+                        text = statusName,//selectedStatus?.name ?: stringResource(R.string.dropdownMenu_title)
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 DropdownMenu(
                     expanded = expandedStatusMenu,
-                    onDismissRequest = { expandedStatusMenu = false }
+                    onDismissRequest = { expandedStatusMenu = false },
+                    modifier = Modifier
+                        .background(
+                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                        )
+                        //.border(1.dp,MaterialTheme.colorScheme.onSurfaceVariant)
                 ) {
-                    DropdownMenuItem(onClick = {
-                        selectedStatus = null
-                        expandedStatusMenu = false
-                    },
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedStatus = null
+                            expandedStatusMenu = false
+                        },
                         text = {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp)
+
                             ) {
                                 Text(
                                     text = stringResource(R.string.dropdownMenu_select),
+
                                 )
                             }
-                        }
+                        },
 
-                    )
+                        )
 
                     allStatuses.forEach { status ->
+                        val statusName = when (status.name) {
+                            EventStatus.ACTIVE.name -> "Активные"
+                            EventStatus.EDITING.name -> "Редактированные"
+                            EventStatus.ARCHIVED.name-> "Архивные"
+                            EventStatus.CANCELED.name-> "Отмененные"
+                            EventStatus.SCHEDULED.name -> "Запланированные"
+                            else -> {""}
+                        }
+
+                        Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
                         DropdownMenuItem(onClick = {
                             selectedStatus = status
                             expandedStatusMenu = false
@@ -127,11 +166,9 @@ fun Content(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(8.dp)
+
                                 ) {
-                                    Text(
-                                        text = status.name,
-                                    )
+                                   Text(text = statusName)
                                 }
                             }
                         )
@@ -149,11 +186,12 @@ fun Content(
                     .fillMaxHeight()
             ) {
                 items(filteredEventsPreview, key = { it.id }) { event ->
-                    EventRow(event = event, onShowDetails = onShowDetails,onShowHall=onShowHall)
+                    EventRow(event = event, onShowDetails = onShowDetails, onShowHall = onShowHall)
                 }
             }
         }
-        // Панель с деталями события
+
+
         if (showDetailsDialog && selectedEventItem != null) {
             EventDetailsDialog(
                 event = selectedEventItem!!,
@@ -162,7 +200,7 @@ fun Content(
         }
 
         if (showHallDialog && selectedEventItem != null) {
-            HallContent(selectedEventItem!!.id,hallViewModel) {
+            HallContent(selectedEventItem!!.id, hallViewModel) {
                 showHallDialog = false
             }
         }
@@ -175,7 +213,7 @@ fun Content(
 fun EventRow(
     event: EventDetails,
     onShowDetails: (EventDetails) -> Unit,
-    onShowHall:(EventDetails) -> Unit
+    onShowHall: (EventDetails) -> Unit
 ) {
     val statusColor = when (event.status) {
         EventStatus.ACTIVE -> Color.Green
@@ -192,6 +230,13 @@ fun EventRow(
             .background(statusColor.copy(alpha = 0.15f), shape = RoundedCornerShape(8.dp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val ageRatingText = when (event.ageRating) {
+            AgeRatings.G -> "Для всех"
+            AgeRatings.PG -> "С родительским контролем"
+            AgeRatings.PG13 -> "13+"
+            AgeRatings.R -> "16+"
+            AgeRatings.NC17 -> "18+"
+        }
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = event.title,
@@ -209,7 +254,8 @@ fun EventRow(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
-                text = stringResource(R.string.event_ageRating, event.ageRating),
+
+                text = stringResource(R.string.event_ageRating, ageRatingText),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
@@ -228,12 +274,12 @@ fun EventRow(
 
         Row(
             modifier = Modifier
-            .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = { onShowDetails(event) }) {
                 Icon(
-                    imageVector = Icons.Default.EventAvailable,
+                    imageVector = Icons.Default.Info,
                     contentDescription = stringResource(R.string.button_details),
                 )
             }
@@ -251,17 +297,17 @@ fun EventRow(
 
 @Composable
 fun HallContent(
-    eventId:String,
+    eventId: String,
     viewModel: HallViewModel,
     onDismiss: () -> Unit
 
-){
+) {
     viewModel.setEventId(eventId)
     val hallState by viewModel.state.collectAsState()
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    val error =stringResource(id = com.example.club.feature.hall.R.string.error_unknown_error)
+    val error = stringResource(id = com.example.club.feature.hall.R.string.error_unknown_error)
 
 
     LaunchedEffect(Unit) {
@@ -274,25 +320,30 @@ fun HallContent(
                 showErrorDialog = true
                 errorMessage = (hallState as HallState.Failure).message ?: error
             }
+
             is HallState.Content -> {
                 if (showErrorDialog) {
                     showErrorDialog = false
                 }
             }
+
             else -> {}
         }
     }
     when (val state = hallState) {
         is HallState.Initial,
         is HallState.Loading -> Loading()
-        is HallState.Failure->{}
+
+        is HallState.Failure -> {}
         is HallState.Content -> HallPlan(
             hall = state.hall,
-            onDismiss=onDismiss
+            onDismiss = onDismiss,
+            update = {
+                viewModel.loadHall()}
         )
     }
     if (showErrorDialog) {
-        com.example.club.feature.hall.ui.Error(
+        Error(
             message = errorMessage,
             onRetry = {
                 viewModel.loadHall()
@@ -300,6 +351,8 @@ fun HallContent(
             },
             onCancel = {
                 showErrorDialog = false
+               // viewModel.setHallStateToInitial()
+
             }
         )
     }

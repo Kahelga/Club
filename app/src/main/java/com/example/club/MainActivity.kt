@@ -48,6 +48,7 @@ import com.example.club.shared.report.domain.repository.UserReportRepository
 import com.example.club.shared.report.domain.usecase.GetReportEventUseCase
 import com.example.club.shared.report.domain.usecase.GetReportPeriodUseCase
 import com.example.club.shared.report.domain.usecase.GetReportUserUseCase
+import com.example.club.shared.tickets.data.converter.BookingConverter
 import com.example.club.shared.user.profile.data.converter.UserConverter
 import com.example.club.shared.user.profile.data.network.ProfileApi
 import com.example.club.shared.user.profile.data.repository.ProfileRepositoryImpl
@@ -68,9 +69,21 @@ import com.example.shared.user.auth.data.repository.UserRegRepositoryImpl
 import com.example.shared.user.auth.domain.repository.UserRegRepository
 import com.example.shared.user.auth.domain.usecase.RegUseCase
 import com.example.club.shared.tickets.data.converter.OrderConverter
+import com.example.club.shared.tickets.data.network.BookingApi
+import com.example.club.shared.tickets.data.network.BookingDetailsApi
 import com.example.club.shared.tickets.data.network.OrderApi
+import com.example.club.shared.tickets.data.network.CancelOrderApi
+import com.example.club.shared.tickets.data.repository.BookedTicketRepositoryImpl
+import com.example.club.shared.tickets.data.repository.BookingRepositoryImpl
+import com.example.club.shared.tickets.data.repository.CancelOrderRepositoryImpl
 import com.example.club.shared.tickets.data.repository.OrderRepositoryImpl
+import com.example.club.shared.tickets.domain.repository.BookedTicketRepository
+import com.example.club.shared.tickets.domain.repository.BookingRepository
 import com.example.club.shared.tickets.domain.repository.OrderRepository
+import com.example.club.shared.tickets.domain.repository.CancelOrderRepository
+import com.example.club.shared.tickets.domain.usecase.BookingUseCase
+import com.example.club.shared.tickets.domain.usecase.CancelOrderUseCase
+import com.example.club.shared.tickets.domain.usecase.GetBookedTicketUseCase
 import com.example.club.shared.tickets.domain.usecase.GetOrderUseCase
 import com.example.club.ui.theme.ClubTheme
 import kotlinx.coroutines.CoroutineScope
@@ -80,6 +93,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private lateinit var networkModule: NetworkModule
+
     //private val networkModule = NetworkModule()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,20 +108,22 @@ class MainActivity : ComponentActivity() {
 
             val retrofit = networkModule.getInstance()
 
-            val eventPosterApi =retrofit.create(EventPosterApi::class.java)
+            val eventPosterApi = retrofit.create(EventPosterApi::class.java)
             val eventPosterConverter = EventPosterConverter()
-            val eventPosterRepository: EventPosterRepository =   EventPosterRepositoryImpl(eventPosterApi, eventPosterConverter)
+            val eventPosterRepository: EventPosterRepository =
+                EventPosterRepositoryImpl(eventPosterApi, eventPosterConverter)
             val getEventPosterUseCase = GetEventPosterUseCase(eventPosterRepository)
 
             val eventDetailsApi = retrofit.create(EventDetailsApi::class.java)
             val eventDetailsConverter = EventDetailsConverter()
-            val eventRepository: EventDetailsRepository = EventRepositoryImpl(eventDetailsApi, eventDetailsConverter)
+            val eventRepository: EventDetailsRepository =
+                EventRepositoryImpl(eventDetailsApi, eventDetailsConverter)
             val getEventUseCase = GetEventUseCase(eventRepository)
 
             val userAuthApi = retrofit.create(UserAuthApi::class.java)
             val authConvert = AuthConvert()
             val userAuthRepository: UserAuthRepository =
-               UserAuthRepositoryImpl(
+                UserAuthRepositoryImpl(
                     userAuthApi,
                     authConvert
                 )
@@ -121,14 +137,16 @@ class MainActivity : ComponentActivity() {
 
             val profileApi = retrofit.create(ProfileApi::class.java)
             val userConverter = UserConverter()
-            val profileRepository: ProfileRepository = ProfileRepositoryImpl(profileApi, userConverter)
+            val profileRepository: ProfileRepository =
+                ProfileRepositoryImpl(profileApi, userConverter)
             val getProfileUseCase = GetProfileUseCase(profileRepository)
 
             val profileUpdateApi = retrofit.create(ProfileUpdateApi::class.java)
-            val profileUpdateRepository: ProfileUpdateRepository = ProfileUpdateRepositoryImpl(profileUpdateApi, userConverter)
+            val profileUpdateRepository: ProfileUpdateRepository =
+                ProfileUpdateRepositoryImpl(profileUpdateApi, userConverter)
             val updateProfileUseCase = UpdateProfileUseCase(profileUpdateRepository)
 
-            val tokenRefreshApi =retrofit.create(TokenRefreshApi::class.java)
+            val tokenRefreshApi = retrofit.create(TokenRefreshApi::class.java)
             val refreshTokenRepository: RefreshTokenRepository =
                 RefreshTokenRepositoryImpl(
                     tokenRefreshApi,
@@ -139,37 +157,58 @@ class MainActivity : ComponentActivity() {
                     refreshTokenRepository
                 )
 
-            val hallApi =retrofit.create(HallApi::class.java)
+            val hallApi = retrofit.create(HallApi::class.java)
             val hallConverter = HallConverter()
             val hallRepository: HallRepository = HallRepositoryImpl(hallApi, hallConverter)
             val getHallUseCase = GetHallUseCase(hallRepository)
 
-            val purchaseApi =retrofit.create(PurchaseApi::class.java)
+            val purchaseApi = retrofit.create(PurchaseApi::class.java)
             val purchaseConverter = PurchaseConverter()
-            val purchaseRepository: PurchaseRepository = PurchaseRepositoryImpl(purchaseApi, purchaseConverter)
+            val orderConverter = OrderConverter()
+            val purchaseRepository: PurchaseRepository =
+                PurchaseRepositoryImpl(purchaseApi, orderConverter /*purchaseConverter*/)
             val purchaseUseCase = PurchaseUseCase(purchaseRepository)
 
-            val orderApi=retrofit.create(OrderApi::class.java)
-            val orderConverter= OrderConverter()
-            val orderRepository: OrderRepository = OrderRepositoryImpl(orderApi,orderConverter)
-            val getOrderUseCase= GetOrderUseCase(orderRepository)
+            val bookingApi = retrofit.create(BookingApi::class.java)
+            val bookingConverter = BookingConverter()
+            val bookingRepository: BookingRepository =
+                BookingRepositoryImpl(bookingApi, bookingConverter)
+            val bookingUseCase = BookingUseCase(bookingRepository)
 
-            val eventReportApi=retrofit.create(EventReportApi::class.java)
-            val reportConvert=ReportConverter()
-            val eventReportRepository:EventReportRepository= EventReportRepositoryImpl(eventReportApi,reportConvert)
-            val getReportEventUseCase=GetReportEventUseCase(eventReportRepository)
+            val bookingDetailsApi = retrofit.create(BookingDetailsApi::class.java)
+            val bookedTicketRepository: BookedTicketRepository =
+                BookedTicketRepositoryImpl(bookingDetailsApi, bookingConverter)
+            val getBookedTicketUseCase = GetBookedTicketUseCase(bookedTicketRepository)
 
-            val userReportApi=retrofit.create(UserReportApi::class.java)
-            val userReportRepository: UserReportRepository = UserReportRepositoryImpl(userReportApi,reportConvert)
-            val getReportUserUseCase= GetReportUserUseCase(userReportRepository)
+            val orderApi = retrofit.create(OrderApi::class.java)
 
-            val reportPeriodApi=retrofit.create(ReportPeriodApi::class.java)
-            val periodReportRepository: PeriodReportRepository = PeriodReportRepositoryImpl(reportPeriodApi,reportConvert)
-            val getReportPeriodUseCase= GetReportPeriodUseCase(periodReportRepository)
+            val orderRepository: OrderRepository = OrderRepositoryImpl(orderApi, orderConverter)
+            val getOrderUseCase = GetOrderUseCase(orderRepository)
 
-            val eventsAdminApi=retrofit.create(EventsAdminApi::class.java)
-            val eventsAdminRepository:EventsAdminRepository=EventsAdminRepositoryImpl(eventsAdminApi,eventDetailsConverter)
-            val getEventsAdminUseCase=GetEventsAdminUseCase(eventsAdminRepository)
+            val cancelOrderApi = retrofit.create(CancelOrderApi::class.java)
+            val cancelOrderRepository: CancelOrderRepository = CancelOrderRepositoryImpl(cancelOrderApi, orderConverter)
+            val cancelOrderUseCase = CancelOrderUseCase(cancelOrderRepository)
+
+            val eventReportApi = retrofit.create(EventReportApi::class.java)
+            val reportConvert = ReportConverter()
+            val eventReportRepository: EventReportRepository =
+                EventReportRepositoryImpl(eventReportApi, reportConvert)
+            val getReportEventUseCase = GetReportEventUseCase(eventReportRepository)
+
+            val userReportApi = retrofit.create(UserReportApi::class.java)
+            val userReportRepository: UserReportRepository =
+                UserReportRepositoryImpl(userReportApi, reportConvert)
+            val getReportUserUseCase = GetReportUserUseCase(userReportRepository)
+
+            val reportPeriodApi = retrofit.create(ReportPeriodApi::class.java)
+            val periodReportRepository: PeriodReportRepository =
+                PeriodReportRepositoryImpl(reportPeriodApi, reportConvert)
+            val getReportPeriodUseCase = GetReportPeriodUseCase(periodReportRepository)
+
+            val eventsAdminApi = retrofit.create(EventsAdminApi::class.java)
+            val eventsAdminRepository: EventsAdminRepository =
+                EventsAdminRepositoryImpl(eventsAdminApi, eventDetailsConverter)
+            val getEventsAdminUseCase = GetEventsAdminUseCase(eventsAdminRepository)
 
             withContext(Dispatchers.Main) {
                 setContent {
@@ -178,16 +217,19 @@ class MainActivity : ComponentActivity() {
                             getEventPosterUseCase = getEventPosterUseCase,
                             getEventUseCase = getEventUseCase,
                             authUseCase = authUseCase,
-                            regUseCase=regUseCase,
+                            regUseCase = regUseCase,
                             getProfileUseCase = getProfileUseCase,
-                            updateProfileUseCase=updateProfileUseCase,
+                            updateProfileUseCase = updateProfileUseCase,
                             getHallUseCase = getHallUseCase,
-                            purchaseUseCase=purchaseUseCase,
+                            purchaseUseCase = purchaseUseCase,
+                            bookingUseCase = bookingUseCase,
+                            getBookedTicketUseCase = getBookedTicketUseCase,
                             getOrderUseCase = getOrderUseCase,
+                            cancelOrderUseCase=cancelOrderUseCase,
                             getReportPeriodUseCase = getReportPeriodUseCase,
                             getReportEventUseCase = getReportEventUseCase,
                             getReportUserUseCase = getReportUserUseCase,
-                            getEventsAdminUseCase=getEventsAdminUseCase,
+                            getEventsAdminUseCase = getEventsAdminUseCase,
                             tokenManager = tokenManager,
                             refreshTokenUseCase = refreshTokenUseCase
 
@@ -195,7 +237,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-       }
+        }
     }
 
     /*override fun onDestroy() {

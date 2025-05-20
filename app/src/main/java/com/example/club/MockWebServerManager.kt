@@ -43,7 +43,11 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                         "authUser1.json"
                     }
 
-                    login == "user2@gmail.com" && password == "pass" -> "authUser2.json"
+                    login == "user2@gmail.com" && password == "pass" ->{
+                        currentTokenInfo =
+                            TokenInfo("eyJpc3MiOiJBdXRoIFNlcnZlciIs", Instant.now(), 30000)
+                        "authUser2.json"
+                    }
                     else -> "error.json"
                 }
 
@@ -70,7 +74,7 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 val body = request.body.readUtf8()
                 Log.d("MockWebServerManager", "Request: $body")
 
-                val responseFile =  "registration.json"
+                val responseFile = "registration.json"
 
                 val responseBody = getAssetFileContent(responseFile, "application/json")
 
@@ -129,6 +133,83 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                     }
                 }
             }
+            if (request.path == "/bookings/confirm" && request.method == "PUT") {
+                val body = request.body.readUtf8()
+                val authToken = request.getHeader("Authorization")
+
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                        val responseFile = "successfulCancel.json"
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> {
+                                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                }
+                            }
+                        }
+                    }else {
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+                }else {
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                    }
+                }
+            }
+
+            if (request.path == "/bookings" && request.method == "POST") {
+                val body = request.body.readUtf8()
+                val authToken = request.getHeader("Authorization")
+
+                if (isTokenValid(authToken)) {
+                    if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
+                        val responseFile = "bookingResponse.json"
+
+                        val responseBody = getAssetFileContent(responseFile, "application/json")
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_OK)
+
+                            when (responseBody) {
+                                is String -> setBody(responseBody)
+                                is ByteArray -> {
+                                    val buffer = Buffer().write(responseBody)
+                                    setBody(buffer)
+                                }
+
+                                null -> {
+                                    setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+                                }
+                            }
+                        }
+                    }else {
+
+                        return MockResponse().apply {
+                            setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                        }
+                    }
+
+                }else {
+                    return MockResponse().apply {
+                        setResponseCode(HttpURLConnection.HTTP_UNAUTHORIZED)
+                    }
+                }
+            }
+
 
             if (request.method == "PUT" && request.path?.startsWith("/users/") == true && request.path?.endsWith(
                     "/profile"
@@ -141,7 +222,8 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 if (isTokenValid(authToken)) {
                     if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
                         val responseFile = when (login) {
-                            "user1@gmail.com" -> "user2.json"
+                            "user1@gmail.com" -> "user1.json"
+                            "user2@gmail.com" -> "user2.json"
                             else -> "error.json"
                         }
                         /*val file = File(context.filesDir,responseFile)
@@ -222,9 +304,14 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 val authToken = request.getHeader("Authorization")
                     if (isTokenValid(authToken)) {
                         if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
-                            val responseFile = if (startDate == "2025-03-10T00:00:00Z" && endDate == "2025-04-10T00:00:00Z") {
+                            val responseFile = if (startDate == "2025-01-01T00:00:00Z" && endDate == "2025-12-31T00:00:00Z") {
                                 "reportEvents.json"
-                            } else {
+                            }else if(startDate == "2025-01-01T00:00:00Z" && endDate == "2025-03-31T00:00:00Z"){
+                                "reportEventsQuarters.json"
+                            }else if(startDate == "2025-01-01T00:00:00Z" && endDate == "2025-01-31T00:00:00Z"){
+                                "reportEventsJanuary.json"
+                            }
+                            else {
                                 "error.json"
                             }
                             val responseBody = getAssetFileContent(responseFile, "application/json")
@@ -268,9 +355,15 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 val authToken = request.getHeader("Authorization")
                 if (isTokenValid(authToken)) {
                     if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
-                        val responseFile = if (startDate == "2025-03-10T00:00:00Z" && endDate == "2025-04-10T00:00:00Z") {
+                        val responseFile = if (startDate == "2025-01-01T00:00:00Z" && endDate == "2025-12-31T00:00:00Z") {
                             "reportPeriod.json"
-                        } else {
+                        }else if(startDate == "2025-01-01T00:00:00Z" && endDate == "2025-03-31T00:00:00Z"){
+                            "reportPeriodQuarters.json"
+                        }else if(startDate == "2025-01-01T00:00:00Z" && endDate == "2025-01-31T00:00:00Z"){
+                            "reportPeriodJanuary.json"
+                        }
+
+                        else {
                             "error.json"
                         }
                         val responseBody = getAssetFileContent(responseFile, "application/json")
@@ -314,11 +407,18 @@ class MockWebServerManager(private val context: Context, private val port: Int) 
                 val authToken = request.getHeader("Authorization")
                 if (isTokenValid(authToken)) {
                     if (authToken == "Bearer eyJpc3MiOiJBdXRoIFNlcnZlciIs" || authToken == "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ102") {
-                        val responseFile = if (startDate == "2025-03-10T00:00:00Z" && endDate == "2025-04-10T00:00:00Z") {
+                        val responseFile = if (startDate == "2025-01-01T00:00:00Z" && endDate == "2025-12-31T00:00:00Z") {
                             "reportUsers.json"
-                        } else {
+                        }else if(startDate == "2025-01-01T00:00:00Z" && endDate == "2025-03-31T00:00:00Z"){
+                            "reportUsersQuarters.json"
+                        }else if(startDate == "2025-01-01T00:00:00Z" && endDate == "2025-01-31T00:00:00Z"){
+                            "reportUsersJanuary.json"
+                        }
+
+                        else {
                             "error.json"
                         }
+
                         val responseBody = getAssetFileContent(responseFile, "application/json")
 
                         return MockResponse().apply {

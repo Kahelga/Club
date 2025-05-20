@@ -1,5 +1,6 @@
 {
   "accessToken": "eyJpc3MiOiJBdXRoIFNlcnZlciIs",
   "refreshToken": "eyJpc3MiOiJBdXRoIFKvvdte",
-  "message": " "
+  "message": " ",
+  "role": "client"
 }

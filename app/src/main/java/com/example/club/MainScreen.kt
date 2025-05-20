@@ -32,6 +32,10 @@ import com.example.club.feature.auth.presentation.AuthState
 import com.example.club.feature.auth.presentation.AuthViewModel
 import com.example.club.feature.auth.presentation.AuthViewModelFactory
 import com.example.club.feature.auth.ui.AuthScreen
+import com.example.club.feature.booking.presentation.BookedTicketViewModel
+import com.example.club.feature.booking.presentation.BookedTicketViewModelFactory
+import com.example.club.feature.booking.presentation.BookingViewModel
+import com.example.club.feature.booking.presentation.BookingViewModelFactory
 import com.example.club.feature.eventdetails.EventDetailsRoute
 import com.example.club.shared.event.domain.usecase.GetEventUseCase
 import com.example.club.feature.eventdetails.presentation.EventDetailsViewModel
@@ -72,6 +76,8 @@ import com.example.club.feature.registration.presentation.RegViewModel
 import com.example.club.feature.registration.presentation.RegViewModelFactory
 import com.example.club.feature.registration.ui.RegScreen
 import com.example.club.feature.tickets.OrderRoute
+import com.example.club.feature.tickets.presentation.CancelOrderViewModel
+import com.example.club.feature.tickets.presentation.CancelOrderViewModelFactory
 import com.example.club.shared.tickets.domain.usecase.GetOrderUseCase
 import com.example.club.feature.tickets.presentation.OrderViewModel
 import com.example.club.feature.tickets.presentation.OrderViewModelFactory
@@ -80,6 +86,9 @@ import com.example.club.shared.event.domain.usecase.GetEventsAdminUseCase
 import com.example.club.shared.report.domain.usecase.GetReportEventUseCase
 import com.example.club.shared.report.domain.usecase.GetReportPeriodUseCase
 import com.example.club.shared.report.domain.usecase.GetReportUserUseCase
+import com.example.club.shared.tickets.domain.usecase.BookingUseCase
+import com.example.club.shared.tickets.domain.usecase.CancelOrderUseCase
+import com.example.club.shared.tickets.domain.usecase.GetBookedTicketUseCase
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -94,6 +103,9 @@ fun MainScreen(
     getHallUseCase: GetHallUseCase,
     getOrderUseCase: GetOrderUseCase,
     purchaseUseCase: PurchaseUseCase,
+    cancelOrderUseCase:CancelOrderUseCase,
+    bookingUseCase:BookingUseCase,
+    getBookedTicketUseCase:GetBookedTicketUseCase,
     getReportPeriodUseCase:GetReportPeriodUseCase,
     getReportEventUseCase:GetReportEventUseCase,
     getReportUserUseCase:GetReportUserUseCase,
@@ -117,7 +129,7 @@ fun MainScreen(
         )
     )
     Surface {
-        NavHost(navController = navController, startDestination = /*AuthRoute*/PosterRoute) {
+        NavHost(navController = navController, startDestination = PosterRoute) {
             composable<PosterRoute> {
                 val viewModel: PosterViewModel =
                     viewModel(factory = PosterViewModelFactory(getEventPosterUseCase))
@@ -150,9 +162,9 @@ fun MainScreen(
                 EventDetailsScreen(
                     viewModel,
                     onBackPressed = { navController.navigate(PosterRoute) },
-                    toBuySelected = {/*navController.navigate(HallRoute(eventId = destination.eventId))*/
+                    toBuySelected = {
                         if (authState is AuthState.Success) {
-                            navController.navigate(HallRoute(eventId = destination.eventId))//it
+                            navController.navigate(HallRoute(eventId = destination.eventId))
                         } else {
                             authViewModel.setPreviousRoute(EventDetailsRoute(destination.eventId))
                             navController.navigate(AuthRoute)
@@ -166,12 +178,16 @@ fun MainScreen(
                     onLoginSuccess = {
                         viewModelProfile.setLogin(it)
                         val previousRoute = authViewModel.getPreviousRoute()
-                        if (previousRoute != null) {
+                        if (previousRoute != null && authViewModel.role.value == "client") {
                             navController.navigate(previousRoute) {
                                 popUpTo(AuthRoute) { inclusive = true }
                             }
-                        } else {//(if role=admin)
-                            navController.navigate(/*ReportsRoute*/PosterRoute)//ProfileRoute(login = it)
+                        } else {
+                            if (authViewModel.role.value == "admin"){
+                                navController.navigate(ReportsRoute)
+                        }else {
+                                navController.navigate(PosterRoute)
+                            }
                         }
                     },
                     onRegisterPressed={navController.navigate(RegRoute){popUpTo(AuthRoute) { inclusive = true }} },
@@ -247,15 +263,28 @@ fun MainScreen(
                         tokenManager
                     )
                 )
+                val bookingViewModel=viewModel(
+                   BookingViewModel::class.java,
+                    factory = BookingViewModelFactory(
+                        bookingUseCase,
+                        refreshTokenUseCase,
+                        tokenManager
+                    )
+                )
                 HallScreen(
                     viewModel,
+                    bookingViewModel,
+                   // viewModelProfile,
+                    authViewModel,
+                    destination.eventId,
                     onBackPressed = { navController.popBackStack() },
-                    toBuySelected = { selectedTickets, totalPrice ->
+                    toBuySelected = { /*selectedTickets, totalPrice,bookedId ->*/
                         navController.navigate(
                             PurchaseRoute(
-                                eventId = destination.eventId,
-                                seats = selectedTickets,
-                                totalPrice = totalPrice
+                                //eventId = destination.eventId,
+                              //  seats = selectedTickets,
+                               // totalPrice = totalPrice,
+                                bookedId = it
                             )
                         )
                     }
@@ -265,16 +294,21 @@ fun MainScreen(
             composable<PurchaseRoute> {
                 val destination = it.toRoute<PurchaseRoute>()
 
-                val viewModelEvent = viewModel(
+               /* val viewModelEvent = viewModel(
                     EventDetailsViewModel::class.java,
                     factory = EventDetailsViewModelFactory(destination.eventId, getEventUseCase)
+                )*/
+                val bookedTicketViewModel = viewModel(
+                    BookedTicketViewModel::class.java,
+                    factory = BookedTicketViewModelFactory(destination.bookedId, getBookedTicketUseCase,refreshTokenUseCase,tokenManager)
                 )
                 PurchaseScreen(
-                    viewModelEvent,
-                    destination.seats,
-                    destination.totalPrice,
+                   // viewModelEvent,
+                    bookedTicketViewModel,
+                    //destination.seats,
+                   // destination.totalPrice,
                     onBackPressed = { navController.popBackStack() },
-                    onData = {navController.navigate(DataRoute(eventId = destination.eventId, seats = destination.seats)) }
+                    onData = {navController.navigate(DataRoute(destination.bookedId/*eventId = destination.eventId, seats = destination.seats*/)) }
                 )
 
             }
@@ -283,7 +317,7 @@ fun MainScreen(
                 DataScreen(
                     viewModelProfile,
                     onBackPressed = { navController.popBackStack() },
-                    toBuySelected = {navController.navigate(CardRoute(destination.eventId,destination.seats))}
+                    toBuySelected = {userId-> navController.navigate(CardRoute(destination.bookedId,userId))}
                 )
 
             }
@@ -298,11 +332,12 @@ fun MainScreen(
                    )
                )
                 CardScreen(
-                    destination.eventId,
-                    destination.seats,
+                    destination.bookedId,
+                    destination.userId,
                     viewModel,
                     onBackPressed = { navController.popBackStack() },
-                    //navController.navigate(PosterRoute)
+                    onPosterScreen = {navController.navigate(PosterRoute)},
+                    onOrderScreen = {navController.navigate(OrderRoute)}
 
                 )
 
@@ -316,11 +351,22 @@ fun MainScreen(
                         tokenManager
                     )
                 )
+                val cancelOrderViewModel = viewModel(
+                    CancelOrderViewModel::class.java,
+                    factory = CancelOrderViewModelFactory(
+                        cancelOrderUseCase,
+                        refreshTokenUseCase,
+                        tokenManager
+                    )
+                )
                 OrderScreen(
                     viewModel,
                     authViewModel,
+                    cancelOrderViewModel,
                     onProfileSelected = { navController.navigate(ProfileRoute(login = it)) },
-                    onPosterSelected = { navController.navigate(PosterRoute) }
+                    onPosterSelected = { navController.navigate(PosterRoute) },
+                    onBuy={ navController.navigate(PurchaseRoute(bookedId=it))},
+                    onOrderScreen = { navController.navigate(OrderRoute)}
                 )
             }
             composable<ReportsRoute>{
@@ -352,7 +398,9 @@ fun MainScreen(
                     reportPeriodViewModel,
                     reportEventViewModel,
                     reportUserViewModel,
-                    onEventsSelected = { navController.navigate(EventsRoute)}
+                    onEventsSelected = { navController.navigate(EventsRoute)},
+                    logOut = {authViewModel.logout()
+                        navController.navigate(PosterRoute)}
 
                 )
             }
@@ -365,7 +413,6 @@ fun MainScreen(
                         getEventsAdminUseCase
                     )
                 )
-             //   val destination = it.toRoute<HallRoute>()
                 val  hallViewModel = viewModel(
                     HallViewModel::class.java,
                     factory = HallViewModelFactory(
@@ -379,10 +426,10 @@ fun MainScreen(
                 EventsScreen(
                     viewModel,
                     hallViewModel,
-                    onReportsSelected={ navController.navigate(ReportsRoute)}
+                    onReportsSelected={ navController.navigate(ReportsRoute)},
+                    logOut={  authViewModel.logout()
+                        navController.navigate(PosterRoute) }
                 )
-
-
             }
         }
     }

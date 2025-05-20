@@ -1,9 +1,11 @@
 package com.example.club.feature.purchase.ui
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +18,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -26,12 +30,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,19 +65,24 @@ import com.example.club.util.validation.validateExpirationDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardScreen(
-    eventId: String,
-    seats: List<String>,
+    //eventId: String,
+    //  seats: List<String>,
+    bookedId: String,
+    userId: String,
     viewModel: PurchaseViewModel,
     onBackPressed: () -> Unit,
+    onPosterScreen: () -> Unit,
+    onOrderScreen: () -> Unit
 ) {
     val purchaseState by viewModel.state.collectAsState()
-    val purchaseRequest = PurchaseRequest(eventId, seats)
-    var showDialog by remember { mutableStateOf(false) }
+    val purchaseRequest = PurchaseRequest(bookedId, userId)
+    //var showDialog by remember { mutableStateOf(false) }
 
     var cardNumber by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var expirationDate by remember { mutableStateOf("") }
     var validationMessage by remember { mutableStateOf("") }
+
 
     val progress = 3
     val totalSteps = 3
@@ -101,11 +112,20 @@ fun CardScreen(
                 text = stringResource(R.string.progress, progress, totalSteps),
                 style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = progress / totalSteps.toFloat(),
-                modifier = Modifier.fillMaxWidth()
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                LinearProgressIndicator(
+                    progress = progress / totalSteps.toFloat(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    // .clip(RoundedCornerShape(10.dp)),
+                    trackColor = MaterialTheme.colorScheme.outline
+                )
+
+            }
 
         }
         CardInputFields(
@@ -118,7 +138,6 @@ fun CardScreen(
         )
         Button(
             onClick = {
-
                 val parts = expirationDate.split("/")
                 val month = if (parts.isNotEmpty()) parts[0] else ""
                 val year = if (parts.size > 1) parts[1] else ""
@@ -128,6 +147,11 @@ fun CardScreen(
                 val cvvValidation = validateCVV(cvv)
                 val expirationValidation = validateExpirationDate(month, year)
 
+                cardNumber = ""
+                Log.e("cardNumber", "${cardNumber}")
+                cvv = ""
+                expirationDate = ""
+
                 validationMessage = cardValidation.ifEmpty {
                     cvvValidation.ifEmpty {
                         expirationValidation
@@ -136,7 +160,9 @@ fun CardScreen(
 
                 if (validationMessage.isEmpty()) {
                     viewModel.buyTicket(purchaseRequest)
+
                 }
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -162,9 +188,10 @@ fun CardScreen(
             }
 
             is PurchaseState.Success -> {
-                if (!showDialog) {
+                CheckScreen( state.response,onPosterScreen, onOrderScreen)
+                /*if (!showDialog) {
                     showDialog = true
-                }
+                }*/
             }
 
             is PurchaseState.Failure -> {
@@ -175,28 +202,10 @@ fun CardScreen(
             }
         }
 
+       /* if (showDialog) {
+            CheckScreen(onPosterScreen, onOrderScreen)
 
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                text = {
-                    Text(
-                        stringResource(id = R.string.purchase_dialog),
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            showDialog = false
-                            // onPosterScreen()
-                        }
-                    ) {
-                        Text(stringResource(id = R.string.purchase_dialog_ok))
-                    }
-                }
-            )
-        }
+        }*/
     }
 
 
@@ -224,7 +233,7 @@ fun CardInputFields(
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
 
 
-    ) {
+        ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -268,7 +277,7 @@ fun CardInputFields(
                 placeholder = { Text(stringResource(R.string.example_cardNumber)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top=10.dp, end = 20.dp)
+                    .padding(top = 10.dp, end = 20.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .border(
                         BorderStroke(
@@ -278,7 +287,7 @@ fun CardInputFields(
 
                     ),
 
-            )
+                )
 
             Row(
                 modifier = Modifier
@@ -298,12 +307,17 @@ fun CardInputFields(
                 }
                 TextField(
 
-                    value =textFieldDateValueState,
+                    value = textFieldDateValueState,
                     onValueChange = { newValue ->
 
                         val digitsOnly = newValue.text.filter { it.isDigit() }
                         var formattedValue = if (digitsOnly.length > 2) {
-                            "${digitsOnly.substring(0, 2)}$slash${digitsOnly.substring(2, minOf(digitsOnly.length, 4))}"
+                            "${digitsOnly.substring(0, 2)}$slash${
+                                digitsOnly.substring(
+                                    2,
+                                    minOf(digitsOnly.length, 4)
+                                )
+                            }"
                         } else {
                             digitsOnly
                         }
@@ -337,7 +351,7 @@ fun CardInputFields(
                                 width = 1.dp,
                                 color = Color.Gray,
 
-                            ),
+                                ),
                             shape = RoundedCornerShape(8.dp),
                         )
 
@@ -363,8 +377,6 @@ fun CardInputFields(
 
                 )
             }
-
-
         }
     }
 }

@@ -13,6 +13,7 @@ class HallConverter {
         return Ticket(
             id=ticketModel.id,
             seat = ticketModel.seat,
+            capacity=ticketModel.capacity,
             x=ticketModel.x,
             y=ticketModel.y,
             type = ticketModel.type,
@@ -24,7 +25,8 @@ class HallConverter {
         return SeatPlan(
             row = seatPlanModel.row,
             column = seatPlanModel.column,
-            tickets = seatPlanModel.tickets.map { ticketConverter(it)}
+            tickets = seatPlanModel.tickets.map { ticketConverter(it)},
+            available = seatPlanModel.available
         )
     }
     fun convert(hallModel: HallModel): Hall {

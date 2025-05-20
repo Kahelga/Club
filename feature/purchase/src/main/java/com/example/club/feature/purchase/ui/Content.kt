@@ -16,10 +16,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.club.feature.eventdetails.ui.EventTitle
 import com.example.club.feature.purchase.R
+import com.example.club.shared.event.domain.entity.AgeRatings
+import com.example.club.shared.event.domain.entity.Event
 import com.example.club.shared.event.domain.entity.EventDetails
 import com.example.club.util.formatting.formatDateSelected
 import com.example.club.util.formatting.formatTimeSelected
@@ -27,7 +30,8 @@ import com.example.club.util.formatting.formatTimeSelected
 
 @Composable
 fun ContentPurchase(
-    event: EventDetails,
+    //event: EventDetails,
+    event: Event,
     seats: List<String>,
     totalPrice: Int,
     toBuySelected: () -> Unit,
@@ -93,4 +97,23 @@ private fun BuyTicketButton(onClick: () -> Unit) {
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         )
     }
+}
+
+@Composable
+private fun EventTitle(event: Event) {
+    val ageRatingText = when (event.ageRating) {
+        AgeRatings.G -> "Для всех"
+        AgeRatings.PG -> "С родительским контролем"
+        AgeRatings.PG13 -> "13+"
+        AgeRatings.R -> "16+"
+        AgeRatings.NC17 -> "18+"
+    }
+    Text(
+        text = buildAnnotatedString {
+            append(event.title)
+            append(" (${ageRatingText})")
+        },
+        style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+        modifier = Modifier.padding(top = 6.dp, start = 8.dp, end = 8.dp)
+    )
 }

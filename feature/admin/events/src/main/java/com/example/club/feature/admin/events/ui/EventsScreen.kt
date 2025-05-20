@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -47,7 +48,8 @@ import com.example.club.feature.hall.presentation.HallViewModel
 fun EventsScreen(
     eventsViewModel: EventsViewModel,
     hallViewModel: HallViewModel,
-    onReportsSelected: () -> Unit
+    onReportsSelected: () -> Unit,
+    logOut:() ->Unit
 ) {
     val eventsState by eventsViewModel.state.collectAsState()
     var showErrorDialog by remember { mutableStateOf(false) }
@@ -75,7 +77,7 @@ fun EventsScreen(
     }
     Scaffold(
         bottomBar = {
-            BottomBar(onReportsSelected/*, { onOrderSelected(loginUser) }*/)
+            BottomBar(onReportsSelected, logOut)
         }
     ) { paddingValues ->
         Column(
@@ -112,7 +114,7 @@ fun EventsScreen(
 }
 
 @Composable
-fun BottomBar(onReportsSelected: () -> Unit/*, onOrderSelected: () -> Unit*/) {
+fun BottomBar(onReportsSelected: () -> Unit, logOut: () -> Unit) {
 
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
@@ -141,9 +143,9 @@ fun BottomBar(onReportsSelected: () -> Unit/*, onOrderSelected: () -> Unit*/) {
 
                 )
             BottomBarItem(
-                icon = Icons.Filled.Person,
-                label = stringResource(id = R.string.profile_title),
-                onClick = {} /*onProfileSelected*/,
+                icon = Icons.Filled.ExitToApp,
+                label = stringResource(id = R.string.exit_title),
+                onClick = logOut ,
                 iconTint = Color.Gray
             )
         }

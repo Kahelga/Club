@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.mockwebserver.v4110)
     implementation(libs.androidx.monitor)
     implementation(project(":util:formatting"))
+    implementation(libs.androidx.ui.android)
     testImplementation(libs.mockwebserver)
 
     // Сериализация JSON

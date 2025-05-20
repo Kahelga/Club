@@ -1,5 +1,23 @@
 {
-  "ticketId": "ticket789",
-  "ticketCode": "QR123456789",
-  "status": "CONFIRMED"
+  "ticketId": "booking123",
+  "bookingId": "booking123",
+  "userId": "user456",
+  "event":{
+    "id": "2",
+    "title": "Фолк Фестиваль",
+    "date": "2025-03-09T17:00:00Z",
+    "genre": [
+      "Фолк"
+    ],
+    "ageRating": "G",
+    "minPrice": 1000,
+    "imgPreview": "http://localhost:8090/img/poster2",
+    "status": "ACTIVE"
+  },
+  "seats": [
+    "D4"
+  ],
+  "ticketCode": "QR4673890365",
+  "issueDate": "2025-03-01T12:00:00Z",
+  "status": "PAID"
 }

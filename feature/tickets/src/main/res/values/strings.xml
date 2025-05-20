@@ -20,10 +20,20 @@
     <string name="button_return">Вернуть билет</string>
     <string name="button_return_d">Вернуть </string>
     <string name="profile_title">Профиль </string>
+    <string name="qr_code_title">QR-код для входа</string>
+    <string name="button_show_qr">QR-код</string>
+    <string name="button_paid">Оплатить</string>
+
     <string name="confirmation_title">Подтверждение</string>
     <string name="confirmation_message">Вернуть билет?</string>
 
     <string name="button_cancel">Отменить</string>
+
+    <string name="cancel_dialog">Возврат оформлен</string>
+    <string name="title_event">Название мероприятия</string>
+    <string name="event_dataTime">Дата и время</string>
+    <string name="seats"> Места</string>
+    <string name="button_poster">На главную</string>
 
     <string name="order_title"> Билеты</string>
     <string name="order_idTicket"> Номер билета: %s</string>
@@ -31,5 +41,9 @@
     <string name="order_active">Активные</string>
     <string name="order_archive">История</string>
 
+    <string name="status_pending">В ожидании</string>
+    <string name="status_confirmed">Подтверждено</string>
+    <string name="status_paid">Оплачено</string>
+    <string name="status_cancelled">Отменено</string>
 
 </resources>

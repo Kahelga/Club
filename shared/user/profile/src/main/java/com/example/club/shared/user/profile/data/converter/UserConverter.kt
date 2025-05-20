@@ -26,6 +26,7 @@ class UserConverter {
             middlename = model.middlename,
             email = model.email,
             city = model.city,
+            birthDate = model.birthDate,
             role=model.role
 
         )

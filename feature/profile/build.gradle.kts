@@ -69,6 +69,7 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(project(":util:formatting"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

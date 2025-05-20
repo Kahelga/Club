@@ -7,7 +7,10 @@
     <string name="error_close">Закрыть</string>
     <string name="min_price_event"> от %1$d₽</string>
     <string name="button_details">Подробнее</string>
-
+    <string name="label_search">Поиск событий</string>
+    <string name="label_dropDown">Жанры</string>
+    <string name="button_calendar_done">Готово</string>
+    <string name="button_calendar_reset">Сбросить</string>
     <string name="bar_poster">Афиша</string>
 
     <string name="profile_title">Профиль </string>

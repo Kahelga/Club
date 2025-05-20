@@ -12,6 +12,10 @@
     <string name="progress"> Шаг %1$d из %2$d </string>
     <string name="seat_name"> Место: %s </string>
     <string name="seat_price"> Цена:%1$d₽ </string>
+    <string name="dancefloorSeat_price"> Танцпол:%1$d₽ </string>
+    <string name="barSeat_price"> Барный стул:%1$d₽ </string>
+    <string name="tableASeat_price"> VIP cтол(тип A):%1$d₽ </string>
+    <string name="tableBSeat_price"> Cтол тип B:%1$d₽ </string>
     <string name="hall_scene"> Сцена </string>
     <string name="ticket_free"> Свободно</string>
     <string name="ticket_reserved"> Забронировано</string>

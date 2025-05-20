@@ -6,11 +6,10 @@ data class EventDetails(
     val date:String,
     val genre:List<String>,
     val ageRating: AgeRatings,
+    val minPrice:Int,
+    val imgPreview:String,
+    val status: EventStatus,
     val description:String,
     val artists:List<EventArtists>,
-    val duration:Int,
-    val imgPreview:String,
-    val minPrice:Int,
-    val status: EventStatus
-
+    val duration:Int
 )

@@ -6,5 +6,6 @@
   "middlename": "Отчество",
   "email": "user1@gmail.com",
   "city": "city",
+  "birthDate": "2003-05-19",
   "role": "client"
 }

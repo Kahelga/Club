@@ -36,8 +36,12 @@ android {
 
 dependencies {
     implementation(project(":shared:event"))
-    implementation(project(":shared:user:auth"))
+    //implementation(project(":shared:user:auth"))
     implementation(project(":util:manager:token"))
+    implementation(project(":shared:user:auth"))
+    implementation(project(":feature:booking"))
+    implementation(project(":shared:tickets"))
+   // implementation(project(":feature:profile"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -70,7 +74,9 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(project(":shared:user:auth"))
+    implementation(project(":feature:auth"))
+
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

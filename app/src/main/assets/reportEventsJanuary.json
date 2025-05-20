@@ -1,0 +1,74 @@
+[
+  {
+    "eventId": "event_001",
+    "report": {
+      "profit": 500,
+      "ticketSold": 10,
+      "expenses": 50,
+      "netProfit": 50
+    }
+  },
+  {
+    "eventId": "event_002",
+    "report": {
+      "profit": 6000,
+      "ticketSold": 20,
+      "expenses": 80,
+      "netProfit": 120
+    }
+  },
+  {
+    "eventId": "event_003",
+    "report": {
+      "profit": 1500,
+      "ticketSold": 15,
+      "expenses": 70,
+      "netProfit": 80
+    }
+  },
+  {
+    "eventId": "event_004",
+    "report": {
+      "profit": 2500,
+      "ticketSold": 25,
+      "expenses": 100,
+      "netProfit": 150
+    }
+  },
+  {
+    "eventId": "event_005",
+    "report": {
+      "profit": 500,
+      "ticketSold": 10,
+      "expenses": 50,
+      "netProfit": 50
+    }
+  },
+  {
+    "eventId": "event_006",
+    "report": {
+      "profit": 6000,
+      "ticketSold": 20,
+      "expenses": 80,
+      "netProfit": 120
+    }
+  },
+  {
+    "eventId": "event_007",
+    "report": {
+      "profit": 1500,
+      "ticketSold": 15,
+      "expenses": 70,
+      "netProfit": 80
+    }
+  },
+  {
+    "eventId": "event_008",
+    "report": {
+      "profit": 2500,
+      "ticketSold": 25,
+      "expenses": 100,
+      "netProfit": 150
+    }
+  }
+]

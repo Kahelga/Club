@@ -1,5 +1,6 @@
 package com.example.club.shared.tickets.data.network
 
+import com.example.club.shared.tickets.data.model.OrderModel
 import com.example.club.shared.tickets.data.model.PurchaseRequestModel
 import com.example.club.shared.tickets.data.model.PurchaseResponseData
 import retrofit2.http.Body
@@ -11,6 +12,6 @@ interface PurchaseApi {
     suspend fun buyTicket(
         @Body request: PurchaseRequestModel,
         @Header("Authorization") token: String
-    ): PurchaseResponseData
+    ): OrderModel /*PurchaseResponseData*/
 
 }

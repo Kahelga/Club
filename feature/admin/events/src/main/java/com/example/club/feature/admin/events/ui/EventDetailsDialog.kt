@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Popup
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.club.feature.admin.events.R
+import com.example.club.shared.event.domain.entity.AgeRatings
 import com.example.club.shared.event.domain.entity.EventDetails
 import com.example.club.util.formatting.formatDateSelected
 import com.example.club.util.formatting.formatTimeSelected
@@ -118,7 +119,14 @@ fun EventDetailsDialog(
                             append(" ")
                         }
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Normal)) {
-                            append(event.ageRating.name)
+                            val ageRatingText = when (event.ageRating) {
+                                AgeRatings.G -> "Для всех"
+                                AgeRatings.PG -> "С родительским контролем"
+                                AgeRatings.PG13 -> "13+"
+                                AgeRatings.R -> "16+"
+                                AgeRatings.NC17 -> "18+"
+                            }
+                            append(ageRatingText)
                         }
                     },
                     style = MaterialTheme.typography.bodyMedium

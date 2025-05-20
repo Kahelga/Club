@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.club.feature.profile.R
 import com.example.club.shared.user.profile.domain.entity.User
+import com.example.club.util.formatting.formatDateToDDMMYYYY
 
 @Composable
 fun Content(
@@ -49,7 +50,7 @@ private fun UserItem(
         ProfileField(label = stringResource(R.string.user_lastname), value = user.lastname)
         ProfileField(label = stringResource(R.string.user_name), value = user.firstname)
         ProfileField(label = stringResource(R.string.user_middlename), value = user.middlename)
-
+        ProfileField(label = stringResource(R.string.user_birth_date), value = formatDateToDDMMYYYY(user.birthDate))
         ProfileField(label = stringResource(R.string.user_phone), value = user.phone)
         ProfileField(label = stringResource(R.string.user_email), value = user.email)
         ProfileField(label = stringResource(R.string.user_city), value = user.city)

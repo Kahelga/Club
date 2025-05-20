@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:profileUpdate"))
     implementation(project(":feature:purchase"))
+    implementation(project(":feature:booking"))
     implementation(project(":feature:tickets"))
     implementation(project(":feature:hall"))
     implementation(project(":feature:admin:events"))

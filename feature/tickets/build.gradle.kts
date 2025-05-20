@@ -67,6 +67,10 @@ dependencies {
     //безопасность
     implementation(libs.androidx.security.crypto)
 
+    //qr код
+    implementation(libs.core)
+    implementation(libs.zxing.android.embedded)
+
     implementation(libs.compose)
     implementation (libs.androidx.material.icons.extended)
 

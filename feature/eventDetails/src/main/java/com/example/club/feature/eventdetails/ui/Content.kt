@@ -46,6 +46,7 @@ import androidx.compose.ui.text.withStyle
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.club.feature.eventdetails.R
+import com.example.club.shared.event.domain.entity.AgeRatings
 
 import com.example.club.shared.event.domain.entity.EventDetails
 import com.example.club.util.formatting.formatDateSelected
@@ -80,6 +81,8 @@ private fun DetailItem(
         EventInfoCard(event)
         EventDescription(event, isDescriptionExpanded) { isDescriptionExpanded = it }
         BuyTicketButton( toBuySelected)
+
+
 
     }
 }
@@ -140,10 +143,17 @@ fun EventImage(event: EventDetails) {
 
 @Composable
 fun EventTitle(event: EventDetails) {
+    val ageRatingText = when (event.ageRating) {
+        AgeRatings.G -> "Для всех"
+        AgeRatings.PG -> "С родительским контролем"
+        AgeRatings.PG13 -> "13+"
+        AgeRatings.R -> "16+"
+        AgeRatings.NC17 -> "18+"
+    }
     Text(
         text = buildAnnotatedString {
             append(event.title)
-            append(" (${event.ageRating})")
+            append(" (${ageRatingText})")
         },
         style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
         modifier = Modifier.padding(top = 6.dp, start = 8.dp, end = 8.dp)

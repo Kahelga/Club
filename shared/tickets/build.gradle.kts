@@ -60,6 +60,7 @@ dependencies {
     implementation (libs.okhttp)
     implementation(libs.mockwebserver.v4110)
     implementation(libs.androidx.monitor)
+    implementation(project(":shared:user:profile"))
     testImplementation(libs.mockwebserver)
 
     // Сериализация JSON

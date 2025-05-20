@@ -32,10 +32,13 @@ fun UserReportContent(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(5.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
-                Column(modifier = Modifier.padding(2.dp)) {
-                    Text(text =stringResource(R.string.report), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                Column(modifier = Modifier.padding(10.dp)) {
+                    Text(text =stringResource(R.string.report), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
                     ReportUserTable(reportUser)
                 }
             }
@@ -47,14 +50,18 @@ fun UserReportContent(
 
 @Composable
 fun ReportUserTable(reportUsers: List<ReportUser>) {
-    Column(modifier = Modifier
+    Column(
+        modifier = Modifier
         .fillMaxWidth()
-        .padding(16.dp)) {
+        .padding(2.dp)
+        .padding(top=16.dp)
+
+    ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .background(MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.5f))
         ) {
             Text(
                 text = stringResource(R.string.table_userId),
@@ -71,7 +78,7 @@ fun ReportUserTable(reportUsers: List<ReportUser>) {
             Text(
                 text = stringResource(R.string.table_ticketSold),
                 modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodySmall
             )
 
             Text(
@@ -87,10 +94,9 @@ fun ReportUserTable(reportUsers: List<ReportUser>) {
             )
         }
 
-        // Линия разделения после заголовков
+
         Divider(thickness = 2.dp, color = MaterialTheme.colorScheme.onSurface)
 
-        // Данные таблицы
         reportUsers.forEach { reportUser ->
             ReportUserRow(reportUser)
         }
@@ -103,6 +109,7 @@ fun ReportUserRow(reportUser: ReportUser) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .background(MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.4f))
     ) {
         Text(text = reportUser.userId, modifier = Modifier
             .weight(1f)

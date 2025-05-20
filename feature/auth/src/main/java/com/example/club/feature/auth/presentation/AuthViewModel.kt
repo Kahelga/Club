@@ -20,7 +20,8 @@ class AuthViewModel(
     val state: StateFlow<AuthState> = _state
     private val _login = MutableStateFlow<String>("")
     val login: StateFlow<String> = _login
-
+    private val _role = MutableStateFlow<String>("")
+    val role: StateFlow<String> = _role
     private var previousRoute: EventDetailsRoute? = null
 
 
@@ -28,13 +29,9 @@ class AuthViewModel(
         viewModelScope.launch {
             try {
                 val response = authUseCase(login, password)
-                /*if (response.success) {
-                    _state.value = AuthState.Success(response)
-                } else {
-                    _state.value = AuthState.Failure(response.reason)
-                }*/
                 _state.value = AuthState.Success(response)
                 _login.value = login
+                _role.value=response.role
                 response.accessToken?.let { tokenManager.saveTokens(it, response.refreshToken) }
             } catch (ce: CancellationException) {
                 throw ce

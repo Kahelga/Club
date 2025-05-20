@@ -7,9 +7,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OrderModel(
     val ticketId:String,
+    val bookingId:String,
     val userId:String,
     val event: EventModel,
     val seats:List<String>,
+    val ticketCode:String,
     val issueDate:String,
     val status: PurchaseStatus
 )

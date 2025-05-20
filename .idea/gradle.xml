@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/feature/admin/events" />
             <option value="$PROJECT_DIR$/feature/admin/reports" />
             <option value="$PROJECT_DIR$/feature/auth" />
+            <option value="$PROJECT_DIR$/feature/booking" />
             <option value="$PROJECT_DIR$/feature/eventDetails" />
             <option value="$PROJECT_DIR$/feature/hall" />
             <option value="$PROJECT_DIR$/feature/poster" />

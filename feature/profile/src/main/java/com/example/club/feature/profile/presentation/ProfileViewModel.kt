@@ -22,7 +22,7 @@ class ProfileViewModel(
     val state: StateFlow<ProfileState> = _state
     private var accessToken: String? = null
     private val _user = MutableStateFlow<User>(
-        User("", "", "", "", "", "", "", ""),
+        User("", "", "", "", "", "", "", "",""),
     )
     val user: StateFlow<User> = _user
 

@@ -9,18 +9,30 @@ import androidx.compose.runtime.setValue
 import com.example.club.feature.admin.reports.presentation.ReportEventViewModel
 import com.example.club.feature.admin.reports.presentation.ReportPeriodViewModel
 import com.example.club.feature.admin.reports.presentation.ReportUserViewModel
-import android.app.DatePickerDialog
+
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,9 +44,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,30 +55,28 @@ import com.example.club.feature.admin.reports.R
 import com.example.club.feature.admin.reports.presentation.ReportEventState
 import com.example.club.feature.admin.reports.presentation.ReportPeriodState
 import com.example.club.feature.admin.reports.presentation.ReportUserState
-import com.example.club.shared.report.domain.entity.ReportEvent
-import com.example.club.util.formatting.formatDateSelected
-import java.text.SimpleDateFormat
+import java.time.Year
 
 import java.util.*
 
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReportsScreen(
     reportPeriodViewModel: ReportPeriodViewModel,
     reportEventViewModel: ReportEventViewModel,
     reportUserViewModel: ReportUserViewModel,
-    onEventsSelected:()-> Unit
+    onEventsSelected: () -> Unit,
+    logOut:() ->Unit
 
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
-    var startDate by remember { mutableStateOf("2025-03-10T00:00:00Z") }
-    var endDate by remember { mutableStateOf("2025-04-10T00:00:00Z") }
-    val reportEventState by reportEventViewModel.state.collectAsState()
+    var startDate by remember { mutableStateOf("2025-01-01T00:00:00Z") }
+    var endDate by remember { mutableStateOf("2025-12-31T00:00:00Z") }
 
     Scaffold(
         bottomBar = {
-            BottomBar( onEventsSelected)
+            BottomBar(onEventsSelected,logOut)
         }
     ) { paddingValues ->
         Column(
@@ -73,70 +84,67 @@ fun ReportsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            TabRow(selectedTabIndex = selectedTab , modifier = Modifier.padding(top=20.dp)) {
-                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }) { Text(
-                    stringResource(R.string.tabRow_0)
-                ) }
-                Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }) { Text( stringResource(R.string.tabRow_1)) }
-                Tab(selected = selectedTab == 2, onClick = { selectedTab = 2 }) { Text( stringResource(R.string.tabRow_2)) }
+            TabRow(selectedTabIndex = selectedTab, modifier = Modifier.padding(top = 20.dp)) {
+                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }) {
+                    Text(
+                        stringResource(R.string.tabRow_0)
+                    )
+                }
+                Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }) {
+                    Text(
+                        stringResource(R.string.tabRow_1)
+                    )
+                }
+                Tab(selected = selectedTab == 2, onClick = { selectedTab = 2 }) {
+                    Text(
+                        stringResource(R.string.tabRow_2)
+                    )
+                }
             }
-
             DatePickerSection(
-                startDate = startDate,
-                endDate = endDate,
                 onStartDateSelected = { newStartDate ->
                     startDate = newStartDate
-                    // Повторный запрос при изменении начальной даты
-                    reportEventViewModel.loadReportEvent(startDate, endDate)
-                    reportUserViewModel.loadReportUser(startDate, endDate)
-                    reportPeriodViewModel.loadReportPeriod(startDate, endDate)
+                    updateReports(
+                        startDate,
+                        endDate,
+                        reportEventViewModel,
+                        reportUserViewModel,
+                        reportPeriodViewModel
+                    )
                 },
                 onEndDateSelected = { newEndDate ->
                     endDate = newEndDate
-                    // Повторный запрос при изменении конечной даты
-                    reportEventViewModel.loadReportEvent(startDate, endDate)
-                    reportUserViewModel.loadReportUser(startDate, endDate)
-                    reportPeriodViewModel.loadReportPeriod(startDate, endDate)
+                    updateReports(
+                        startDate,
+                        endDate,
+                        reportEventViewModel,
+                        reportUserViewModel,
+                        reportPeriodViewModel
+                    )
                 }
             )
 
             when (selectedTab) {
                 0 -> {
-                    if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
-                        LaunchedEffect(Unit) {
-                            reportEventViewModel.loadReportEvent(startDate, endDate)
-                        }
-
-                    }
-                    when (val eventState = reportEventState) {
-                        is ReportEventState.Initial,
-                        is ReportEventState.Loading -> Loading()
-
-                        is ReportEventState.Failure ->Error(message = eventState.message
-                            ?: stringResource(id = R.string.error_unknown_error),
-                            onRetry = { reportEventViewModel.loadReportEvent(startDate, endDate) }
-
-                        ){}
-                        is ReportEventState.Content -> {
-                            PeriodReport(reportPeriodViewModel, eventState.reportEvent, startDate, endDate)
-                        }
-                    }
-
+                    PeriodReport(reportPeriodViewModel, reportEventViewModel, startDate, endDate)
                 }
+
                 1 -> {
                     EventReport(reportEventViewModel, startDate, endDate)
                 }
+
                 2 -> {
-                     UserReport(reportUserViewModel, startDate, endDate)
+                    UserReport(reportUserViewModel, startDate, endDate)
 
                 }
             }
         }
+
     }
 }
 
 @Composable
-fun BottomBar( onEventsSelected: () -> Unit,/* onOrderSelected: () -> Unit*/) {
+fun BottomBar(onEventsSelected: () -> Unit, logOut:() ->Unit) {
 
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
@@ -160,13 +168,13 @@ fun BottomBar( onEventsSelected: () -> Unit,/* onOrderSelected: () -> Unit*/) {
             BottomBarItem(
                 icon = Icons.Filled.Event,
                 label = stringResource(id = R.string.event_title),
-                onClick =  onEventsSelected,
+                onClick = onEventsSelected,
                 iconTint = Color.Gray
             )
             BottomBarItem(
-                icon = Icons.Filled.Person,
-                label = stringResource(id = R.string.profile_title),
-                onClick = {} /*onProfileSelected*/,
+                icon = Icons.Filled.ExitToApp,
+                label = stringResource(id = R.string.exit_title),
+                onClick = logOut ,
                 iconTint = Color.Gray
             )
         }
@@ -206,151 +214,497 @@ fun BottomBarItem(
     }
 }
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DatePickerSection(
-    startDate: String,
-    endDate: String,
     onStartDateSelected: (String) -> Unit,
     onEndDateSelected: (String) -> Unit
 ) {
-    val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val years = (2015..2060).toList()
+    val quarters = listOf("1", "2", "3", "4")
+    val months = listOf(
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    )
+    val currentYear = Year.now().value
+    var selectedYear by remember { mutableStateOf(currentYear) }
+    var selectedQuarter by remember { mutableStateOf<Int?>(null) }
+    var selectedMonth by remember { mutableStateOf<Int?>(null) }
 
-    val context = LocalContext.current
+    var expandedYear by remember { mutableStateOf(false) }
+    var expandedQuarter by remember { mutableStateOf(false) }
+    var expandedMonth by remember { mutableStateOf(false) }
 
-    Column(
+    Row(
         modifier = Modifier
-            .padding(top=5.dp),
+            .fillMaxWidth()
+            .padding(top = 15.dp)
     ) {
-        // Кнопка выбора начальной даты
-        Button(onClick = {
-            DatePickerDialog(
-                context,
-                R.style.CustomDatePickerDialog,
-                { _, selectedYear, selectedMonth, selectedDay ->
-                    calendar.set(Calendar.YEAR, selectedYear)
-                    calendar.set(Calendar.MONTH, selectedMonth)
-                    calendar.set(Calendar.DAY_OF_MONTH, selectedDay)
-                    calendar.set(Calendar.HOUR_OF_DAY, 0)
-                    calendar.set(Calendar.MINUTE, 0)
-                    calendar.set(Calendar.SECOND, 0)
-                    calendar.set(Calendar.MILLISECOND, 0)
-
-                    val formattedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(calendar.time)
-                    onStartDateSelected(formattedDate)
-                },
-                year, month, day
-            ).show()
-        }) {
-            val date=formatDateSelected(startDate)
-            Text("Выбрать начальную дату:$date ")
+        // Выбор года
+        Row(modifier = Modifier.weight(1f)) {
+            Text(stringResource(R.string.year), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                selectedYear.toString(),
+                modifier = Modifier.padding(end = 2.dp),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            IconButton(onClick = { expandedYear = true }) {
+                Icon(Icons.Default.ArrowDropDown, contentDescription = "Select Year")
+            }
+            DropdownMenu(
+                expanded = expandedYear,
+                onDismissRequest = { expandedYear = false },
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                    )
+                    .height(250.dp)
+            ) {
+                years.forEach { year ->
+                    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
+                    DropdownMenuItem(onClick = {
+                        selectedYear = year
+                        selectedQuarter = null
+                        selectedMonth = null
+                        expandedYear = false
+                        updateDateRange(
+                            "Year",
+                            selectedYear,
+                            0,
+                            0,
+                            onStartDateSelected,
+                            onEndDateSelected
+                        )
+                    },
+                        text = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            ) {
+                                Text(year.toString())
+                            }
+                        }
+                    )
+                }
+            }
         }
 
-            Button(onClick = {
-                DatePickerDialog(
-                    context,
-                    R.style.CustomDatePickerDialog,
-                    { _, selectedYear, selectedMonth, selectedDay ->
-                        calendar.set(Calendar.YEAR, selectedYear)
-                        calendar.set(Calendar.MONTH, selectedMonth)
-                        calendar.set(Calendar.DAY_OF_MONTH, selectedDay)
-                        calendar.set(Calendar.HOUR_OF_DAY, 0)
-                        calendar.set(Calendar.MINUTE, 0)
-                        calendar.set(Calendar.SECOND, 0)
-                        calendar.set(Calendar.MILLISECOND, 0)
-
-                        val formattedDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).format(calendar.time)
-                        onEndDateSelected(formattedDate)
-                    },
-                    year, month, day
-                ).show()
-            }) {
-                val date=formatDateSelected(endDate)
-                Text("Выбрать конечную дату: $date")
+        // Выбор квартала
+        Row(modifier = Modifier.weight(1f)) {
+            Text(stringResource(R.string.quarter), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                selectedQuarter?.toString() ?: "",
+                modifier = Modifier.padding(end = 2.dp),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            IconButton(onClick = { expandedQuarter = true }) {
+                Icon(Icons.Default.ArrowDropDown, contentDescription = "Select Quarter")
             }
+            DropdownMenu(
+                expanded = expandedQuarter,
+                onDismissRequest = { expandedQuarter = false },
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                    )
+            ) {
+                DropdownMenuItem(onClick = {
+                    selectedQuarter = null
+                    expandedQuarter = false
+                    updateDateRange(
+                        "Year",
+                        selectedYear,
+                        0,
+                        0,
+                        onStartDateSelected,
+                        onEndDateSelected
+                    )
+                },
+                    text = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        ) {
+                            Text("Сбросить")
+                        }
+                    })
+                quarters.forEachIndexed { index, quarter ->
+                    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
+                    DropdownMenuItem(onClick = {
+                        selectedQuarter = index + 1
+                        selectedMonth = null
+                        expandedQuarter = false
+                        updateDateRange(
+                            "Quarter",
+                            selectedYear,
+                            selectedQuarter ?: 0,
+                            selectedMonth ?: 0,
+                            onStartDateSelected,
+                            onEndDateSelected
+                        )
+                    },
+                        text = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            ) {
+                                Text(quarter)
+                            }
+                        }
+                    )
+                }
+
+            }
+        }
+
+        // Выбор месяца
+        Row(modifier = Modifier.weight(1f)) {
+            Text(stringResource(R.string.month), style = MaterialTheme.typography.bodyMedium)
+            Text(selectedMonth?.let { months[it - 1] } ?: "",
+                style = MaterialTheme.typography.bodyMedium)
+            IconButton(onClick = { expandedMonth = true }) {
+                Icon(Icons.Default.ArrowDropDown, contentDescription = "Select Month")
+            }
+            DropdownMenu(
+                expanded = expandedMonth,
+                onDismissRequest = { expandedMonth = false },
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                    )
+                    .height(250.dp)
+            ) {
+                DropdownMenuItem(onClick = {
+                    selectedMonth = null
+                    expandedMonth = false
+                    updateDateRange(
+                        "Year",
+                        selectedYear,
+                        0,
+                        0,
+                        onStartDateSelected,
+                        onEndDateSelected
+                    )
+                },
+                    text = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        ) {
+                            Text("Сбросить")
+                        }
+                    })
+                months.forEachIndexed { index, month ->
+                    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
+                    DropdownMenuItem(onClick = {
+                        selectedMonth = index + 1
+                        selectedQuarter = null
+                        expandedMonth = false
+                        updateDateRange(
+                            "Month",
+                            selectedYear,
+                            selectedQuarter ?: 0,
+                            selectedMonth ?: 0,
+                            onStartDateSelected,
+                            onEndDateSelected
+                        )
+                    },
+                        text = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            ) {
+                                Text(month)
+                            }
+                        }
+                    )
+                }
+
+            }
+
+        }
 
     }
 }
 
 @Composable
 fun EventReport(viewModel: ReportEventViewModel, startDate: String, endDate: String) {
+
+    val reportEventState by viewModel.state.collectAsState()
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val error = stringResource(id = R.string.error_unknown_error)
+
     if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
         LaunchedEffect(Unit) {
             viewModel.loadReportEvent(startDate, endDate)
         }
 
     }
+    LaunchedEffect(reportEventState) {
+        when (reportEventState) {
+            is ReportEventState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (reportEventState as ReportEventState.Failure).message ?: error
+            }
 
-    // Обработка состояния и отображение графика
-    val reportEventState by viewModel.state.collectAsState()
+            is ReportEventState.Content -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+
 
     when (val state = reportEventState) {
         is ReportEventState.Initial,
         is ReportEventState.Loading -> Loading()
 
-        is ReportEventState.Failure ->Error(message = state.message
-            ?: stringResource(id = R.string.error_unknown_error),
-            onRetry = { viewModel.loadReportEvent(startDate, endDate) }
+        is ReportEventState.Failure -> {}
+        is ReportEventState.Content -> EventReportContent(state.reportEvent)
+    }
 
-        ){}
-        is ReportEventState.Content ->  EventReportContent(state.reportEvent)
+    if (showErrorDialog) {
+        Error(
+            message = errorMessage,
+            onRetry = {
+                viewModel.loadReportEvent(startDate, endDate)
+                showErrorDialog = false
+            },
+            onCancel = {
+                showErrorDialog = false
+            }
+        )
     }
 }
 
 @Composable
 fun UserReport(viewModel: ReportUserViewModel, startDate: String, endDate: String) {
+    val reportUserState by viewModel.state.collectAsState()
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val error = stringResource(id = R.string.error_unknown_error)
+
     if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
         LaunchedEffect(Unit) {
             viewModel.loadReportUser(startDate, endDate)
         }
 
     }
+    LaunchedEffect(reportUserState) {
+        when (reportUserState) {
+            is ReportUserState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (reportUserState as ReportUserState.Failure).message ?: error
+            }
 
-    // Обработка состояния и отображение графика
-    val reportUserState by viewModel.state.collectAsState()
+            is ReportUserState.Content -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
+
+            else -> {}
+        }
+    }
 
     when (val state = reportUserState) {
         is ReportUserState.Initial,
         is ReportUserState.Loading -> Loading()
 
-        is ReportUserState.Failure ->Error(message = state.message
-            ?: stringResource(id = R.string.error_unknown_error),
-            onRetry = { viewModel.loadReportUser(startDate, endDate) }
+        is ReportUserState.Failure -> {}
+        is ReportUserState.Content -> UserReportContent(state.reportUser)
+    }
 
-        ){}
-        is ReportUserState.Content ->  UserReportContent(state.reportUser)
+    if (showErrorDialog) {
+        Error(
+            message = errorMessage,
+            onRetry = {
+                viewModel.loadReportUser(startDate, endDate)
+                showErrorDialog = false
+            },
+            onCancel = {
+                showErrorDialog = false
+            }
+        )
     }
 }
+
 @Composable
 fun PeriodReport(
     viewModel: ReportPeriodViewModel,
-    reportEvents: List<ReportEvent>,
+    reportEventViewModel: ReportEventViewModel,
     startDate: String,
     endDate: String
 ) {
+    val reportPeriodState by viewModel.state.collectAsState()
+    val reportEventState by reportEventViewModel.state.collectAsState()
+
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val error = stringResource(id = R.string.error_unknown_error)
+
     if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
         LaunchedEffect(Unit) {
             viewModel.loadReportPeriod(startDate, endDate)
+            reportEventViewModel.loadReportEvent(startDate, endDate)
         }
 
     }
+    LaunchedEffect(reportPeriodState) {
+        when (reportPeriodState) {
+            is ReportPeriodState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (reportPeriodState as ReportPeriodState.Failure).message ?: error
+            }
 
+            is ReportPeriodState.Content -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
 
-    // Обработка состояния и отображение графика
-    val reportPeriodState by viewModel.state.collectAsState()
+            else -> {}
+        }
+    }
+    LaunchedEffect(reportEventState) {
+        when (reportEventState) {
+            is ReportEventState.Failure -> {
+                showErrorDialog = true
+                errorMessage = (reportEventState as ReportEventState.Failure).message ?: error
+            }
 
+            is ReportEventState.Content -> {
+                if (showErrorDialog) {
+                    showErrorDialog = false
+                }
+            }
 
+            else -> {}
+        }
+    }
     when (val state = reportPeriodState) {
         is ReportPeriodState.Initial,
         is ReportPeriodState.Loading -> Loading()
 
-        is ReportPeriodState.Failure ->Error(message = state.message
-            ?: stringResource(id = R.string.error_unknown_error),
-            onRetry = { viewModel.loadReportPeriod(startDate, endDate) }
-
-        ){}
-        is ReportPeriodState.Content -> PeriodReportContent(state.reportPeriod,reportEvents)
+        is ReportPeriodState.Failure -> {}
+        is ReportPeriodState.Content -> {
+            if (reportEventState is ReportEventState.Content) {
+                PeriodReportContent(
+                    state.reportPeriod,
+                    (reportEventState as ReportEventState.Content).reportEvent
+                )
+            } else {
+                Loading()
+            }
+        }
+    }
+    if (showErrorDialog) {
+        Error(
+            message = errorMessage,
+            onRetry = {
+                viewModel.loadReportPeriod(startDate, endDate)
+                showErrorDialog = false
+            },
+            onCancel = {
+                showErrorDialog = false
+            }
+        )
     }
 }
+
+
+private fun updateReports(
+    startDate: String,
+    endDate: String,
+    reportEventViewModel: ReportEventViewModel,
+    reportUserViewModel: ReportUserViewModel,
+    reportPeriodViewModel: ReportPeriodViewModel
+) {
+    reportEventViewModel.loadReportEvent(startDate, endDate)
+    reportUserViewModel.loadReportUser(startDate, endDate)
+    reportPeriodViewModel.loadReportPeriod(startDate, endDate)
+}
+
+
+private fun updateDateRange(
+    dateRangeType: String,
+    year: Int,
+    quarter: Int,
+    month: Int,
+    onStartDateSelected: (String) -> Unit,
+    onEndDateSelected: (String) -> Unit
+) {
+    when (dateRangeType) {
+        "Year" -> {
+            val startDate = "$year-01-01T00:00:00Z"
+            val endDate = "$year-12-31T00:00:00Z"
+            onStartDateSelected(startDate)
+            onEndDateSelected(endDate)
+        }
+
+        "Quarter" -> {
+            val (startDate, endDate) = getQuarterDateRange(year, quarter)
+            Log.d("DatePicker", "Quarter selected: startDate = $startDate, endDate = $endDate")
+            onStartDateSelected(startDate)
+            onEndDateSelected(endDate)
+        }
+
+        "Month" -> {
+            val (startDate, endDate) = getMonthDateRange(year, month)
+            Log.d("DatePicker", "Month selected: startDate = $startDate, endDate = $endDate")
+            onStartDateSelected(startDate)
+            onEndDateSelected(endDate)
+        }
+    }
+}
+
+
+fun getQuarterDateRange(year: Int, quarter: Int): Pair<String, String> {
+    val startMonth = when (quarter) {
+        1 -> 1
+        2 -> 4
+        3 -> 7
+        4 -> 10
+        else -> throw IllegalArgumentException("Некорректный квартал")
+    }
+    val startDate = "$year-${String.format("%02d", startMonth)}-01T00:00:00Z"
+    val endMonth = startMonth + 2
+    val endDay = if (endMonth == 2) {
+        if (isLeapYear(year)) "29" else "28"
+    } else if (endMonth in listOf(4, 6, 9, 11)) {
+        "30"
+    } else {
+        "31"
+    }
+    val endDate = "$year-${String.format("%02d", endMonth)}-${endDay}T00:00:00Z"
+    return Pair(startDate, endDate)
+}
+
+fun getMonthDateRange(year: Int, month: Int): Pair<String, String> {
+    val startDate = "$year-${String.format("%02d", month)}-01T00:00:00Z"
+    val endDay = when (month) {
+        2 -> if (isLeapYear(year)) "29" else "28"
+        in listOf(4, 6, 9, 11) -> "30"
+        else -> "31"
+    }
+    val endDate = "$year-${String.format("%02d", month)}-${endDay}T00:00:00Z"
+    return Pair(startDate, endDate)
+}
+
+
+fun isLeapYear(year: Int): Boolean {
+    return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
+}
+
+

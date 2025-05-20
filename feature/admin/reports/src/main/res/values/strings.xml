@@ -22,12 +22,18 @@
     <string name="table_eventId">ID События</string>
     <string name="table_userId">ID Пользователя</string>
     <string name="table_profit">Прибыль</string>
-    <string name="table_ticketSold">Проданные билеты</string>
+    <string name="table_ticketSold">Билеты</string>
     <string name="table_expenses">Расходы</string>
-    <string name="table_netProfit">Чистая прибыль</string>
+    <string name="table_netProfit">Профит</string>
+
+
+    <string name="year">Год: </string>
+    <string name="quarter">Квартал: </string>
+    <string name="month">Месяц: </string>
+
     <string name="bar_report">Отчеты</string>
 
-    <string name="profile_title">Сотрудники</string>
+    <string name="exit_title">Выход</string>
 
     <string name="event_title">Мероприятия</string>
 
